@@ -79,6 +79,7 @@ import AddProducts from './AgentDashboard/pages/Products/AddProducts';
 import AddProductCategory from './AgentDashboard/pages/Products/AddProductCategory';
 import WalletRequest from './AgentDashboard/pages/WalletRequest';
 import PlanCommissionConfiguration from './AdminDashboard/pages/AdminSettings/PlanComissionConfiguration';
+import Partners from './pages/partners/Partners';
 
 function App() {
   return (
@@ -96,7 +97,7 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/" element={<MainPage />} />
             <Route path="/about" element={<About />} />
-            <Route path="/services" element={<Services />} />
+            <Route path="/partners" element={<Partners />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/details/:id" element={<Details />} />
