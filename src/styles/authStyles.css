@@ -1,0 +1,400 @@
+/* src/styles/authStyles.css */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: white;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+}
+
+.auth-container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.auth-card {
+  position: relative;
+  width: min(60%, 42rem);
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 0.9375rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  overflow: visible;
+  max-height: 90vh;
+}
+
+.auth-card::-webkit-scrollbar {
+  width: 6px;
+}
+
+.auth-card::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.auth-card::-webkit-scrollbar-thumb {
+  background: #8EA198;
+  border-radius: 3px;
+}
+
+.avatar-circle {
+  position: absolute;
+  top: -2.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5.5rem;
+  height: 5.5rem;
+  background: #FFFFFF;
+  border: 2px solid #8EA198;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 110;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+.avatar-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: #1F1E17;
+}
+
+.badge-img {
+  position: absolute;
+  top: -2.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5.5rem;
+  height: 5.5rem;
+  object-fit: cover;
+  z-index: 110;
+  display: block;
+  background: #FFFFFF;
+  border-radius: 50%;
+  border: 2px solid #8EA198;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+.auth-title {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.5rem, 4vw, 1.7rem);
+  line-height: 100%;
+  text-align: center;
+  color: #0A6806;
+  margin-bottom: 0.75rem;
+  margin-top: 2rem;
+}
+
+.auth-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: 1rem;
+  line-height: 100%;
+  text-align: center;
+  color: #000000;
+  margin-bottom: 2rem;
+}
+
+.info-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  line-height: 120%;
+  color: #666666;
+  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
+  text-align: left;
+  width: 100%;
+}
+
+.error-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 0.75rem;
+  color: #d32f2f;
+  margin-bottom: 0.25rem;
+  text-align: left;
+  width: min(33.3125rem, 100%);
+  padding-left: 0.25rem;
+}
+
+.link-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  line-height: 100%;
+  text-align: center;
+  color: #000000;
+  margin-top: 1rem;
+}
+
+.link-text a {
+  color: #0A6806;
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.link-text a:hover {
+  text-decoration: underline;
+}
+
+.input-wrapper {
+  width: 25rem;
+  height: 3rem;
+  display: flex;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  margin-bottom: 0.7rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.input-icon {
+  width: 10%;
+  min-width: 3.5rem;
+  background: #0A6806;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.input-icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.input-field {
+  flex: 1;
+  background: rgba(75, 175, 71, 0.42);
+  border: none;
+  outline: none;
+  padding: 0 1rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9375rem;
+  color: #000000;
+}
+
+.input-field::placeholder {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+/* Keep the Email/Username input background consistent when browser autofills
+   by overriding autofill styles (scoped to the specific input using its name).
+   This prevents the yellow/changed background while preserving text color. */
+.input-field[name="emailOrUsername"]:-webkit-autofill,
+.input-field[name="emailOrUsername"]:-webkit-autofill:hover,
+.input-field[name="emailOrUsername"]:-webkit-autofill:focus,
+.input-field[name="emailOrUsername"]:-internal-autofill-selected {
+  -webkit-box-shadow: 0 0 0px 1000px rgba(75, 175, 71, 0.42) inset !important;
+  box-shadow: 0 0 0px 1000px rgba(75, 175, 71, 0.42) inset !important;
+  -webkit-text-fill-color: #000000 !important;
+  background-clip: content-box;
+}
+
+.forget-password {
+  width: min(33.3125rem, 100%);
+  text-align: right;
+  margin-bottom: 1rem;
+}
+
+.forget-password a {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: 0.875rem;
+  color: #000000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.forget-password a:hover {
+  text-decoration: underline;
+}
+
+.auth-button {
+  width: 25rem;
+  height: 3rem;
+  background: #0A6806;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(10, 104, 6, 0.3);
+  margin-top: 0.8rem;
+}
+
+.auth-button:hover {
+  background: #085a04;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(10, 104, 6, 0.4);
+}
+
+.auth-button:active {
+  transform: translateY(0);
+}
+
+.otp-input-section {
+  width: min(33.3125rem, 100%);
+  margin-bottom: 1.5rem;
+}
+
+.otp-label {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 0.875rem;
+  color: #000000;
+  margin-bottom: 0.75rem;
+  display: block;
+  text-align: center;
+}
+
+.masked-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.9375rem;
+  color: #666666;
+}
+
+.otp-container {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.otp-box {
+  width: 3rem;
+  height: 3rem;
+  border: 0.2px solid #055D69;
+  border-radius: 0.5rem;
+  text-align: center;
+  font-size: 1.5rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  color: #000000;
+  outline: none;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.otp-box:focus {
+  border-color: #0A6806;
+  border-width: 2px;
+  box-shadow: 0 0 8px rgba(10, 104, 6, 0.3);
+}
+
+.timer-text {
+  text-align: right;
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: 0.75rem;
+  color: #666666;
+  margin-bottom: 1.5rem;
+}
+
+.support-link {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 0.875rem;
+  color: #038F9D;
+  text-align: center;
+  margin-top: 1rem;
+  cursor: pointer;
+}
+
+.support-link:hover {
+  text-decoration: underline;
+}
+
+.success-img {
+  position: absolute;
+  top: -2.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5.5rem;
+  height: 5.5rem;
+  object-fit: contain;
+  display: block;
+  background: #E8F5E9;
+  border-radius: 50%;
+  z-index: 110;
+  border: 2px solid rgba(10,104,6,0.12);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  padding: 0.25rem;
+}
+
+.success-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .auth-card {
+    padding: 2.5rem 1.25rem 1.25rem;
+  }
+  
+  .avatar-circle,
+  .badge-img,
+  .success-img {
+    width: 4.25rem;
+    height: 4.25rem;
+    top: -2.125rem;
+  }
+  
+  .avatar-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+  
+  .otp-container {
+    gap: 0.5rem;
+  }
+  
+  .otp-box {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .otp-box {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1rem;
+  }
+}

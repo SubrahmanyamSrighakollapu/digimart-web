@@ -1,0 +1,48 @@
+/* Form Validation Styles - Apply to all forms */
+
+/* Required field indicator */
+input:required:invalid,
+select:required:invalid,
+textarea:required:invalid {
+  border-color: #e2e8f0;
+}
+
+input:required:invalid:focus,
+select:required:invalid:focus,
+textarea:required:invalid:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+/* Show validation message on blur */
+input:invalid:not(:focus):not(:placeholder-shown),
+select:invalid:not(:focus):not(:placeholder-shown),
+textarea:invalid:not(:focus):not(:placeholder-shown) {
+  border-color: #ef4444;
+}
+
+/* Valid state */
+input:valid:not(:placeholder-shown),
+select:valid:not(:placeholder-shown),
+textarea:valid:not(:placeholder-shown) {
+  border-color: #10b981;
+}
+
+/* Custom validation message styling */
+.form-group {
+  position: relative;
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
+/* Prevent default browser validation bubble */
+input:invalid,
+select:invalid,
+textarea:invalid {
+  box-shadow: none;
+}

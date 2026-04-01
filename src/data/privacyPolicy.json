@@ -1,0 +1,181 @@
+{
+  "banner": {
+    "title": "Privacy Policy",
+    "lastUpdated": "01 Dec 2025"
+  },
+  "sections": [
+    {
+      "id": "01",
+      "title": "Information We Collect",
+      "content": [
+        {
+          "type": "subsection",
+          "subtitle": "A. Personal Information",
+          "items": [
+            "Name",
+            "Email address",
+            "Phone number",
+            "Billing and shipping address",
+            "Payment details (via secure third-party gateways)",
+            "Usernames and passwords",
+            "Any other information voluntarily provided"
+          ]
+        },
+        {
+          "type": "subsection",
+          "subtitle": "B. Non-Personal Information",
+          "items": [
+            "IP address",
+            "Browser type",
+            "Device information",
+            "Referring website URLs",
+            "Your interactions with the website (pages visited, time spent, etc.)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "02",
+      "title": "How We Use Your Information",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "We use your personal information for the following purposes:"
+        },
+        {
+          "type": "points",
+          "items": [
+            "To process and fulfill your orders",
+            "To communicate with you (order status, offers, customer service)",
+            "To personalize your shopping experience",
+            "To improve our website, products, and services",
+            "To comply with legal obligations",
+            "To prevent fraud and ensure security"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "03",
+      "title": "Sharing of Your Information",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "We do not sell or rent your personal data to third parties. We may share your information with:"
+        },
+        {
+          "type": "points",
+          "items": [
+            "Service providers (e.g., delivery partners, payment processors, marketing agencies)",
+            "Government or regulatory authorities, when required by law or in response to a legal process",
+            "Third-party tools integrated into our site (such as analytics or advertising partners), under strict data protection agreements"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "04",
+      "title": "Security of Your Information",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "We maintain reasonable and appropriate security measures to protect your personal data, including:"
+        },
+        {
+          "type": "points",
+          "items": [
+            "SSL encryption",
+            "Secure servers",
+            "Role-based data access controls",
+            "Periodic security audits"
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "However, no internet-based platform is entirely secure. You are responsible for keeping your login credentials confidential."
+        }
+      ]
+    },
+    {
+      "id": "05",
+      "title": "Your Rights and Choices",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "You may:"
+        },
+        {
+          "type": "points",
+          "items": [
+            "Access, correct, or update your personal information via your account settings",
+            "Request deletion of your account or data (subject to legal requirements)",
+            "Opt out of marketing communications"
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "To make such requests, please contact us at info@totalneedsmarketing.com."
+        }
+      ]
+    },
+    {
+      "id": "06",
+      "title": "Cookies and Tracking Technologies",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "We use cookies and similar technologies to enhance your experience, analyze traffic, and provide personalized recommendations. You can manage cookie preferences through your browser settings."
+        }
+      ]
+    },
+    {
+      "id": "07",
+      "title": "Third-Party Links",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Our Website may contain links to other websites. We are not responsible for the privacy practices of these third-party websites. Please read their privacy policies before submitting any personal data."
+        }
+      ]
+    },
+    {
+      "id": "08",
+      "title": "Children's Privacy",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Our Website is not intended for children under the age of 18. We do not knowingly collect personal information from children."
+        }
+      ]
+    },
+    {
+      "id": "09",
+      "title": "Changes to This Policy",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "We may update this Privacy Policy from time to time. We will notify you of significant changes by posting the updated policy on our Website with a new effective date."
+        }
+      ]
+    },
+    {
+      "id": "10",
+      "title": "Contact Us",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For any questions or concerns about this Privacy Policy, please contact us at:"
+        },
+        {
+          "type": "contact",
+          "details": {
+            "company": "Totalneeds Marketing",
+            "email": "info@totalneedsmarketing.com",
+            "phone": "+91-9581906060",
+            "address": "FLAT NO 405, ALLURI TRADE CENTER, BHAGYA NAGAR COLONY, KPHB, KUKATPALLY, Bachupally, Medchal-Malkajgiri, Telangana - 500072"
+          }
+        }
+      ]
+    }
+  ]
+}

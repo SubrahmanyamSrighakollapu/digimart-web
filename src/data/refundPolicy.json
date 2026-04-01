@@ -1,0 +1,156 @@
+{
+  "banner": {
+    "title": "Refund Policy",
+    "lastUpdated": "01-10-2025"
+  },
+  "sections": [
+    {
+      "id": "01",
+      "title": "Eligibility for Return / Replacement",
+      "content": [
+        {
+          "type": "points",
+          "items": [
+            "Due to the nature of wholesale transactions, returns are only accepted under the following conditions:"
+          ]
+        },
+        {
+          "type": "subpoints_bold",
+          "items": [
+            "Damaged or Defective Products:|If you receive goods that are damaged, defective, or not as per your purchase order.",
+            "Incorrect Items Received:|If the product specifications (model, size, quantity, or variant) differ from what was ordered.",
+            "Manufacturing Defect:|Valid only with photographic or video proof."
+          ]
+        },
+        {
+          "type": "points",
+          "items": [
+            "Returns will NOT be accepted for buyer's remorse, unsold inventory, or minor packaging damage that does not affect product usability."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "02",
+      "title": "Return Request Process",
+      "content": [
+        {
+          "type": "points",
+          "items": [
+            "To request a return or replacement:"
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "A. Contact our support team at info@totalneedsmarketing.com/+91 9581906060 within 48 hours of delivery."
+        },
+        {
+          "type": "paragraph",
+          "text": "B. Provide:"
+        },
+        {
+          "type": "subpoints",
+          "items": [
+            "Order ID / Invoice Number",
+            "Photos or videos clearly showing the issue",
+            "Number of affected units"
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "C. After verification, we will confirm approval or rejection of your request."
+        },
+        {
+          "type": "subtitle",
+          "items": [
+            "No returns will be accepted without prior authorization."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "03",
+      "title": "Pickup / Return Shipping",
+      "content": [
+        {
+          "type": "points",
+          "items": [
+            "If the return is approved due to our fault (wrong, defective, or damaged items), we will arrange pickup or reimburse return shipping.",
+            "If the return is requested for other reasons and accepted as per mutual agreement, the buyer will bear return logistics costs."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "04",
+      "title": "Refund / Replacement Terms",
+      "content": [
+        {
+          "type": "points",
+          "items": [
+            "Once the returned goods are received and inspected:"
+          ]
+        },
+        {
+          "type": "subpoints",
+          "items": [
+            "Refunds (if applicable) will be processed within 7-10 business days via the original payment method or store credit.",
+            "Replacements will be dispatched based on stock availability."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "05",
+      "title": "Order Cancellation Policy",
+      "content": [
+        {
+          "type": "points",
+          "items": [
+            "Wholesale orders cannot be cancelled once processed or dispatched.",
+            "For prepaid custom or bulk manufacturing orders, advance payments are non-refundable."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "06",
+      "title": "Exceptions",
+      "content": [
+        {
+          "type": "points",
+          "items": [
+            "The following products are not eligible for returns/refunds:"
+          ]
+        },
+        {
+          "type": "subpoints",
+          "items": [
+            "Perishable, consumable, or hygiene-sensitive goods",
+            "Customised, logo-printed, or made-to-order items",
+            "Clearance, promotion, or special deal stock"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "07",
+      "title": "Contact Information",
+      "content": [
+        {
+          "type": "points",
+          "items": [
+            "For return or refund-related queries, please reach us at:"
+          ]
+        },
+        {
+          "type": "contact",
+          "details": {
+            "email": "info@totalneedsmarketing.com",
+            "phone": "+91 9581906060"
+          }
+        }
+      ]
+    }
+  ]
+}
