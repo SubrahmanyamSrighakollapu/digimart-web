@@ -1,8 +1,12 @@
-// src/AdminDashboard/pages/Dashboard/AdminActions/CreateUser.jsx
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import { UserPlus, Send, ShieldCheck, User, Settings } from 'lucide-react';
 import userService from '../../../services/userService';
 import lookupService from '../../../services/lookupService';
+import {
+  T, PageHeader, Card, Btn, GhostBtn, SectionLabel,
+  FormGrid, FormField, InputField, SelectField, Toggle, VerifyInput
+} from '../../components/AdminUI';
 
 const CreateUser = () => {
   const [autoGeneratePassword, setAutoGeneratePassword] = useState(true);
@@ -10,541 +14,167 @@ const CreateUser = () => {
   const [loading, setLoading] = useState(false);
   const [roles, setRoles] = useState([]);
   const [statusTypes, setStatusTypes] = useState([]);
-  
-  const [formData, setFormData] = useState({
-    aadhaarNumber: '',
-    panNumber: '',
-    fullName: '',
-    email: '',
-    mobile: '',
-    role: '',
-    statusType: '',
-    password: ''
-  });
+  const [formData, setFormData] = useState({ aadhaarNumber: '', panNumber: '', fullName: '', email: '', mobile: '', role: '', statusType: '', statusId: '', password: '' });
+  const [verified, setVerified] = useState({ aadhaar: false, pan: false });
 
-  const [verificationStatus, setVerificationStatus] = useState({
-    isAadharVerify: false,
-    panNoVerify: false
-  });
-
-  useEffect(() => {
-    fetchRoles();
-    fetchStatusTypes();
-  }, []);
+  useEffect(() => { fetchRoles(); fetchStatusTypes(); }, []);
 
   const fetchRoles = async () => {
     try {
-      const payload = {
-        roleId: 0,
-        isEmployee: false,
-        isActive: true
-      };
-      const response = await lookupService.getUserRoleMaster(payload);
-      if (response.status === 1 && response.result) {
-        setRoles(response.result);
-      }
-    } catch (error) {
-      console.error('Error fetching roles:', error);
-    }
+      const res = await lookupService.getUserRoleMaster({ roleId: 0, isEmployee: false, isActive: true });
+      if (res.status === 1 && res.result) setRoles(res.result);
+    } catch {}
   };
 
   const fetchStatusTypes = async () => {
     try {
-      const response = await lookupService.getDefaultStatusTypes();
-      if (response.status === 1 && response.result) {
-        setStatusTypes(response.result);
-      }
-    } catch (error) {
-      console.error('Error fetching status types:', error);
-    }
+      const res = await lookupService.getDefaultStatusTypes();
+      if (res.status === 1 && res.result) setStatusTypes(res.result);
+    } catch {}
   };
 
-  const handleInputChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'statusType') {
-      const selectedStatus = statusTypes.find(status => status.statusValue === value);
-      setFormData(prev => ({
-        ...prev,
-        [name]: value,
-        statusId: selectedStatus ? selectedStatus.statusId : ''
-      }));
+      const sel = statusTypes.find(s => s.statusValue === value);
+      setFormData(p => ({ ...p, [name]: value, statusId: sel?.statusId || '' }));
     } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: value
-      }));
+      setFormData(p => ({ ...p, [name]: value }));
     }
   };
 
   const handleCreateUser = async () => {
     setLoading(true);
     try {
-      const selectedRole = roles.find(role => role.roleName === formData.role);
-      
-      const userData = {
-        userId: 0,
-        fullName: formData.fullName,
-        email: formData.email,
-        contactNo: formData.mobile,
-        password: autoGeneratePassword ? "N/A" : formData.password,
-        isAutoPassword: autoGeneratePassword,
-        roleId: selectedRole ? selectedRole.roleId : 0,
-        aadharNo: formData.aadhaarNumber,
-        panNo: formData.panNumber,
+      const selectedRole = roles.find(r => r.roleName === formData.role);
+      const res = await userService.createUser({
+        userId: 0, fullName: formData.fullName, email: formData.email,
+        contactNo: formData.mobile, password: autoGeneratePassword ? 'N/A' : formData.password,
+        isAutoPassword: autoGeneratePassword, roleId: selectedRole?.roleId || 0,
+        aadharNo: formData.aadhaarNumber, panNo: formData.panNumber,
         statusId: formData.statusId || statusTypes[0]?.statusId || 0,
-        isAadharVerify: verificationStatus.isAadharVerify,
-        panNoVerify: verificationStatus.panNoVerify,
-        isActive: status
-      };
-      
-      const response = await userService.createUser(userData);
-      
-      if (response.status === 1) {
+        isAadharVerify: verified.aadhaar, panNoVerify: verified.pan, isActive: status
+      });
+      if (res.status === 1) {
         toast.success('User created successfully!');
-        
-        // Reset form
-        setFormData({
-          aadhaarNumber: '',
-          panNumber: '',
-          fullName: '',
-          email: '',
-          mobile: '',
-          role: '',
-          password: ''
-        });
-        setVerificationStatus({
-          isAadharVerify: false,
-          panNoVerify: false
-        });
-        setAutoGeneratePassword(true);
-        setStatus(true);
-      } else {
-        toast.error(response.message || 'Failed to create user. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error creating user:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Failed to create user. Please try again.';
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyAadhaar = () => {
-    console.log('Verifying Aadhaar:', formData.aadhaarNumber);
-    // Simulate verification success
-    setVerificationStatus(prev => ({ ...prev, isAadharVerify: true }));
-    toast.success('Aadhaar verified successfully!');
-  };
-
-  const handleVerifyPan = () => {
-    console.log('Verifying PAN:', formData.panNumber);
-    // Simulate verification success
-    setVerificationStatus(prev => ({ ...prev, panNoVerify: true }));
-    toast.success('PAN verified successfully!');
-  };
-
-  const handleSendCredentials = async () => {
-    console.log('Sending login credentials...');
-    toast.success('Login credentials sent!');
+        setFormData({ aadhaarNumber: '', panNumber: '', fullName: '', email: '', mobile: '', role: '', statusType: '', statusId: '', password: '' });
+        setVerified({ aadhaar: false, pan: false });
+        setAutoGeneratePassword(true); setStatus(true);
+      } else toast.error(res.message || 'Failed to create user');
+    } catch (e) { toast.error(e.response?.data?.message || e.message || 'Failed to create user'); }
+    finally { setLoading(false); }
   };
 
   return (
-    <>
-      <style jsx>{`
-        .create-user-container {
-          padding: 40px 20px;
-          background-color: #f7f9fc;
-          min-height: 100vh;
-          font-family: 'Segoe UI', sans-serif;
+    <div>
+      <PageHeader
+        title="Create User"
+        subtitle="Add a new user to the platform"
+        actions={
+          <>
+            <GhostBtn>Cancel</GhostBtn>
+            <Btn color={T.info} onClick={() => toast.success('Login credentials sent!')}>
+              <Send size={14} /> Send Credentials
+            </Btn>
+            <Btn onClick={handleCreateUser} disabled={loading}>
+              <UserPlus size={14} /> {loading ? 'Creating...' : 'Create User'}
+            </Btn>
+          </>
         }
+      />
 
-        .card {
-          max-width: 900px;
-          margin: 0 auto;
-          background: white;
-          border-radius: 16px;
-          padding: 40px;
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-        }
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', alignItems: 'start' }}>
 
-        .title {
-          font-size: 28px;
-          font-weight: 700;
-          color: #1f2937;
-          margin-bottom: 32px;
-        }
-
-        .form-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 24px 32px;
-        }
-
-        .form-group.full-width {
-          grid-column: 1 / -1;
-        }
-
-        .form-group {
-          display: flex;
-          flex-direction: column;
-        }
-
-        label {
-          font-size: 14px;
-          font-weight: 600;
-          color: #4a5568;
-          margin-bottom: 8px;
-        }
-
-        .input-wrapper {
-          position: relative;
-          display: flex;
-          align-items: stretch;          /* ← Changed: stretch instead of center */
-          width: 100%;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        select {
-          flex: 1;
-          padding: 12px 16px;
-          border: 1px solid #e2e8f0;
-          border-radius: 8px 0 0 8px;
-          font-size: 15px;
-          background: white;
-          border-right: none;
-        }
-
-        .verify-btn {
-          padding: 0 24px;
-          background: #10b981;
-          color: white;
-          border: none;
-          border-radius: 0 8px 8px 0;
-          font-weight: 600;
-          cursor: pointer;
-          white-space: nowrap;
-          font-size: 14px;
-        }
-
-        .verify-btn:hover {
-          background: #059669;
-        }
-
-        .role-description {
-          grid-column: 1 / -1;
-          font-size: 13px;
-          color: #718096;
-          line-height: 1.6;
-          margin-top: -8px;
-          margin-bottom: 20px;
-        }
-
-        .toggle-group {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-          margin: 24px 0;
-        }
-
-        .toggle-label {
-          font-size: 15px;
-          font-weight: 500;
-          color: #4a5568;
-        }
-
-        /* Toggle Switch */
-        .toggle-switch {
-          position: relative;
-          display: inline-block;
-          width: 52px;
-          height: 28px;
-        }
-
-        .toggle-switch input {
-          opacity: 0;
-          width: 0;
-          height: 0;
-        }
-
-        .slider {
-          position: absolute;
-          cursor: pointer;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background-color: #cbd5e0;
-          transition: .3s;
-          border-radius: 34px;
-        }
-
-        .slider:before {
-          position: absolute;
-          content: "";
-          height: 22px;
-          width: 22px;
-          left: 3px;
-          bottom: 3px;
-          background-color: white;
-          transition: .3s;
-          border-radius: 50%;
-        }
-
-        input:checked + .slider {
-          background-color: #10b981;
-        }
-
-        input:checked + .slider:before {
-          transform: translateX(24px);
-        }
-
-        .actions {
-          display: flex;
-          justify-content: flex-end;
-          gap: 16px;
-          margin-top: 40px;
-        }
-
-        .btn {
-          padding: 12px 28px;
-          border-radius: 8px;
-          font-size: 15px;
-          font-weight: 600;
-          cursor: pointer;
-          border: none;
-          transition: all 0.2s;
-        }
-
-        .btn-primary {
-          background-color: #10b981;
-          color: white;
-        }
-
-        .btn-primary:hover {
-          background-color: #059669;
-        }
-
-        .btn-secondary {
-          background-color: #3b82f6;
-          color: white;
-        }
-
-        .btn-secondary:hover {
-          background-color: #2563eb;
-        }
-
-        .btn-cancel {
-          background-color: #e2e8f0;
-          color: #4a5568;
-        }
-
-        .btn-cancel:hover {
-          background-color: #cbd5e0;
-        }
-
-        @media (max-width: 768px) {
-          .form-grid {
-            grid-template-columns: 1fr;
-          }
-
-          .input-wrapper {
-            flex-direction: column;
-          }
-
-          .verify-btn {
-            border-radius: 8px;
-            margin-top: 8px;
-            width: 100%;
-          }
-
-          .actions {
-            flex-direction: column;
-          }
-
-          .btn {
-            width: 100%;
-          }
-        }
-      `}</style>
-
-      <div className="create-user-container">
-        <div className="card">
-          <h1 className="title">Create User</h1>
-
-          <div className="form-grid">
-            {/* Aadhaar Number + Verify */}
-            <div className="form-group full-width">
-              <label>Aadhaar Number</label>
-              <div className="input-wrapper">
-                <input 
-                  type="text" 
-                  name="aadhaarNumber"
-                  value={formData.aadhaarNumber}
-                  onChange={handleInputChange}
-                  placeholder="Enter Aadhaar Number" 
-                />
-                <button className="verify-btn" onClick={handleVerifyAadhaar}>
-                  Verify →
-                </button>
+        {/* Left column */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          {/* Identity Verification */}
+          <Card>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ShieldCheck size={16} color="white" />
+              </div>
+              <div>
+                <p style={{ margin: 0, fontSize: T.fontMd, fontWeight: 700, color: T.text }}>Identity Verification</p>
+                <p style={{ margin: 0, fontSize: T.fontSm, color: T.textMuted }}>Verify Aadhaar & PAN before creating</p>
               </div>
             </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <VerifyInput label="Aadhaar Number" name="aadhaarNumber" value={formData.aadhaarNumber} onChange={handleChange}
+                placeholder="Enter 12-digit Aadhaar number"
+                onVerify={() => { setVerified(p => ({ ...p, aadhaar: true })); toast.success('Aadhaar verified!'); }}
+                verified={verified.aadhaar} />
+              <VerifyInput label="PAN Number" name="panNumber" value={formData.panNumber} onChange={handleChange}
+                placeholder="Enter PAN (e.g. ABCDE1234F)"
+                onVerify={() => { setVerified(p => ({ ...p, pan: true })); toast.success('PAN verified!'); }}
+                verified={verified.pan} />
+            </div>
+          </Card>
 
-            {/* PAN Number + Verify */}
-            <div className="form-group full-width">
-              <label>PAN Number</label>
-              <div className="input-wrapper">
-                <input 
-                  type="text" 
-                  name="panNumber"
-                  value={formData.panNumber}
-                  onChange={handleInputChange}
-                  placeholder="Enter Pan Number" 
-                />
-                <button className="verify-btn" onClick={handleVerifyPan}>
-                  Verify →
-                </button>
+          {/* Account Settings */}
+          <Card>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg,#f59e0b,#d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Settings size={16} color="white" />
+              </div>
+              <div>
+                <p style={{ margin: 0, fontSize: T.fontMd, fontWeight: 700, color: T.text }}>Account Settings</p>
+                <p style={{ margin: 0, fontSize: T.fontSm, color: T.textMuted }}>Password and activation options</p>
               </div>
             </div>
-
-            {/* Full Name + Email ID */}
-            <div className="form-group">
-              <label>Full Name</label>
-              <input 
-                type="text" 
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleInputChange}
-                placeholder="Enter full name" 
-              />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <Toggle checked={autoGeneratePassword} onChange={() => setAutoGeneratePassword(p => !p)} label="Auto-generate password" />
+              {!autoGeneratePassword && (
+                <FormField label="Password">
+                  <InputField type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Enter password" />
+                </FormField>
+              )}
+              <Toggle checked={status} onChange={() => setStatus(p => !p)} label="Account active on creation" />
             </div>
+          </Card>
+        </div>
 
-            <div className="form-group">
-              <label>Email ID</label>
-              <input 
-                type="email" 
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                placeholder="Enter email ID" 
-              />
+        {/* Right column */}
+        <Card>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg,#10b981,#059669)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <User size={16} color="white" />
             </div>
-
-            {/* Mobile + Role */}
-            <div className="form-group">
-              <label>Mobile Number</label>
-              <input 
-                type="text" 
-                name="mobile"
-                value={formData.mobile}
-                onChange={handleInputChange}
-                placeholder="Enter mobile number" 
-              />
+            <div>
+              <p style={{ margin: 0, fontSize: T.fontMd, fontWeight: 700, color: T.text }}>Personal Details</p>
+              <p style={{ margin: 0, fontSize: T.fontSm, color: T.textMuted }}>Basic user information and role</p>
             </div>
-
-            <div className="form-group">
-              <label>Role</label>
-              <select 
-                name="role"
-                value={formData.role}
-                onChange={handleInputChange}
-              >
+          </div>
+          <FormGrid>
+            <FormField label="Full Name">
+              <InputField name="fullName" value={formData.fullName} onChange={handleChange} placeholder="Enter full name" />
+            </FormField>
+            <FormField label="Email ID">
+              <InputField type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Enter email address" />
+            </FormField>
+            <FormField label="Mobile Number">
+              <InputField name="mobile" value={formData.mobile} onChange={handleChange} placeholder="Enter 10-digit mobile" />
+            </FormField>
+            <FormField label="Role">
+              <SelectField name="role" value={formData.role} onChange={handleChange}>
                 <option value="">Select Role</option>
-                {roles.map((role) => (
-                  <option key={role.roleId} value={role.roleName}>
-                    {role.roleName}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label>Status Type</label>
-              <select 
-                name="statusType"
-                value={formData.statusType}
-                onChange={handleInputChange}
-              >
-                <option value="">Select Status Type</option>
-                {statusTypes.map((status) => (
-                  <option key={status.statusId} value={status.statusValue}>
-                    {status.statusValue}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <p className="role-description">
-              Admin: Manage all aspects of the platform.<br />
-              Agent: Manage specific accounts and transactions.<br />
-              Employee: Support role with limited access.
+                {roles.map(r => <option key={r.roleId} value={r.roleName}>{r.roleName}</option>)}
+              </SelectField>
+            </FormField>
+            <FormField label="Status Type" fullWidth>
+              <SelectField name="statusType" value={formData.statusType} onChange={handleChange}>
+                <option value="">Select Status</option>
+                {statusTypes.map(s => <option key={s.statusId} value={s.statusValue}>{s.statusValue}</option>)}
+              </SelectField>
+            </FormField>
+          </FormGrid>
+          <div style={{ marginTop: '16px', padding: '14px 16px', background: 'linear-gradient(135deg,#eef2ff,#f5f3ff)', borderRadius: T.radius, border: `1px solid #e0e7ff` }}>
+            <p style={{ margin: 0, fontSize: T.fontBase, color: '#4338ca', lineHeight: 1.7 }}>
+              <strong>Role guide:</strong> <span style={{ color: T.textMuted }}>Admin — full platform access · Agent — account & transaction management · Employee — limited support access</span>
             </p>
           </div>
-
-          {/* Auto-generate password toggle */}
-          <div className="toggle-group">
-            <span className="toggle-label">Auto-generate password</span>
-            <label className="toggle-switch">
-              <input
-                type="checkbox"
-                checked={autoGeneratePassword}
-                onChange={() => setAutoGeneratePassword(!autoGeneratePassword)}
-              />
-              <span className="slider"></span>
-            </label>
-          </div>
-
-          {/* Password (conditional) */}
-          {!autoGeneratePassword && (
-            <div className="form-group full-width">
-              <label>Password</label>
-              <input 
-                type="password" 
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                placeholder="Enter password" 
-              />
-            </div>
-          )}
-
-          {/* Status toggle */}
-          <div className="toggle-group">
-            <span className="toggle-label">Status</span>
-            <label className="toggle-switch">
-              <input
-                type="checkbox"
-                checked={status}
-                onChange={() => setStatus(!status)}
-              />
-              <span className="slider"></span>
-            </label>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="actions">
-            <button 
-              className="btn btn-primary" 
-              onClick={handleCreateUser}
-              disabled={loading}
-            >
-              {loading ? 'Creating...' : 'Create User'}
-            </button>
-
-            <button 
-              className="btn btn-secondary"
-              onClick={handleSendCredentials}
-            >
-              Send Login Credentials
-            </button>
-
-            <button className="btn btn-cancel">Cancel</button>
-          </div>
-        </div>
+        </Card>
       </div>
-    </>
+    </div>
   );
 };
 

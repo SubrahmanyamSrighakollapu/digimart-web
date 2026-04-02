@@ -26,71 +26,58 @@ const ThreeSimpleSteps = () => {
 
   return (
     <section
-      className="py-5 py-lg-5"
+      className="py-5 py-md-6 py-lg-7"
       style={{
-        backgroundColor: '#F7EEEA', // consistent light peach/beige from previous sections
+        backgroundColor: '#F7EEEA',
         fontFamily: 'Manrope, sans-serif',
       }}
     >
       <div className="container">
         {/* Header */}
-        <div className="text-center mb-5 mb-lg-5">
+        <div className="text-center mb-5 mb-lg-6">
           <h2
-            className="fw-bold"
+            className="fw-bold mb-3"
             style={{
               color: '#EC5609',
-              fontSize: '2.5rem',
-              marginBottom: '0.75rem',
+              fontSize: "2rem", // responsive sizing, bigger on desktop
+              lineHeight: 1.1,
             }}
           >
             Start Growing in 3 Simple Steps
           </h2>
           <p
+            className="mx-auto"
             style={{
               color: '#555555',
-              fontSize: '1.25rem',
+              fontSize: "1rem",
               fontWeight: 500,
-              maxWidth: '720px',
-              margin: '0 auto',
+              maxWidth: '820px',
+              lineHeight: 1.5,
+              textAlign:'center'
             }}
           >
             Getting set up as a wholesale partner is fast and entirely digital
           </p>
         </div>
 
-        {/* Steps Row */}
-        <div className="row g-4 g-lg-5 justify-content-center align-items-stretch">
+        {/* Steps */}
+        <div className="row g-4 g-lg-5 justify-content-center">
           {steps.map((step, index) => (
             <div key={index} className="col-lg-4 col-md-6">
               <div
-                className="h-100 d-flex flex-column align-items-center text-center p-4 p-lg-5 rounded-4"
-                style={{
-                  backgroundColor: '#ffffff',
-                  border: '1px solid #f0e0d8',
-                  boxShadow: '0 8px 25px rgba(0,0,0,0.06)',
-                  transition: 'all 0.35s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-12px)';
-                  e.currentTarget.style.boxShadow = '0 20px 45px rgba(236,86,9,0.18)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.06)';
-                }}
+                className="h-100 text-center p-4 p-lg-5 d-flex flex-column align-items-center justify-content-between"
               >
-                {/* Circle Number */}
+                {/* Orange Circle */}
                 <div
-                  className="d-flex align-items-center justify-content-center rounded-circle mb-4"
+                  className="d-flex align-items-center justify-content-center rounded-circle mb-4 flex-shrink-0"
                   style={{
-                    width: '110px',
-                    height: '110px',
-                    backgroundColor: '#EC5609',
+                    width: '100px',
+                    height: '100px',
+                    backgroundColor: '#EC5609', 
                     color: '#ffffff',
-                    fontSize: '2.5rem',
-                    fontWeight: 700,
+                    fontSize: '2rem',
+                    fontWeight: 800,
                     lineHeight: 1,
-                    flexShrink: 0,
                   }}
                 >
                   {step.number}
@@ -101,7 +88,8 @@ const ThreeSimpleSteps = () => {
                   className="fw-bold mb-3"
                   style={{
                     color: '#24231D',
-                    fontSize: '1.75rem',
+                    fontSize: '1.5rem',
+                    lineHeight: 1.2,
                   }}
                 >
                   {step.title}
@@ -111,9 +99,10 @@ const ThreeSimpleSteps = () => {
                 <p
                   style={{
                     color: '#555555',
-                    fontSize: '1.05rem',
-                    lineHeight: '1.65',
-                    marginBottom: 0,
+                    fontSize: '1rem',
+                    lineHeight: 1.7,
+                    marginBottom: 'auto', // pushes content up if needed
+                    textAlign: 'center',
                   }}
                 >
                   {step.description}
@@ -123,28 +112,28 @@ const ThreeSimpleSteps = () => {
           ))}
         </div>
 
-        {/* CTA Button */}
-        <div className="text-center mt-5 mt-lg-5 pt-3">
+        {/* CTA */}
+        <div className="text-center mt-5 mt-lg-6 pt-3 pt-lg-4">
           <a
-            href="/register" // ← update to your actual registration route
-            className="btn btn-lg px-5 py-3 fw-semibold text-white"
+            href="/register" // ← replace with your actual route
+            className="btn btn-lg fw-semibold text-white shadow-lg"
             style={{
               backgroundColor: '#EC5609',
-              borderRadius: '5px',
-              fontSize: '1.25rem',
+              border: 'none',
+              borderRadius: '10px',     // pill shape — more modern & common in Figma e-com designs
+              fontSize: '1rem',
               padding: '1rem 3.5rem',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 8px 25px rgba(236,86,9,0.25)',
+              transition: 'all 0.35s ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#d14c08';
-              e.currentTarget.style.transform = 'translateY(-3px)';
-              e.currentTarget.style.boxShadow = '0 15px 35px rgba(236,86,9,0.35)';
+              e.currentTarget.style.backgroundColor = '#d44e08';
+              e.currentTarget.style.transform = 'translateY(-4px)';
+              e.currentTarget.style.boxShadow = '0 20px 40px rgba(236,86,9,0.35)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = '#EC5609';
               e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 8px 25px rgba(236,86,9,0.25)';
+              e.currentTarget.style.boxShadow = '0 10px 30px rgba(236,86,9,0.25)';
             }}
           >
             Get Started Today

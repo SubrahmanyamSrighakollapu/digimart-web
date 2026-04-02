@@ -2,6 +2,7 @@
 
 import agentIcon from '../../assets/MainPage/Agent/Icon.png';
 import ToolImg from '../../assets/services/Img5.png';
+import colors from '../../styles/colors';
 
 const AffordableTools = () => {
     const features = [
@@ -57,7 +58,7 @@ const AffordableTools = () => {
 
 
 export const AffordableToolsCss = `
-.business-agent { width: 100%; margin: 0; background-color: #F8F7F0; }
+.business-agent { width: 100%; margin: 0; background-color: ${colors.bgCream}; }
 .business-agent .container { max-width: 80.5rem; }
 
 .agent-left { max-width: 35rem; }
@@ -76,7 +77,7 @@ export const AffordableToolsCss = `
   width: calc(100% + 3rem);
   height: calc(100% + 1rem);
   transform: rotate(-2.28deg);
-  background: #C2BEFF47;
+  background: ${colors.bgPurpleLight};
   border-radius: 30px;
   z-index: 0;
 }
@@ -87,7 +88,7 @@ export const AffordableToolsCss = `
   top: 0.5rem;
   width: calc(100% + 1rem);
   height: calc(90% + 0.5rem);
-  background: #FFFFFF;
+  background: ${colors.bgWhite};
   border-radius: 30px;
   z-index: 1;
 }

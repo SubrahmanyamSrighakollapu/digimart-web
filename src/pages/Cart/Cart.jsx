@@ -151,7 +151,7 @@ const Cart = () => {
                     <p className="mb-2 text-muted" style={{ fontSize: '13px' }}>
                       Bag Size: {item.specifications?.packaging || item.quantity}
                     </p>
-                    <p className="mb-0 fw-bold" style={{ color: '#4BAF47', fontSize: '16px' }}>
+                    <p className="mb-0 fw-bold" style={{ color: '#EC5B13', fontSize: '16px' }}>
                       ₹{(parseFloat(item.price.replace(/,/g, '')) * item.quantity).toLocaleString('en-IN')}
                     </p>
                   </div>
@@ -198,7 +198,7 @@ const Cart = () => {
             ))}
           </div>
 
-          {/* <div className="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-3" style={{ maxWidth: '600px' }}>
+          <div className="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-3" style={{ maxWidth: '600px' }}>
             <input
               type="text"
               className="form-control"
@@ -214,7 +214,7 @@ const Cart = () => {
               style={{
                 height: '48px',
                 minWidth: '100px',
-                background: '#4BAF47',
+                background: '#EC5B13',
                 color: 'white',
                 fontWeight: '600',
                 borderRadius: '8px',
@@ -223,7 +223,7 @@ const Cart = () => {
             >
               Apply
             </button>
-          </div> */}
+          </div>
         </div>
 
         <div className="col-12 col-lg-4">
@@ -257,7 +257,7 @@ const Cart = () => {
               onClick={() => navigate('/cart/checkout')}
               className="btn w-100 mb-3"
               style={{
-                background: '#4BAF47',
+                background: '#EC5B13',
                 color: 'white',
                 fontWeight: '600',
                 borderRadius: '12px',

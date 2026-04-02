@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import cardImg from '../../assets/about/CardImg.png';
 import pointImg from '../../assets/about/PointImg.png';
 import DiscoverMoreButton from '../../components/DiscoverMoreButton';
+import colors from '../../styles/colors';
 
 const GetToKnowUs = () => {
   return (
@@ -30,7 +31,7 @@ const GetToKnowUs = () => {
         {/* Right Section - Content */}
         <div className="col-lg-5 d-flex flex-column gap-3">
           <p className="subtitle" style={{
-            color: '#4BAF47',
+            color: colors.primary,
             fontWeight: '600',
             fontSize: '1.1rem',
             marginBottom: '0.5rem'
@@ -39,7 +40,7 @@ const GetToKnowUs = () => {
           </p>
 
           <h2 style={{
-            color: '#1F1E17',
+            color: colors.textPrimary,
             fontWeight: '700',
             fontSize: '2.2rem',
             lineHeight: '1.3',
@@ -47,7 +48,7 @@ const GetToKnowUs = () => {
           }}>Bridging the gap between rural roots and global markets</h2>
 
           <p style={{
-            color: '#666',
+            color: colors.textLight,
             fontSize: '1.1rem',
             lineHeight: '1.7',
             marginBottom: '1.5rem'

@@ -1,132 +1,121 @@
 // src/components/WhyChooseUs.jsx
 
-import React from 'react';
-// Assuming you have react-icons installed
-import { FaTruckFast, FaChartLine, FaBoxOpen, FaMobileScreen } from 'react-icons/fa6';
+import React from "react";
+import { FaTruckFast, FaChartLine, FaBoxOpen, FaMobileScreen } from "react-icons/fa6";
 
 const WhyChooseUs = () => {
   const features = [
     {
-      icon: <FaTruckFast size={38} color="#EC5609" />,
-      title: 'Fast Delivery',
+      icon: <FaTruckFast size={22} color="#EC5609" />,
+      title: "Fast Delivery",
       description:
-        'Guaranteed 24-hour turnaround for all orders in metro cities. Never run out of stock.',
+        "Guaranteed 24-hour turnaround for all orders in metro cities. Never run out of stock.",
     },
     {
-      icon: <FaChartLine size={38} color="#EC5609" />,
-      title: 'Better Margins',
+      icon: <FaChartLine size={22} color="#EC5609" />,
+      title: "Better Margins",
       description:
-        'Eliminate middlemen. Get direct-from-brand wholesale prices to increase your profits.',
+        "Eliminate middlemen. Get direct-from-brand wholesale prices to increase your profits.",
     },
     {
-      icon: <FaBoxOpen size={38} color="#EC5609" />,
-      title: '5000+ SKUs',
+      icon: <FaBoxOpen size={22} color="#EC5609" />,
+      title: "5000+ SKUs",
       description:
-        'Access a wide range of categories including Staples, Snacks, and Personal Care brands.',
+        "Access a wide range of categories including Staples, Snacks, and Personal Care brands.",
     },
     {
-      icon: <FaMobileScreen size={38} color="#EC5609" />,
-      title: 'Easy Ordering',
+      icon: <FaMobileScreen size={22} color="#EC5609" />,
+      title: "Easy Ordering",
       description:
-        'Our mobile-first platform lets you place orders in seconds, even while serving customers.',
+        "Our mobile-first platform lets you place orders in seconds, even while serving customers.",
     },
   ];
 
   return (
     <section
-      className="py-5 py-lg-5"
+      className="py-5"
       style={{
-        backgroundColor: '#F7EEEA',
-        fontFamily: 'Manrope, sans-serif',
+        backgroundColor: "#F7EEEA",
+        fontFamily: "Manrope, sans-serif",
       }}
     >
       <div className="container">
+
         {/* Section Title */}
         <div className="text-center mb-5">
           <h2
             className="fw-bold"
             style={{
-              color: '#24231D',
-              fontSize: '2.5rem',
+              color: "#EC5609",
+              fontSize: "2rem",
             }}
           >
             Why Choose Us
           </h2>
-          <div
-            style={{
-              width: '80px',
-              height: '4px',
-              backgroundColor: '#EC5609',
-              margin: '1rem auto 0',
-              borderRadius: '2px',
-            }}
-          />
         </div>
 
-        {/* Features Grid */}
-        <div className="row g-4 justify-content-center">
+        {/* Feature Cards */}
+        <div className="row g-4">
           {features.map((feature, index) => (
             <div key={index} className="col-lg-3 col-md-6">
+
               <div
-                className="h-100 text-center p-4 rounded-2 shadow-sm transition-all"
+                className="h-100 p-4"
                 style={{
-                  backgroundColor: '#ffffff',
-                  border: '1px solid #f0e0d8',
-                  transition: 'all 0.3s ease',
+                  background: "#fff",
+                  borderRadius: "8px",
+                  boxShadow: "0 6px 18px rgba(0,0,0,0.05)",
+                  transition: "all 0.25s ease",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-8px)';
-                  e.currentTarget.style.boxShadow = '0 15px 35px rgba(236,86,9,0.15)';
+                  e.currentTarget.style.transform = "translateY(-6px)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.08)';
+                  e.currentTarget.style.transform = "translateY(0)";
                 }}
               >
-                {/* Icon in circle-like bg */}
+
+                {/* Icon Box */}
                 <div
-                  className="mb-4 d-inline-flex align-items-center justify-content-center rounded-circle"
+                  className="mb-3 d-flex align-items-center justify-content-center"
                   style={{
-                    width: '100px',
-                    height: '100px',
-                    backgroundColor: 'rgba(236, 86, 9, 0.08)',
+                    width: "45px",
+                    height: "45px",
+                    background: "#F7EEEA",
+                    borderRadius: "6px",
                   }}
                 >
                   {feature.icon}
                 </div>
 
-                <h3
-                  className="fw-bold mb-3"
+                <h5
+                  className="fw-semibold mb-2"
                   style={{
-                    color: '#24231D',
-                    fontSize: '1.5rem',
+                    fontSize: "1rem",
+                    color: "#222",
                   }}
                 >
                   {feature.title}
-                </h3>
+                </h5>
 
                 <p
                   style={{
-                    color: '#555555',
-                    fontSize: '1rem',
-                    lineHeight: '1.6',
+                    fontSize: "0.9rem",
+                    color: "#666",
+                    lineHeight: "1.5",
                     marginBottom: 0,
                   }}
                 >
                   {feature.description}
                 </p>
+
               </div>
+
             </div>
           ))}
         </div>
-      </div>
 
-      {/* Optional minimal custom style */}
-      <style>{`
-        .transition-all:hover {
-          transform: translateY(-8px);
-        }
-      `}</style>
+      </div>
     </section>
   );
 };

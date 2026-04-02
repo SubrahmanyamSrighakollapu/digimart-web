@@ -26,11 +26,19 @@ const RouteGuard = ({ children }) => {
 
     // Role-based route restrictions
     if (authService.isAuthenticated()) {
-      const redirectRoute = authService.getRedirectRoute(currentPath);
+      const user = authService.getUserPermissions();
       
-      if (redirectRoute) {
-        toast.error('Access denied. You do not have permission to access this page.');
-        navigate(redirectRoute, { replace: true });
+      // Prevent Admin from accessing Agent dashboard
+      if (currentPath.startsWith('/agent') && authService.isAdmin()) {
+        toast.error('Access denied. Admins cannot access Agent dashboard.');
+        navigate('/admin', { replace: true });
+        return;
+      }
+      
+      // Prevent Agent from accessing Admin dashboard
+      if (currentPath.startsWith('/admin') && authService.isAgent()) {
+        toast.error('Access denied. Agents cannot access Admin dashboard.');
+        navigate('/agent', { replace: true });
         return;
       }
     }

@@ -10,25 +10,25 @@ import {
 
 const benefits = [
   {
-    icon: <FaUsers size={38} />,
+    icon: <FaUsers size={30} />,
     title: 'Reach 20,000+ Retailers',
     description:
       'Instant 50+ cities distribution across kirana stores, supermarkets, and retail chains.'
   },
   {
-    icon: <FaChartLine size={38} />,
+    icon: <FaChartLine size={30} />,
     title: 'Data-Driven Insights',
     description:
       'Real-time sales analytics. Understand demand patterns. Optimize inventory and pricing strategies.'
   },
   {
-    icon: <FaRocket size={38} />,
+    icon: <FaRocket size={30} />,
     title: 'Fast Market Entry',
     description:
       'Launch new products in weeks, not months. Test markets quickly with our extensive retailer network.'
   },
   {
-    icon: <FaShieldHalved size={38} />,
+    icon: <FaShieldHalved size={30} />,
     title: 'Brand Protection',
     description:
       'Direct-to-retailer model ensures price control. Prevent grey market leakage and maintain brand integrity.'
@@ -51,7 +51,7 @@ const WhyBrandUs = () => {
             className="fw-bold"
             style={{
               color: '#EC5609',
-              fontSize: '2.5rem',
+              fontSize: '2rem',
               marginBottom: '0.75rem',
             }}
           >
@@ -63,6 +63,7 @@ const WhyBrandUs = () => {
               color: '#555555',
               maxWidth: '720px',
               lineHeight: '1.6',
+              textAlign:'center'
             }}
           >
             Reach more retailers, faster, with data-driven distribution
@@ -76,7 +77,7 @@ const WhyBrandUs = () => {
               <div
                 className="h-100 text-center p-4 p-lg-5 rounded-4 shadow-sm"
                 style={{
-                  backgroundColor: '#ffffff',
+                  backgroundColor: '#F7EEEA',
                   border: '1px solid #f0e0d8',
                   transition: 'all 0.35s ease',
                 }}
@@ -91,10 +92,10 @@ const WhyBrandUs = () => {
               >
                 {/* Icon Circle */}
                 <div
-                  className="d-flex align-items-center justify-content-center rounded-circle mx-auto mb-4"
+                  className="d-flex align-items-center justify-content-center rounded-2 mx-auto mb-4"
                   style={{
-                    width: '90px',
-                    height: '90px',
+                    width: '70px',
+                    height: '70px',
                     backgroundColor: '#EC5609',
                     color: '#ffffff',
                   }}
@@ -107,7 +108,7 @@ const WhyBrandUs = () => {
                   className="fw-bold mb-3"
                   style={{
                     color: '#24231D',
-                    fontSize: '1.45rem',
+                    fontSize: '1.2rem',
                   }}
                 >
                   {benefit.title}
@@ -120,6 +121,7 @@ const WhyBrandUs = () => {
                     fontSize: '1.02rem',
                     lineHeight: '1.65',
                     marginBottom: 0,
+                    textAlign:'center'
                   }}
                 >
                   {benefit.description}

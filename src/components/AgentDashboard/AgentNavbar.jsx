@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 import Icon1 from '../../assets/AgentDashboard/Navbar/Icon1.png';
 import Icon2 from '../../assets/AgentDashboard/Navbar/Icon2.png';
-import logo from '../../assets/total-needs-logo.png';
+import logo from '../../assets/digimart.png';
 import authService from '../../services/authService';
 import { useNavigate } from 'react-router-dom';
 

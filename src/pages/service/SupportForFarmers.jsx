@@ -2,6 +2,7 @@
 
 import agentIcon from '../../assets/MainPage/Agent/Icon.png';
 import FarmerImg from '../../assets/services/Img1.jpg';
+import colors from '../../styles/colors';
 
 const SupportForFarmers = () => {
     const features = [
@@ -52,7 +53,7 @@ const SupportForFarmers = () => {
 
 
 export const SupportForFarmersCss = `
-.business-agent { width: 100%; margin: 0; background-color: #F8F7F0; }
+.business-agent { width: 100%; margin: 0; background-color: ${colors.bgCream}; }
 .business-agent .container { max-width: 80.5rem; }
 
 .agent-left { max-width: 35rem; }

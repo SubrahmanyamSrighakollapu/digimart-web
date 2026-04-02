@@ -10,6 +10,7 @@ import agentIcon from '../../assets/MainPage/Agent/Icon.png';
 import revenueIcon from '../../assets/about/Icon1.png';
 import platformIcon from '../../assets/about/Icon2.png';
 import farmerIcon from '../../assets/about/Icon3.png';
+import colors from '../../styles/colors';
 
 const OurServices = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -111,7 +112,7 @@ const OurServices = () => {
                 <h3 className="card-title mb-3 text-center" style={{ fontSize: '1.25rem', fontWeight: '600' }}>{service.title}</h3>
 
                 {/* Description */}
-                <p style={{color:"#565656", textAlign: 'center', lineHeight: '1.6'}}>{service.description}</p>
+                <p style={{color:colors.textTertiary, textAlign: 'center', lineHeight: '1.6'}}>{service.description}</p>
               </div>
             ))}
           </div>
@@ -126,8 +127,8 @@ const OurServices = () => {
               transform: 'translateY(-50%)',
               width: '40px',
               height: '40px',
-              border: '2px solid #4BAF47',
-              color: '#4BAF47',
+              border: `2px solid ${colors.primary}`,
+              color: colors.primary,
               zIndex: 20,
               fontSize: '18px'
             }}
@@ -143,8 +144,8 @@ const OurServices = () => {
               transform: 'translateY(-50%)',
               width: '40px',
               height: '40px',
-              border: '2px solid #4BAF47',
-              color: '#4BAF47',
+              border: `2px solid ${colors.primary}`,
+              color: colors.primary,
               zIndex: 20,
               fontSize: '18px'
             }}
@@ -164,7 +165,7 @@ const OurServices = () => {
                   height: '12px',
                   borderRadius: '50%',
                   border: 'none',
-                  backgroundColor: Math.floor(currentIndex / 4) === index ? '#4BAF47' : '#ccc'
+                  backgroundColor: Math.floor(currentIndex / 4) === index ? colors.primary : '#ccc'
                 }}
               />
             ))}
@@ -173,12 +174,8 @@ const OurServices = () => {
       </div>
 
       <style>{`
-        
-
-        
-
         .service-card {
-          background-color: #EFFFF0;
+          background-color: ${colors.bgLightGreen};
           margin: 0 auto;
           transition: transform 0.3s ease, box-shadow 0.3s ease;
         }

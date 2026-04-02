@@ -5,7 +5,7 @@ const Button = ({
   text, 
   route, 
   onClick, 
-  bgColor = '#4BAF47', 
+  bgColor = '#EC5B13', 
   className = '' 
 }) => {
   const navigate = useNavigate();

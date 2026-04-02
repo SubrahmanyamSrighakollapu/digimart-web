@@ -2,6 +2,7 @@ import { CreditCard, Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styles } from '../styles/authStyles';
+import heroBg from '../assets/MainPage/super-market.jpg';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -147,7 +148,33 @@ const Signup = () => {
   };
 
   return (
-    <div className="auth-container" style={{ backgroundImage: `url(${styles.backgroundImage})` }}>
+    <div style={{
+      minHeight: '100vh',
+      position: 'relative',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}>
+      {/* Blurred background */}
+      <div style={{
+        position: 'fixed',
+        inset: 0,
+        backgroundImage: `url(${heroBg})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        filter: 'blur(2px)',
+        transform: 'scale(1.05)',
+        zIndex: 0,
+      }} />
+      {/* White overlay */}
+      <div style={{
+        position: 'fixed',
+        inset: 0,
+        backgroundColor: 'rgba(255, 255, 255, 0.25)',
+        zIndex: 1,
+      }} />
+      {/* Card */}
+      <div className="auth-container" style={{ position: 'relative', zIndex: 2 }}>
       <div className={styles.card}>
         <div className={styles.avatarCircle}>
           <User className={styles.avatarIcon} />
@@ -314,11 +341,12 @@ const Signup = () => {
           </button>
         </form>
         
-        <p className={styles.linkText}>
-          Already have an account? <a onClick={() => navigate('/login')}>Log In</a>
+        <p className={styles.linkText} >
+          Already have an account? <a style={{ cursor: 'pointer', color: '#EC5609', marginLeft: '4px' }} onClick={() => navigate('/login')}>Log In</a>
         </p>
       </div>
     </div>
+      </div>
   );
 };
 

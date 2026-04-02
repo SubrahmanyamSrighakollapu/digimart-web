@@ -1,357 +1,214 @@
-// src/components/AdminDashboard/AdminSidebar.jsx
-
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import authService from '../../services/authService';
-import { 
-  MdDashboard, 
-  MdInventory, 
-  MdAssessment, 
-  MdIntegrationInstructions, 
-  MdPeople, 
-  MdSettings, 
-  MdLanguage, 
-  MdAccountBalanceWallet,
-  MdPause,
-  MdTrendingUp,
-  MdPayment,
-  MdAttachMoney,
-  MdPersonAdd,
-  MdList,
-  MdAccountBalance,
-  MdLock,
-  MdPerson,
-  MdDescription,
-  MdBusiness,
-  MdTextFields,
-  MdAnnouncement,
-  MdMonetizationOn,
-  MdCreditCard,
-  MdSecurity,
-  MdArticle,
-  MdUndo,
-  MdKeyboardArrowRight,
-  MdSupervisorAccount,
-  MdGroupAdd,
-  MdWork
-} from 'react-icons/md';
+import {
+  LayoutDashboard, Package, BarChart2, Zap, Users, UserCheck,
+  Briefcase, Settings, Globe, Wallet, ChevronRight,
+  PauseCircle, TrendingUp, CreditCard, DollarSign, UserPlus,
+  List, Lock, UserCog, FileText, Building2, AlignLeft,
+  Megaphone, Coins, BadgeDollarSign, Shield, ScrollText, Undo2
+} from 'lucide-react';
 
-const AdminSidebar = ({ onClose }) => {
+// Brand palette for sidebar — #EC5B13 is the darkest allowed color
+const SB = {
+  bg:          '#EC5B13',   // primary brand orange as sidebar bg
+  bgHover:     'rgba(255,255,255,0.12)',
+  accent:      '#ffffff',
+  accentLight: 'rgba(255,255,255,0.18)',
+  accentBorder:'#ffffff',
+  textMuted:   'rgba(255,255,255,0.65)',
+  textActive:  '#ffffff',
+  divider:     'rgba(255,255,255,0.15)',
+};
+
+const SIDEBAR_WIDTH   = 240;
+const COLLAPSED_WIDTH = 64;
+
+const AdminSidebar = ({ collapsed, onToggle }) => {
   const location = useLocation();
-  const [openDropdown, setOpenDropdown] = useState(null);
+  const [openMenu, setOpenMenu] = useState(null);
   const isLimitedAccess = authService.isLimitedAccess();
-  
-  // Get base route based on user role
+
   const user = JSON.parse(sessionStorage.getItem('user') || '{}');
-  const getBaseRoute = () => {
+  const getBase = () => {
     if (user.roleName === 'Super Distributor') return '/super-distributor';
     if (user.roleName === 'Master Distributor') return '/master-distributor';
     if (user.roleName === 'Distributor') return '/distributor';
     return '/admin';
   };
-  const baseRoute = getBaseRoute();
+  const base = getBase();
 
   const allMenuItems = [
-    { 
-      icon: MdDashboard, 
-      title: 'Dashboard', 
-      path: baseRoute 
-    },
-    { 
-      icon: MdInventory, 
-      title: 'Products', 
-      path: `${baseRoute}/products` 
-    },
-    { 
-      icon: MdAssessment, 
-      title: 'Reports', 
-      hasDropdown: true,
-      subItems: [
-        { icon: MdPause, title: 'Hold Transactions', path: `${baseRoute}/reports/hold-transactions` },
-        { icon: MdTrendingUp, title: 'Transaction Reports', path: `${baseRoute}/reports/transaction-reports` }
-      ]
-    },
-    { 
-      icon: MdIntegrationInstructions, 
-      title: 'Integration', 
-      hasDropdown: true,
-      subItems: [
-        { icon: MdPayment, title: 'Add Payment Gateway', path: `${baseRoute}/integration/add-payment-gateway` },
-        { icon: MdPayment, title: 'Payment Gateway Setup', path: `${baseRoute}/integration/payment-gateway-setup` },
-        { icon: MdAttachMoney, title: 'Charge', path: `${baseRoute}/integration/charge` }
-      ]
-    },
-    { 
-      icon: MdPeople, 
-      title: 'User Management', 
-      hasDropdown: true,
-      subItems: [
-        { icon: MdSettings, title: 'User Settings', path: `${baseRoute}/user-management/user-service-settings` },
-        { icon: MdPersonAdd, title: 'Add User', path: `${baseRoute}/user-management/create-user` },
-        { icon: MdList, title: 'User List', path: `${baseRoute}/user-management/users-list` },
-        { icon: MdAccountBalance, title: 'Add Wallet', path: `${baseRoute}/user-management/add-wallet` },
-        { icon: MdLock, title: 'Hold Funds', path: `${baseRoute}/user-management/hold-funds` }
-      ]
-    },
-    { 
-      icon: MdSupervisorAccount, 
-      title: 'Agent Management', 
-      hasDropdown: true,
-      subItems: [
-        { icon: MdGroupAdd, title: 'Add Agent', path: `${baseRoute}/agent-management/add-agent` },
-        { icon: MdList, title: 'Agent List', path: `${baseRoute}/agent-management/agents-list` }
-      ]
-    },
-    { 
-      icon: MdWork, 
-      title: 'Employee Management', 
-      hasDropdown: true,
-      subItems: [
-        { icon: MdPersonAdd, title: 'Add Employee', path: `${baseRoute}/employee-management/add-employee` },
-        { icon: MdList, title: 'Employees List', path: `${baseRoute}/employee-management/employees-list` }
-      ]
-    },
-    { 
-      icon: MdSettings, 
-      title: 'Admin Settings', 
-      hasDropdown: true,
-      subItems: [
-        { icon: MdPerson, title: 'Role', path: `${baseRoute}/admin-settings/roles-management` },
-        { icon: MdDescription, title: 'Plans', path: `${baseRoute}/admin-settings/plans-management` },
-        { icon: MdBusiness, title: 'Plan Commission', path: `${baseRoute}/admin-settings/plan-commission-manager` },
-        { icon: MdBusiness, title: 'Plan Commission Config', path: `${baseRoute}/admin-settings/plan-commission-configuration` },
-        { icon: MdTextFields, title: 'Scroll Text', path: `${baseRoute}/admin-settings/scroll-text-manager` },
-        { icon: MdAnnouncement, title: 'Notice Board', path: `${baseRoute}/admin-settings/notice-board-manager` },
-        { icon: MdMonetizationOn, title: 'Payout Charges', path: `${baseRoute}/admin-settings/payout-charges-manager` },
-        { icon: MdAccountBalanceWallet, title: 'Minimum Wallet Balance', path: `${baseRoute}/admin-settings/set-balance-requirement` },
-        { icon: MdCreditCard, title: 'Payment Methods', path: `${baseRoute}/admin-settings/payment-methods-manager` }
-      ]
-    },
-    { 
-      icon: MdLanguage, 
-      title: 'Website Settings', 
-      hasDropdown: true,
-      subItems: [
-        { icon: MdSecurity, title: 'Privacy Policy', path: `${baseRoute}/website-settings/privacy-policy` },
-        { icon: MdArticle, title: 'Terms & Conditions', path: `${baseRoute}/website-settings/terms-conditions` },
-        { icon: MdUndo, title: 'Refund Policy', path: `${baseRoute}/website-settings/refund-policy` }
-      ]
-    },
-    { 
-      icon: MdAccountBalanceWallet, 
-      title: 'Wallet Management', 
-      path: `${baseRoute}/wallet-management` 
-    },
+    { icon: LayoutDashboard, label: 'Dashboard', path: base },
+    { icon: Package,         label: 'Products',  path: `${base}/products` },
+    { icon: BarChart2, label: 'Reports', children: [
+      { icon: PauseCircle,  label: 'Hold Transactions',  path: `${base}/reports/hold-transactions` },
+      { icon: TrendingUp,   label: 'Transaction Reports', path: `${base}/reports/transaction-reports` },
+    ]},
+    { icon: Zap, label: 'Integration', children: [
+      { icon: CreditCard,   label: 'Add Payment Gateway', path: `${base}/integration/add-payment-gateway` },
+      { icon: CreditCard,   label: 'Gateway Setup',       path: `${base}/integration/payment-gateway-setup` },
+      { icon: DollarSign,   label: 'Charge Config',       path: `${base}/integration/charge` },
+    ]},
+    { icon: Users, label: 'User Management', children: [
+      { icon: Settings,     label: 'User Settings', path: `${base}/user-management/user-service-settings` },
+      { icon: UserPlus,     label: 'Add User',      path: `${base}/user-management/create-user` },
+      { icon: List,         label: 'User List',     path: `${base}/user-management/users-list` },
+      { icon: Wallet,       label: 'Add Wallet',    path: `${base}/user-management/add-wallet` },
+      { icon: Lock,         label: 'Hold Funds',    path: `${base}/user-management/hold-funds` },
+    ]},
+    { icon: UserCheck, label: 'Agent Management', children: [
+      { icon: UserPlus, label: 'Add Agent',   path: `${base}/agent-management/add-agent` },
+      { icon: List,     label: 'Agent List',  path: `${base}/agent-management/agents-list` },
+    ]},
+    { icon: Briefcase, label: 'Employee Management', children: [
+      { icon: UserPlus, label: 'Add Employee',     path: `${base}/employee-management/add-employee` },
+      { icon: List,     label: 'Employees List',   path: `${base}/employee-management/employees-list` },
+    ]},
+    { icon: Settings, label: 'Admin Settings', children: [
+      { icon: UserCog,         label: 'Roles',              path: `${base}/admin-settings/roles-management` },
+      { icon: FileText,        label: 'Plans',              path: `${base}/admin-settings/plans-management` },
+      { icon: Building2,       label: 'Plan Commission',    path: `${base}/admin-settings/plan-commission-manager` },
+      { icon: Building2,       label: 'Commission Config',  path: `${base}/admin-settings/plan-commission-configuration` },
+      { icon: AlignLeft,       label: 'Scroll Text',        path: `${base}/admin-settings/scroll-text-manager` },
+      { icon: Megaphone,       label: 'Notice Board',       path: `${base}/admin-settings/notice-board-manager` },
+      { icon: Coins,           label: 'Payout Charges',     path: `${base}/admin-settings/payout-charges-manager` },
+      { icon: BadgeDollarSign, label: 'Min Wallet Balance', path: `${base}/admin-settings/set-balance-requirement` },
+      { icon: CreditCard,      label: 'Payment Methods',    path: `${base}/admin-settings/payment-methods-manager` },
+    ]},
+    { icon: Globe, label: 'Website Settings', children: [
+      { icon: Shield,     label: 'Privacy Policy',    path: `${base}/website-settings/privacy-policy` },
+      { icon: ScrollText, label: 'Terms & Conditions',path: `${base}/website-settings/terms-conditions` },
+      { icon: Undo2,      label: 'Refund Policy',     path: `${base}/website-settings/refund-policy` },
+    ]},
+    { icon: Wallet, label: 'Wallet Management', path: `${base}/wallet-management` },
   ];
 
-  // Filter menu items based on role
-  const menuItems = isLimitedAccess ? allMenuItems.filter(item => 
-    item.title === 'Dashboard' || 
-    item.title === 'Agent Management' || 
-    item.title === 'User Management' || 
-    item.title === 'Reports'
-  ) : allMenuItems;
+  const menuItems = isLimitedAccess
+    ? allMenuItems.filter(i => ['Dashboard', 'Agent Management', 'User Management', 'Reports'].includes(i.label))
+    : allMenuItems;
 
-  const sidebarStyles = {
-    container: {
-      backgroundColor: '#FBFFF6',
-      borderRight: '1px solid #d1d5db',
-      height: 'auto',
-      padding: '1.5rem 0',
-      marginTop: '1.85rem',
-      boxShadow: '2px 0 8px rgba(0,0,0,0.05)'
-    },
-    item: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.75rem',
-      padding: '0.875rem 1.5rem',
-      cursor: 'pointer',
-      transition: 'all 0.2s ease',
-      marginBottom: '0.25rem',
-      textDecoration: 'none',
-      color: '#374151',
-      fontSize: '0.95rem',
-      fontWeight: '500',
-      borderLeft: '3px solid transparent'
-    },
-    activeItem: {
-      backgroundColor: '#dcfce7',
-      color: '#16a34a',
-      fontWeight: '600',
-      borderLeftColor: '#16a34a'
-    },
-    icon: {
-      fontSize: '1.25rem',
-      width: '1.5rem',
-      textAlign: 'center',
-      flexShrink: 0,
-      color: 'inherit'
-    },
-    dropdownContainer: {
-      marginBottom: '0.25rem'
-    },
-    dropdownHeader: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: '0.75rem',
-      padding: '0.875rem 1.5rem',
-      cursor: 'pointer',
-      transition: 'all 0.2s ease',
-      textDecoration: 'none',
-      color: '#374151',
-      fontSize: '0.95rem',
-      fontWeight: '500',
-      borderLeft: '3px solid transparent'
-    },
-    dropdownContent: {
-      backgroundColor: '#f0fdf4',
-      borderLeft: '3px solid #bbf7d0',
-      marginLeft: '1.5rem',
-      marginRight: '0.5rem',
-      borderRadius: '0 8px 8px 0'
-    },
-    subItem: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.75rem',
-      padding: '0.75rem 1rem',
-      cursor: 'pointer',
-      transition: 'all 0.2s ease',
-      marginBottom: '0.125rem',
-      textDecoration: 'none',
-      color: '#374151',
-      fontSize: '0.875rem',
-      fontWeight: '500',
-      borderRadius: '6px'
-    },
-    subIcon: {
-      fontSize: '1rem',
-      width: '1.25rem',
-      textAlign: 'center',
-      flexShrink: 0,
-      color: 'inherit'
-    },
-    arrow: {
-      transition: 'transform 0.2s ease',
-      fontSize: '1.25rem',
-      color: '#6b7280'
-    },
-    arrowOpen: {
-      transform: 'rotate(90deg)'
-    }
-  };
+  const isActive      = (path) => path === base ? location.pathname === base : location.pathname === path;
+  const isGroupActive = (children) => children?.some(c => location.pathname === c.path);
+  const toggle        = (label) => setOpenMenu(prev => prev === label ? null : label);
 
-  const isActive = (path) => {
-    if (path === baseRoute) {
-      return location.pathname === baseRoute;
-    }
-    return location.pathname === path;
-  };
-
-  const isDropdownActive = (subItems) => {
-    return subItems.some(item => location.pathname === item.path);
-  };
-
-  const toggleDropdown = (index) => {
-    setOpenDropdown(openDropdown === index ? null : index);
+  const itemBase = {
+    display: 'flex', alignItems: 'center', gap: '10px',
+    border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
+    transition: 'all 0.15s', textDecoration: 'none',
   };
 
   return (
-    <div style={sidebarStyles.container}>
-      {menuItems.map((item, index) => {
-        if (item.hasDropdown) {
-          const isOpen = openDropdown === index;
-          const isDropdownItemActive = isDropdownActive(item.subItems);
-          
-          return (
-            <div key={index} style={sidebarStyles.dropdownContainer}>
-              <div
-                style={{
-                  ...sidebarStyles.dropdownHeader,
-                  ...(isDropdownItemActive ? sidebarStyles.activeItem : {})
-                }}
-                onClick={() => toggleDropdown(index)}
-                onMouseEnter={(e) => {
-                  if (!isDropdownItemActive) {
-                    e.currentTarget.style.backgroundColor = '#f0fdf4';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isDropdownItemActive) {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                  }
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <item.icon style={sidebarStyles.icon} />
-                  <span className="sidebar-title">{item.title}</span>
-                </div>
-                <MdKeyboardArrowRight style={{
-                  ...sidebarStyles.arrow,
-                  ...(isOpen ? sidebarStyles.arrowOpen : {})
-                }} />
+    <aside style={{
+      width: collapsed ? COLLAPSED_WIDTH : SIDEBAR_WIDTH,
+      minWidth: collapsed ? COLLAPSED_WIDTH : SIDEBAR_WIDTH,
+      height: '100vh',
+      backgroundColor: SB.bg,
+      display: 'flex', flexDirection: 'column',
+      transition: 'width 0.25s ease, min-width 0.25s ease',
+      overflow: 'hidden',
+      position: 'fixed', top: 0, left: 0, zIndex: 999,
+      paddingTop: '64px',
+      borderRight: `1px solid ${SB.divider}`,
+    }}>
+      {/* Brand strip at top */}
+      {!collapsed && (
+        <div style={{ padding: '12px 16px 8px', borderBottom: `1px solid ${SB.divider}` }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.9)', boxShadow: '0 0 6px rgba(255,255,255,0.6)' }} />
+            <span style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(255,255,255,0.85)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Admin Panel</span>
+          </div>
+        </div>
+      )}
+
+      <nav style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '8px 0', scrollbarWidth: 'none' }}>
+        {menuItems.map((item) => {
+          if (item.children) {
+            const isOpen = openMenu === item.label;
+            const groupActive = isGroupActive(item.children);
+            return (
+              <div key={item.label}>
+                <button
+                  onClick={() => !collapsed && toggle(item.label)}
+                  title={collapsed ? item.label : ''}
+                  style={{
+                    ...itemBase,
+                    width: '100%', background: groupActive ? SB.accentLight : 'none',
+                    padding: collapsed ? '11px 0' : '11px 16px',
+                    justifyContent: collapsed ? 'center' : 'flex-start',
+                    borderLeft: `3px solid ${groupActive ? SB.accentBorder : 'transparent'}`,
+                  }}
+                  onMouseEnter={e => { if (!groupActive) e.currentTarget.style.backgroundColor = SB.bgHover; }}
+                  onMouseLeave={e => { if (!groupActive) e.currentTarget.style.backgroundColor = 'transparent'; }}
+                >
+                  <item.icon size={17} style={{ flexShrink: 0, color: groupActive ? SB.accent : SB.textMuted }} />
+                  {!collapsed && (
+                    <>
+                      <span style={{ flex: 1, textAlign: 'left', fontSize: '13px', fontWeight: groupActive ? 600 : 500, color: groupActive ? SB.textActive : SB.textMuted }}>{item.label}</span>
+                      <ChevronRight size={13} style={{ color: SB.textMuted, transform: isOpen ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }} />
+                    </>
+                  )}
+                </button>
+
+                {!collapsed && isOpen && (
+                  <div style={{ backgroundColor: 'rgba(0,0,0,0.1)', borderLeft: `2px solid ${SB.divider}`, marginLeft: '26px' }}>
+                    {item.children.map(child => (
+                      <Link key={child.path} to={child.path} style={{
+                        ...itemBase, display: 'flex',
+                        padding: '9px 14px', fontSize: '12.5px',
+                        fontWeight: isActive(child.path) ? 600 : 400,
+                        color: isActive(child.path) ? SB.accent : SB.textMuted,
+                        backgroundColor: isActive(child.path) ? SB.accentLight : 'transparent',
+                        borderLeft: `2px solid ${isActive(child.path) ? SB.accentBorder : 'transparent'}`,
+                      }}
+                        onMouseEnter={e => { if (!isActive(child.path)) e.currentTarget.style.backgroundColor = SB.bgHover; }}
+                        onMouseLeave={e => { if (!isActive(child.path)) e.currentTarget.style.backgroundColor = 'transparent'; }}
+                      >
+                        <child.icon size={13} style={{ flexShrink: 0 }} />
+                        <span>{child.label}</span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
-              
-              {isOpen && (
-                <div style={sidebarStyles.dropdownContent}>
-                  {item.subItems.map((subItem, subIndex) => (
-                    <Link
-                      key={subIndex}
-                      to={subItem.path}
-                      onClick={onClose}
-                      style={{
-                        ...sidebarStyles.subItem,
-                        ...(isActive(subItem.path) ? sidebarStyles.activeItem : {})
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!isActive(subItem.path)) {
-                          e.currentTarget.style.backgroundColor = '#dcfce7';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isActive(subItem.path)) {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                        }
-                      }}
-                    >
-                      <subItem.icon style={sidebarStyles.subIcon} />
-                      <span>{subItem.title}</span>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
+            );
+          }
+
+          const active = isActive(item.path);
+          return (
+            <Link key={item.path} to={item.path} title={collapsed ? item.label : ''} style={{
+              ...itemBase, display: 'flex',
+              padding: collapsed ? '11px 0' : '11px 16px',
+              justifyContent: collapsed ? 'center' : 'flex-start',
+              fontSize: '13px', fontWeight: active ? 600 : 500,
+              color: active ? SB.textActive : SB.textMuted,
+              backgroundColor: active ? SB.accentLight : 'transparent',
+              borderLeft: `3px solid ${active ? SB.accentBorder : 'transparent'}`,
+            }}
+              onMouseEnter={e => { if (!active) e.currentTarget.style.backgroundColor = SB.bgHover; }}
+              onMouseLeave={e => { if (!active) e.currentTarget.style.backgroundColor = 'transparent'; }}
+            >
+              <item.icon size={17} style={{ flexShrink: 0, color: active ? SB.accent : SB.textMuted }} />
+              {!collapsed && <span>{item.label}</span>}
+            </Link>
           );
-        }
-        
-        return (
-          <Link 
-            key={index} 
-            to={item.path}
-            onClick={onClose}
-            style={{
-              ...sidebarStyles.item,
-              ...(isActive(item.path) ? sidebarStyles.activeItem : {})
-            }}
-            onMouseEnter={(e) => {
-              if (!isActive(item.path)) {
-                e.currentTarget.style.backgroundColor = '#f0fdf4';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isActive(item.path)) {
-                e.currentTarget.style.backgroundColor = 'transparent';
-              }
-            }}
-          >
-            <item.icon style={sidebarStyles.icon} />
-            <span className="sidebar-title">{item.title}</span>
-          </Link>
-        );
-      })}
-    </div>
+        })}
+      </nav>
+
+      {/* Collapse toggle */}
+      <button onClick={onToggle} style={{
+        display: 'flex', alignItems: 'center', justifyContent: collapsed ? 'center' : 'flex-end',
+        padding: '14px 16px', background: 'none', border: 'none',
+        borderTop: `1px solid ${SB.divider}`, cursor: 'pointer', color: SB.textMuted,
+        transition: 'all 0.15s',
+      }}
+        onMouseEnter={e => { e.currentTarget.style.color = SB.accent; e.currentTarget.style.backgroundColor = SB.bgHover; }}
+        onMouseLeave={e => { e.currentTarget.style.color = SB.textMuted; e.currentTarget.style.backgroundColor = 'transparent'; }}
+        title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+      >
+        <ChevronRight size={17} style={{ transform: collapsed ? 'none' : 'rotate(180deg)', transition: 'transform 0.25s' }} />
+      </button>
+    </aside>
   );
 };
 

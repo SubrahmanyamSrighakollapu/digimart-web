@@ -1,321 +1,156 @@
-import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import calendar from "../../../assets/AgentDashboard/Dashboard/calender.png";
-import orders from "../../../assets/AgentDashboard/Dashboard/orders.png";
-import revenue from "../../../assets/AgentDashboard/Dashboard/revenue.png";
-import farmer from "../../../assets/AgentDashboard/Dashboard/farmer.png";
-import agent from "../../../assets/AgentDashboard/Dashboard/agent.png";
-
-import { Chart as ChartJS, ArcElement, Tooltip } from "chart.js";
-import { Doughnut } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip } from 'chart.js';
+import { Doughnut } from 'react-chartjs-2';
+import { ShoppingCart, TrendingUp, Wheat, Users, ArrowUpRight, Calendar } from 'lucide-react';
+import { T, PageHeader, Card, SectionLabel, SearchBar, SelectInput, FilterBar, Badge } from '../../components/AdminUI';
 
 ChartJS.register(ArcElement, Tooltip);
 
-const Reports = () => {
-  const pieData = {
-    datasets: [
-      {
-        data: [20, 20, 60],
-        backgroundColor: ["#FFC533", "#FF5F8A", "#7A49E5"],
-        borderWidth: 0,
-        cutout: "70%",
-        rotation: -60,
-      },
-    ],
-  };
+const kpis = [
+  { label: 'Total Orders', value: '1,234', change: '+10%', icon: ShoppingCart, gradient: 'linear-gradient(135deg,#3b82f6,#1d4ed8)', glow: 'rgba(59,130,246,0.3)' },
+  { label: 'Total Revenue', value: '₹98,000', change: '+12%', icon: TrendingUp, gradient: 'linear-gradient(135deg,#f59e0b,#d97706)', glow: 'rgba(245,158,11,0.3)' },
+  { label: 'Farmer Payments', value: '₹57,000', change: '+5%', icon: Wheat, gradient: 'linear-gradient(135deg,#10b981,#059669)', glow: 'rgba(16,185,129,0.3)' },
+  { label: 'Agent Margin', value: '₹80,000', change: '+10%', icon: Users, gradient: 'linear-gradient(135deg,#a855f7,#7c3aed)', glow: 'rgba(168,85,247,0.3)' },
+];
 
-  const pieOptions = {
-    responsive: false,
-    plugins: { legend: { display: false } },
-  };
+const txns = [
+  { id: 'TXN001', orderId: 'ORD123', agent: 'Ramesh Kumar', product: 'Basmati Rice', amount: '₹15,000', mode: 'UPI', status: 'Completed', date: '2024-01-15' },
+  { id: 'TXN002', orderId: 'ORD124', agent: 'Suresh Patel', product: 'Wheat', amount: '₹8,500', mode: 'Bank Transfer', status: 'Pending', date: '2024-01-14' },
+  { id: 'TXN003', orderId: 'ORD125', agent: 'Mahesh Singh', product: 'Toor Dal', amount: '₹12,300', mode: 'Cash', status: 'Completed', date: '2024-01-13' },
+];
 
-  return (
-    <div style={pageWrapper}>
-      <div style={container}>
-        <h4>Transaction reports</h4>
-        {/* <p style={{ color: "#777", marginBottom: 24 }}>
-          Track performance, financials, and business growth insights.
-        </p> */}
+const cropSales = [
+  { label: 'Basmati Rice', value: '8 Tons', pct: 80, color: '#10b981' },
+  { label: 'Toor Dal', value: '5 Tons', pct: 55, color: '#6366f1' },
+  { label: 'Wheat', value: '3 Tons', pct: 35, color: '#f59e0b' },
+];
 
-        <div style={filterBar}>
-          <DateRangeInput label="Date range" icon={calendar} />
-          <Input label="Crop Type" placeholder="Enter the crop type" />
-          <Select label="Farmer / Agent" />
-          <Input label="Region" placeholder="Enter Region" />
+const pieData = {
+  datasets: [{ data: [20, 20, 60], backgroundColor: ['#FFC533', '#FF5F8A', '#7A49E5'], borderWidth: 0, cutout: '72%' }]
+};
+
+const Reports = () => (
+  <div>
+    <PageHeader title="Transaction Reports" subtitle="Track performance, financials, and business growth insights" />
+
+    {/* Filters */}
+    <Card style={{ marginBottom: '24px' }}>
+      <FilterBar>
+        <div style={{ position: 'relative' }}>
+          <Calendar size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: T.textLight, pointerEvents: 'none' }} />
+          <input type="date" style={{ padding: '10px 14px 10px 34px', border: `1px solid ${T.border}`, borderRadius: T.radius, fontSize: T.fontMd, outline: 'none', color: T.text, backgroundColor: T.surface }}
+            onFocus={e => e.target.style.borderColor = T.primary} onBlur={e => e.target.style.borderColor = T.border} />
         </div>
+        <SearchBar placeholder="Enter crop type..." style={{ width: '200px' }} />
+        <SelectInput style={{ minWidth: '160px' }}>
+          <option>All Agents</option>
+          <option>Farmer</option>
+          <option>Agent</option>
+        </SelectInput>
+        <SearchBar placeholder="Enter region..." style={{ width: '180px' }} />
+      </FilterBar>
+    </Card>
 
-        <div style={kpiRow}>
-          <KPI title="Total Orders" value="1234" percent="10%" img={orders} color="#1b5e20" />
-          <KPI title="Total revenue" value="₹ 98,000" percent="12%" img={revenue} color="#f9a825" />
-          <KPI title="Farmer payments" value="₹ 57,000" percent="5%" img={farmer} color="#1e88e5" />
-          <KPI title="Agent margin" value="₹ 80,000" percent="10%" img={agent} color="#8e24aa" />
-        </div>
-
-        <div style={tableRow}>
-          <Table
-            title="Recent Transactions"
-            headers={["Transaction ID", "Order ID", "Agent", "Product", "Amount", "Payment Mode", "Status", "Date"]}
-            rows={[
-              ["TXN001", "ORD123", "Ramesh Kumar", "Basmati Rice", "₹ 15,000", "UPI", "Completed", "2024-01-15"],
-              ["TXN002", "ORD124", "Suresh Patel", "Wheat", "₹ 8,500", "Bank Transfer", "Pending", "2024-01-14"],
-              ["TXN003", "ORD125", "Mahesh Singh", "Toor Dal", "₹ 12,300", "Cash", "Completed", "2024-01-13"]
-            ]}
-          />
-        </div>
-
-        <div style={twoColGrid}>
-          <div style={card}>
-            <CardHeader title="Crop-wise Sales" />
-            <div style={{ padding: 16 }}>
-              <CropRow label="Basmati Rice" value="8 Tons" percent="80%" color="#4CAF50" />
-              <CropRow label="Toor Dal" value="5 Tons" percent="55%" color="#F44336" />
-              <CropRow label="Wheat" value="3 Tons" percent="35%" color="#006064" />
-            </div>
+    {/* KPI Cards */}
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '16px', marginBottom: '24px' }}>
+      {kpis.map((k, i) => (
+        <div key={i} style={{ background: k.gradient, borderRadius: '14px', padding: '20px', boxShadow: `0 8px 24px ${k.glow}`, position: 'relative', overflow: 'hidden', transition: 'transform 0.2s' }}
+          onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-3px)'}
+          onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+        >
+          <div style={{ position: 'absolute', top: '-15px', right: '-15px', width: '70px', height: '70px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.1)', pointerEvents: 'none' }} />
+          <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
+            <k.icon size={16} color="white" />
           </div>
-
-          <div style={revenueCard}>
-            <h4>Revenue Split</h4>
-            <p style={{ fontSize: 13, color: "#777", marginBottom: 24 }}>
-              Breakdown of earnings distribution
-            </p>
-
-            <div style={revenueGrid}>
-              <Doughnut data={pieData} options={pieOptions} width={205} height={205} />
-              <div>
-                <Legend color="#FFC533" text="Farmer payout" value="20%" />
-                <Legend color="#FF5F8A" text="Agent margin" value="20%" />
-                <Legend color="#7A49E5" text="Platform fees" value="60%" />
-              </div>
-            </div>
+          <p style={{ margin: '0 0 4px', fontSize: T.fontSm, color: 'rgba(255,255,255,0.75)', fontWeight: 500 }}>{k.label}</p>
+          <p style={{ margin: '0 0 6px', fontSize: '22px', fontWeight: 800, color: 'white', letterSpacing: '-0.02em' }}>{k.value}</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: 'rgba(255,255,255,0.8)', fontWeight: 600 }}>
+            <ArrowUpRight size={11} />{k.change} this month
           </div>
         </div>
+      ))}
+    </div>
+
+    {/* Transactions Table */}
+    <Card noPad style={{ marginBottom: '24px' }}>
+      <div style={{ padding: '16px 20px', borderBottom: `1px solid ${T.borderLight}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h3 style={{ margin: 0, fontSize: T.fontXl, fontWeight: 700, color: T.text }}>Recent Transactions</h3>
+        <span style={{ fontSize: T.fontBase, color: T.primary, fontWeight: 600, cursor: 'pointer' }}>View all →</span>
       </div>
-    </div>
-  );
-};
-
-const CardHeader = ({ title }) => (
-  <div
-    style={{
-      height: 48,
-      padding: "12px 16px",
-      borderBottom: "1px solid #ddd",
-      fontWeight: 600,
-      fontSize: 16,
-    }}
-  >
-    {title}
-  </div>
-);
-
-const KPI = ({ title, value, percent, img, color }) => (
-  <div style={{ ...kpiCard, borderLeft: `4px solid ${color}` }}>
-    <img src={img} alt={title} width="20" />
-    <div style={trendBadge}>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1B5E20" strokeWidth="2.5">
-        <polyline points="3 17 9 11 13 15 21 7" />
-        <polyline points="14 7 21 7 21 14" />
-      </svg>
-      {percent}
-    </div>
-    <p style={{ marginTop: 16 }}>{title}</p>
-    <h5>{value}</h5>
-  </div>
-);
-
-const DateRangeInput = ({ label, icon }) => (
-  <div>
-    <label style={labelStyle}>{label}</label>
-    <div style={inputBox}>
-      <input placeholder="mm/dd/yy" style={inputField} />
-      <img src={icon} alt="calendar" width="16" />
-    </div>
-  </div>
-);
-
-const Input = ({ label, placeholder }) => (
-  <div>
-    <label style={labelStyle}>{label}</label>
-    <input className="form-control" placeholder={placeholder} />
-  </div>
-);
-
-const Select = ({ label }) => (
-  <div>
-    <label style={labelStyle}>{label}</label>
-    <select style={selectStyle}>
-      <option>All Agents</option>
-    </select>
-  </div>
-);
-
-const CropRow = ({ label, value, percent, color }) => (
-  <div style={{ marginBottom: 16 }}>
-    <div style={{ display: "flex", justifyContent: "space-between" }}>
-      <span>{label}</span>
-      <span>{value}</span>
-    </div>
-    <div style={{ height: 8, background: "#eee", borderRadius: 4 }}>
-      <div style={{ width: percent, height: 8, background: color, borderRadius: 4 }} />
-    </div>
-  </div>
-);
-
-const Legend = ({ color, text, value }) => (
-  <div style={legendRow}>
-    <div style={{ ...legendBox, background: color }} />
-    <div>{text}</div>
-    <div style={{ textAlign: "right", fontWeight: 600 }}>{value}</div>
-  </div>
-);
-
-const Table = ({ title, headers, rows }) => (
-  <div style={tableCard}>
-    <div style={tableHeader}>{title}</div>
-    <table style={{ width: "100%", borderCollapse: "collapse" }}>
-      <thead>
-        <tr>
-          {headers.map((h) => (
-            <th key={h} style={tableHead}>{h}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((r, i) => (
-          <tr key={i}>
-            {r.map((c, j) => (
-              <td key={j} style={tableCell}>{c}</td>
+      <div style={{ overflowX: 'auto' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr style={{ backgroundColor: '#f8fafc' }}>
+              {['Transaction ID', 'Order ID', 'Agent', 'Product', 'Amount', 'Payment Mode', 'Status', 'Date'].map(h => (
+                <th key={h} style={{ padding: '12px 18px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: T.textMuted, borderBottom: `1px solid ${T.border}`, textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {txns.map((t, i) => (
+              <tr key={i} style={{ borderBottom: `1px solid ${T.borderLight}` }}
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = '#fafbff'}
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+              >
+                <td style={{ padding: '13px 18px' }}><span style={{ fontFamily: 'monospace', fontSize: T.fontBase, color: T.primary, fontWeight: 600 }}>{t.id}</span></td>
+                <td style={{ padding: '13px 18px', color: T.textMuted, fontSize: T.fontBase }}>{t.orderId}</td>
+                <td style={{ padding: '13px 18px', fontWeight: 600, color: T.text }}>{t.agent}</td>
+                <td style={{ padding: '13px 18px', color: T.textMuted }}>{t.product}</td>
+                <td style={{ padding: '13px 18px', fontWeight: 700, color: T.text }}>{t.amount}</td>
+                <td style={{ padding: '13px 18px' }}><Badge variant="info">{t.mode}</Badge></td>
+                <td style={{ padding: '13px 18px' }}><Badge variant={t.status === 'Completed' ? 'success' : 'warning'}>{t.status}</Badge></td>
+                <td style={{ padding: '13px 18px', color: T.textMuted, fontSize: T.fontBase }}>{t.date}</td>
+              </tr>
             ))}
-          </tr>
+          </tbody>
+        </table>
+      </div>
+    </Card>
+
+    {/* Bottom 2-col */}
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+      {/* Crop-wise Sales */}
+      <Card>
+        <h3 style={{ margin: '0 0 20px', fontSize: T.fontXl, fontWeight: 700, color: T.text }}>Crop-wise Sales</h3>
+        {cropSales.map((c, i) => (
+          <div key={i} style={{ marginBottom: '18px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+              <span style={{ fontSize: T.fontMd, fontWeight: 600, color: T.text }}>{c.label}</span>
+              <span style={{ fontSize: T.fontMd, color: T.textMuted }}>{c.value}</span>
+            </div>
+            <div style={{ height: '8px', backgroundColor: '#f1f5f9', borderRadius: '999px', overflow: 'hidden' }}>
+              <div style={{ width: `${c.pct}%`, height: '100%', background: `linear-gradient(90deg,${c.color},${c.color}99)`, borderRadius: '999px', transition: 'width 0.6s ease' }} />
+            </div>
+          </div>
         ))}
-      </tbody>
-    </table>
+      </Card>
+
+      {/* Revenue Split */}
+      <Card>
+        <h3 style={{ margin: '0 0 4px', fontSize: T.fontXl, fontWeight: 700, color: T.text }}>Revenue Split</h3>
+        <p style={{ margin: '0 0 24px', fontSize: T.fontBase, color: T.textMuted }}>Breakdown of earnings distribution</p>
+        <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: '32px', alignItems: 'center' }}>
+          <div style={{ position: 'relative' }}>
+            <Doughnut data={pieData} options={{ responsive: false, plugins: { legend: { display: false } } }} width={180} height={180} />
+            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', textAlign: 'center' }}>
+              <p style={{ margin: 0, fontSize: '11px', color: T.textMuted }}>Total</p>
+              <p style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: T.text }}>100%</p>
+            </div>
+          </div>
+          <div>
+            {[{ color: '#FFC533', label: 'Farmer payout', value: '20%' }, { color: '#FF5F8A', label: 'Agent margin', value: '20%' }, { color: '#7A49E5', label: 'Platform fees', value: '60%' }].map((l, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '8px', backgroundColor: l.color, flexShrink: 0 }} />
+                <div style={{ flex: 1 }}>
+                  <p style={{ margin: 0, fontSize: T.fontBase, color: T.textMuted }}>{l.label}</p>
+                </div>
+                <span style={{ fontSize: T.fontXl, fontWeight: 800, color: T.text }}>{l.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Card>
+    </div>
   </div>
 );
-
-const pageWrapper = {
-  background: "#fafaf7",
-  minHeight: "100vh",
-  overflowX: "hidden",
-};
-
-const container = {
-  maxWidth: "1200px",
-  margin: "0 auto",
-  padding: 24,
-};
-
-const filterBar = {
-  background: "#fff",
-  border: "1px solid #ddd",
-  borderRadius: 12,
-  padding: 16,
-  display: "grid",
-  gridTemplateColumns: "repeat(4, 1fr)",
-  gap: 16,
-  marginBottom: 32,
-};
-
-const kpiRow = { display: "flex", gap: 24, marginBottom: 32 };
-
-const twoColGrid = {
-  display: "grid",
-  gridTemplateColumns: "1fr 1fr",
-  gap: 24,
-  marginBottom: 32,
-};
-
-const card = {
-  background: "#fff",
-  border: "1px solid #000",
-  borderRadius: 10,
-};
-
-const revenueCard = {
-  background: "#fff",
-  border: "1px solid #000",
-  borderRadius: 10,
-  padding: 24,
-};
-
-const revenueGrid = {
-  display: "grid",
-  gridTemplateColumns: "240px 1fr",
-  gap: 40,
-  alignItems: "center",
-};
-
-const kpiCard = {
-  width: 270,
-  height: 164,
-  background: "#fff",
-  borderRadius: 12,
-  padding: 16,
-  position: "relative",
-};
-
-const trendBadge = {
-  position: "absolute",
-  top: 12,
-  right: 12,
-  display: "flex",
-  alignItems: "center",
-  gap: 6,
-  background: "#C8E6C9",
-  padding: "4px 10px",
-  borderRadius: 8,
-  fontWeight: 600,
-};
-
-const labelStyle = { fontSize: 13, color: "#777" };
-
-const inputBox = {
-  display: "flex",
-  alignItems: "center",
-  border: "1px solid #ced4da",
-  borderRadius: 6,
-  padding: "0 12px",
-  height: 38,
-};
-
-const inputField = { border: "none", outline: "none", flex: 1 };
-
-const selectStyle = {
-  width: "100%",
-  height: 38,
-  border: "1px solid #ced4da",
-  borderRadius: 6,
-  appearance: "none",
-};
-
-const legendRow = {
-  display: "grid",
-  gridTemplateColumns: "56px 1fr 64px",
-  alignItems: "center",
-  marginBottom: 28,
-};
-
-const legendBox = { width: 40, height: 40, borderRadius: 6 };
-
-const tableRow = { display: "block", marginBottom: 24 };
-
-const tableCard = {
-  width: "100%",
-  background: "#fff",
-  border: "1px solid #000",
-  borderRadius: 10,
-};
-
-const tableHeader = {
-  height: 60,
-  padding: "16px 20px",
-  borderBottom: "1px solid #000",
-  fontWeight: 600,
-  fontSize: "18px"
-};
-
-const tableHead = { padding: "12px 16px", color: "#2e7d32", fontSize: "14px", fontWeight: "600" };
-
-const tableCell = { padding: "12px 16px", fontSize: "14px" };
 
 export default Reports;

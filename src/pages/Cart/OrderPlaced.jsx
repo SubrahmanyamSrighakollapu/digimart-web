@@ -122,9 +122,9 @@ const OrderPlaced = () => {
             <div className="border rounded p-3" style={{ borderRadius: '8px', background: '#F9F9F9' }}>
               <h6 className="fw-bold mb-2">Shipping Details</h6>
               <small className="text-muted d-block">
-                #405, ALLURI TRADE CENTRE<br />
-                BHAGYANAGAR COLONY KUKATPALLY<br />
-                HYDERABAD 500072
+                BRIGHT SPARK INNOVATIONS PVT. LTD.<br />
+                Door No: 12-8-42, 2nd Floor, Savithri Mallaiah Arcade, Lallaguda<br />
+                Secunderabad, Hyderabad, Telangana-500017
               </small>
             </div>
           </div>

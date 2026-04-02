@@ -74,7 +74,7 @@ button {
 }
 
 button:focus-visible {
-  outline: 2px solid #4BAF47;
+  outline: 2px solid var(--color-primary, #EC5B13);
   outline-offset: 2px;
 }
 
@@ -122,7 +122,7 @@ h3.small {
 
 /* Green variant */
 h3.small.green {
-  color: #49A760;
+  color: var(--color-primary-light, #EC5B13);
 }
 
 h3.small.white{
@@ -146,7 +146,7 @@ p {
 }
 
 p.green{
-  color: #49A760;
+  color: var(--color-primary-light, #EC5B13);
   font-size: 1.375rem;
 }
 
@@ -156,7 +156,7 @@ p.subtitle {
   font-family: 'Inter', sans-serif;
   font-size: 1rem;
   font-weight: 500;
-  color: #49A760;
+  color: var(--color-primary-light, #EC5B13);
 }
 
 /* Dark text paragraph */
@@ -271,7 +271,7 @@ h3.card-title {
 .icon-bg {
   width: 4rem;
   height: 4rem;
-  background-color: #4BAF4747;
+  background-color: rgb(245, 175, 141);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -467,7 +467,7 @@ p.text-dark-green-22 {
   line-height: 1.875rem; /* 30px */
   letter-spacing: 0%;
   vertical-align: middle;
-  color: #0A6806;
+  color: #EC5B13;
 }
 
 /* Light Green - 20px Semi Bold */
@@ -478,7 +478,7 @@ p.text-light-green-20 {
   line-height: 1.875rem; /* 30px */
   letter-spacing: 0%;
   vertical-align: middle;
-  color: #4BAF47;
+  color: #EC5B13;
 }
 
 /* Gray - 20px Regular */
@@ -540,7 +540,7 @@ p.text-manrope-34 {
 }
 
 .icon-bg-small.bg-light-green {
-  background-color: #4BAF473B;
+  background-color: #EC5B133B;
 }
 
 .icon-bg-small.bg-yellow-light {
@@ -578,12 +578,12 @@ p.text-manrope-34 {
 }
 
 .icon-bg-medium.bg-green-solid {
-  background-color: #4BAF47;
+  background-color: #EC5B13;
 }
 
 .icon-bg-medium.bg-green-border {
-  background-color: #4BAF476B;
-  border: 0.0625rem solid #4BAF47; /* 1px */
+  background-color: #EC5B136B;
+  border: 0.0625rem solid #EC5B13; /* 1px */
 }
 
 .icon-bg-medium.bg-gray-border {

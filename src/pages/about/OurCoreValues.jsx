@@ -10,25 +10,25 @@ import {
 
 const coreValues = [
   {
-    icon: <FaHeart size={48} />,
+    icon: <FaHeart size={30} />,
     title: 'Retailer First',
     description:
       'Every decision we make starts with our retail partners. Their success is our success.'
   },
   {
-    icon: <FaShieldHalved size={48} />,
+    icon: <FaShieldHalved size={30} />,
     title: 'Trust & Transparency',
     description:
       'No hidden fees, no middlemen. Just honest pricing and reliable service.'
   },
   {
-    icon: <FaBolt size={48} />,
+    icon: <FaBolt size={30} />,
     title: 'Speed & Efficiency',
     description:
       'We obsess over getting products to your doorstep faster than anyone else.'
   },
   {
-    icon: <FaLeaf size={48} />,
+    icon: <FaLeaf size={30} />,
     title: 'Sustainable Growth',
     description:
       'Building a business that benefits retailers, brands, and communities alike.'
@@ -63,6 +63,7 @@ const OurCoreValues = () => {
               color: '#555555',
               maxWidth: '720px',
               lineHeight: '1.6',
+              textAlign:'center'
             }}
           >
             These principles guide every decision we make, from product development to customer service.
@@ -75,27 +76,27 @@ const OurCoreValues = () => {
             <div key={index} className="col-lg-3 col-md-6">
               <div
                 className="text-center p-4 p-lg-5 rounded-4 h-100"
-                style={{
-                  backgroundColor: '#ffffff',
-                  border: '1px solid #f0e0d8',
-                  boxShadow: '0 8px 25px rgba(0,0,0,0.06)',
-                  transition: 'all 0.35s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-12px)';
-                  e.currentTarget.style.boxShadow = '0 20px 45px rgba(236,86,9,0.18)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.06)';
-                }}
+                // style={{
+                //   backgroundColor: '#ffffff',
+                //   border: '1px solid #f0e0d8',
+                //   boxShadow: '0 8px 25px rgba(0,0,0,0.06)',
+                //   transition: 'all 0.35s ease',
+                // }}
+                // onMouseEnter={(e) => {
+                //   e.currentTarget.style.transform = 'translateY(-12px)';
+                //   e.currentTarget.style.boxShadow = '0 20px 45px rgba(236,86,9,0.18)';
+                // }}
+                // onMouseLeave={(e) => {
+                //   e.currentTarget.style.transform = 'translateY(0)';
+                //   e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.06)';
+                // }}
               >
                 {/* Icon Circle */}
                 <div
                   className="d-flex align-items-center justify-content-center rounded-circle mx-auto mb-4"
                   style={{
-                    width: '110px',
-                    height: '110px',
+                    width: '70px',
+                    height: '70px',
                     backgroundColor: '#EC5609',
                     color: '#ffffff',
                   }}
@@ -108,7 +109,7 @@ const OurCoreValues = () => {
                   className="fw-bold mb-3"
                   style={{
                     color: '#24231D',
-                    fontSize: '1.6rem',
+                    fontSize: '1rem',
                   }}
                 >
                   {value.title}
@@ -118,9 +119,10 @@ const OurCoreValues = () => {
                 <p
                   style={{
                     color: '#555555',
-                    fontSize: '1.05rem',
+                    fontSize: '0.9rem',
                     lineHeight: '1.65',
                     marginBottom: 0,
+                    textAlign:'center'
                   }}
                 >
                   {value.description}

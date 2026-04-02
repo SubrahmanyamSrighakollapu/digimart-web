@@ -2,10 +2,11 @@
 
 import offerImg from '../../assets/shop/offerCardImg.png';
 import DiscoverMoreButton from '../../components/DiscoverMoreButton';
+import colors from '../../styles/colors';
 
 const OfferCard = () => {
   return (
-    <section className="offer-section px-5 py-3" style={{ background: '#EAFCEA', minHeight: '10rem', marginTop: '-2rem', }}>
+    <section className="offer-section px-5 py-3" style={{ background: colors.bgLightGreen, minHeight: '10rem', marginTop: '-2rem', }}>
       <div className="container">
         
         <div
@@ -45,7 +46,7 @@ const OfferCard = () => {
                 width: '35.0625rem', // 657px
                 height: '18.5625rem', // 377px
                 borderRadius: '2.5rem',
-                borderBottom: '0.3125rem solid #0A6806',
+                borderBottom: `0.3125rem solid ${colors.primaryDark}`,
                 boxShadow: '0.25rem 0.25rem 0.5rem rgba(0,0,0,0.25)',
                 objectFit: 'cover',
               }}

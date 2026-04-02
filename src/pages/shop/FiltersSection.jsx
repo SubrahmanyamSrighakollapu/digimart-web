@@ -171,7 +171,7 @@ const FiltersSection = ({ filters = { searchQuery: '', selectedCategories: [], m
         className="btn apply-filters-btn w-100"
         onClick={onApplyFilters}
         style={{
-          background: '#4BAF47',
+          background: '#EC5B13',
           color: 'white',
           fontWeight: '600',
           fontSize: '18px',
@@ -209,7 +209,7 @@ const FiltersSection = ({ filters = { searchQuery: '', selectedCategories: [], m
           font-family: 'Manrope', sans-serif;
           font-weight: 500;
           font-size: 20px;
-          color: #4BAF47;
+          color: #EC5B13;
           background: none;
           border: none;
           padding: 0;
@@ -226,7 +226,7 @@ const FiltersSection = ({ filters = { searchQuery: '', selectedCategories: [], m
           font-family: 'Manrope', sans-serif;
           font-weight: 400;
           font-size: 18px;
-          color: #4BAF47;
+          color: #EC5B13;
         }
 
         .filter-group {
@@ -241,7 +241,7 @@ const FiltersSection = ({ filters = { searchQuery: '', selectedCategories: [], m
         .custom-radio {
           width: 16.67px;
           height: 16.67px;
-          border: 2px solid #4BAF47;
+          border: 2px solid #EC5B13;
           border-radius: 50%;
           appearance: none;
           cursor: pointer;
@@ -249,8 +249,8 @@ const FiltersSection = ({ filters = { searchQuery: '', selectedCategories: [], m
         }
 
         .custom-radio:checked {
-          background-color: #4BAF47;
-          border-color: #4BAF47;
+          background-color: #EC5B13;
+          border-color: #EC5B13;
         }
 
         .filter-option {
@@ -304,18 +304,18 @@ const FiltersSection = ({ filters = { searchQuery: '', selectedCategories: [], m
 
         .form-range::-webkit-slider-runnable-track {
           height: 0.5rem;
-          background: linear-gradient(to right, #4BAF47 0%, #4BAF47 ${(sliderVal - sliderMin) / (sliderMax - sliderMin) * 100}%, #E5E5E5 ${(sliderVal - sliderMin) / (sliderMax - sliderMin) * 100}%, #E5E5E5 100%);
+          background: linear-gradient(to right, #EC5B13 0%, #EC5B13 ${(sliderVal - sliderMin) / (sliderMax - sliderMin) * 100}%, #E5E5E5 ${(sliderVal - sliderMin) / (sliderMax - sliderMin) * 100}%, #E5E5E5 100%);
           border-radius: 0.25rem;
         }
         .form-range::-moz-range-track {
           height: 0.5rem;
-          background: linear-gradient(to right, #4BAF47 0%, #4BAF47 ${(sliderVal - sliderMin) / (sliderMax - sliderMin) * 100}%, #E5E5E5 ${(sliderVal - sliderMin) / (sliderMax - sliderMin) * 100}%, #E5E5E5 100%);
+          background: linear-gradient(to right, #EC5B13 0%, #EC5B13 ${(sliderVal - sliderMin) / (sliderMax - sliderMin) * 100}%, #E5E5E5 ${(sliderVal - sliderMin) / (sliderMax - sliderMin) * 100}%, #E5E5E5 100%);
           border-radius: 0.25rem;
         }
 
         .form-range::-webkit-slider-thumb {
-          background: #4BAF47;
-          border: 2px solid #4BAF47;
+          background: #EC5B13;
+          border: 2px solid #EC5B13;
           box-shadow: 0 2px 6px rgba(0,0,0,0.2);
           width: 20px;
           height: 20px;
@@ -323,8 +323,8 @@ const FiltersSection = ({ filters = { searchQuery: '', selectedCategories: [], m
           margin-top: -6px;
         }
         .form-range::-moz-range-thumb {
-          background: #4BAF47;
-          border: 2px solid #4BAF47;
+          background: #EC5B13;
+          border: 2px solid #EC5B13;
           box-shadow: 0 2px 6px rgba(0,0,0,0.2);
           width: 20px;
           height: 20px;
@@ -332,7 +332,7 @@ const FiltersSection = ({ filters = { searchQuery: '', selectedCategories: [], m
         }
 
         .apply-filters-btn:hover {
-          background: #3d9639 !important;
+          background: #EC5B13 !important;
         }
 
         @media (max-width: 992px) {

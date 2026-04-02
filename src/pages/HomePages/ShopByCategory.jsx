@@ -1,42 +1,40 @@
 // src/components/ShopByCategory.jsx
 
-import React from 'react';
-import { Link } from 'react-router-dom'; // or use <a> if no router
+import React from "react";
+import { Link } from "react-router-dom";
 
-// Replace these paths with your actual local image files
-import staples1 from '../../assets/groceryweb/grocery.png'; // e.g. various dals & grains in bowls
-import edibleOils from '../../assets/groceryweb/grocery.png';   // bottle of oil with seeds
-import staples2 from '../../assets/groceryweb/grocery.png'; // another variation of staples
+import staples from "../../assets/MainPage/category1_image.png";
+import edibleOils from "../../assets/MainPage/category2_image.png";
+import flours from "../../assets/MainPage/category4_image.jpg";
 
 const categories = [
   {
-    image: staples1,
-    title: 'Staples & Grains',
-    subtitle: '1,200+ Items',
-    link: '/category/staples-grains',
+    image: staples,
+    title: "Staples & Grains",
+    subtitle: "1,200+ Items",
+    link: "/category/staples-grains",
   },
   {
     image: edibleOils,
-    title: 'Edible Oils',
-    subtitle: 'Sunflower, Mustard',
-    link: '/category/edible-oils',
+    title: "Edible Oils",
+    subtitle: "Sunflower, Mustard",
+    link: "/category/edible-oils",
   },
   {
-    image: staples2,
-    title: 'Staples & Grains',
-    subtitle: '1,200+ Items',
-    link: '/category/staples-grains', // or different if needed
+    image: flours,
+    title: "Flours",
+    subtitle: "Atta, Maida, Besan",
+    link: "/category/flours",
   },
-  // Add more if you have additional cards in the design
 ];
 
 const ShopByCategory = () => {
   return (
     <section
-      className="py-5 py-lg-5"
+      className="py-5"
       style={{
-        backgroundColor: '#fff', // matching previous section's light peach
-        fontFamily: 'Manrope, sans-serif',
+        background: "#fff",
+        fontFamily: "Manrope, sans-serif",
       }}
     >
       <div className="container">
@@ -45,96 +43,97 @@ const ShopByCategory = () => {
           <h2
             className="fw-bold"
             style={{
-              color: '#EC5609',
-              fontSize: '2.5rem',
-              marginBottom: '0.75rem',
+              color: "#EC5609",
+              fontSize: "2rem",
             }}
           >
             Shop by Category
           </h2>
+
           <p
             style={{
-              color: '#555555',
-              fontSize: '1.25rem',
-              fontWeight: 500,
-              marginBottom: '1rem',
-              textAlign:"center"
+              color: "#666",
+              fontSize: "1rem",
+              marginTop: "8px",
+              textAlign:'center'
             }}
           >
             Restock your shelves with our curated categories
           </p>
         </div>
 
-        {/* Categories Grid */}
+        {/* Cards */}
         <div className="row g-4 justify-content-center">
           {categories.map((cat, index) => (
             <div key={index} className="col-lg-4 col-md-6">
               <div
-                className="position-relative rounded-2 overflow-hidden shadow-sm h-100 d-flex flex-column"
+                className="category-card h-100"
                 style={{
-                  backgroundColor: '#ffffff',
-                  transition: 'all 0.3s ease',
+                  borderRadius: "10px",
+                  overflow: "hidden",
+                  background: "#fff",
+                  boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
+                  transition: "all 0.3s ease",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-10px)';
-                  e.currentTarget.style.boxShadow = '0 20px 40px rgba(236,86,9,0.18)';
+                  e.currentTarget.style.transform = "translateY(-6px)";
+                  e.currentTarget.style.boxShadow =
+                    "0 12px 30px rgba(0,0,0,0.12)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.1)';
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow =
+                    "0 6px 20px rgba(0,0,0,0.08)";
                 }}
               >
                 {/* Image */}
                 <img
                   src={cat.image}
                   alt={cat.title}
-                  className="w-100 object-fit-cover"
                   style={{
-                    height: '260px', // adjust based on your images' aspect ratio
-                    objectPosition: 'center',
+                    width: "100%",
+                    height: "220px",
+                    objectFit: "cover",
                   }}
                 />
 
-                {/* Overlay Content at Bottom */}
+                {/* Card Body */}
                 <div
-                  className="position-absolute bottom-0 start-0 w-100 p-4 text-white"
+                  className="d-flex justify-content-between align-items-center"
                   style={{
-                    background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0) 100%)',
+                    padding: "16px 18px",
                   }}
                 >
-                  <h3
-                    className="fw-bold mb-1"
-                    style={{
-                      fontSize: '1.5rem',
-                    }}
-                  >
-                    {cat.title}
-                  </h3>
-                  <p
-                    className="mb-3"
-                    style={{
-                      fontSize: '1rem',
-                      color:"#fff",
-                      opacity: 0.9,
-                    }}
-                  >
-                    {cat.subtitle}
-                  </p>
+                  <div>
+                    <h5
+                      style={{
+                        margin: 0,
+                        fontWeight: "600",
+                        fontSize: "16px",
+                      }}
+                    >
+                      {cat.title}
+                    </h5>
+
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: "13px",
+                        color: "#888",
+                      }}
+                    >
+                      {cat.subtitle}
+                    </p>
+                  </div>
 
                   <Link
-                    to={cat.link}
-                    className="btn btn-sm px-4 py-2 fw-semibold text-white border border-white border-2"
+                    // to={cat.link}
+                    className="btn btn-sm text-white"
                     style={{
-                      backgroundColor: '#EC5609',
-                      borderRadius: '5px',
-                      fontSize: '0.95rem',
-                      transition: 'all 0.3s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#d14c08';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = '#EC5609';
+                      background: "#EC5609",
+                      padding: "6px 14px",
+                      fontSize: "13px",
+                      borderRadius: "4px",
                     }}
                   >
                     View More

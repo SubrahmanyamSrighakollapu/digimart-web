@@ -1,686 +1,259 @@
-// src/AdminDashboard/pages/Dashboard/AdminActions/CreateAgent.jsx
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Upload, CheckCircle, UserCheck, Building2, FileText } from 'lucide-react';
 import lookupService from '../../../services/lookupService';
 import agentService from '../../../services/agentService';
+import {
+  T, PageHeader, Card, Btn, GhostBtn, SectionLabel,
+  FormGrid, FormField, InputField, SelectField, VerifyInput, StepIndicator
+} from '../../components/AdminUI';
+
+const STEPS = ['Basic Details', 'Business Info', 'Documents'];
 
 const CreateAgent = () => {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [businessTypes, setBusinessTypes] = useState([]);
   const [documentTypes, setDocumentTypes] = useState([]);
   const [uploadedFiles, setUploadedFiles] = useState({});
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    aadhaarNumber: '',
-    panNumber: '',
-    fullName: '',
-    email: '',
-    mobile: '',
-    operatingArea: '',
-    languagePreferred: '',
-    businessType: '',
-    businessName: '',
-    address: '',
-    serviceRadius: '',
-    commission: '',
-    isAadhaarVerified: false,
-    isPanVerified: false,
-    businessTypeId: ''
+    aadhaarNumber: '', panNumber: '', fullName: '', email: '', mobile: '',
+    operatingArea: '', languagePreferred: '', businessType: '', businessName: '',
+    address: '', serviceRadius: '', isAadhaarVerified: false, isPanVerified: false, businessTypeId: ''
   });
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchBusinessTypes();
-    fetchDocumentTypes();
-  }, []);
+  useEffect(() => { fetchBusinessTypes(); fetchDocumentTypes(); }, []);
 
   const fetchBusinessTypes = async () => {
     try {
       setLoading(true);
-      const response = await lookupService.getBusinessTypes();
-      if (response.status === 1 && response.result) {
-        setBusinessTypes(response.result);
-      }
-    } catch (error) {
-      console.error('Error fetching business types:', error);
-    } finally {
-      setLoading(false);
-    }
+      const res = await lookupService.getBusinessTypes();
+      if (res.status === 1 && res.result) setBusinessTypes(res.result);
+    } catch {} finally { setLoading(false); }
   };
 
   const fetchDocumentTypes = async () => {
     try {
-      const response = await lookupService.getAgentDocumentTypes();
-      if (response.status === 1 && response.result) {
-        setDocumentTypes(response.result);
-      }
-    } catch (error) {
-      console.error('Error fetching document types:', error);
-    }
+      const res = await lookupService.getAgentDocumentTypes();
+      if (res.status === 1 && res.result) setDocumentTypes(res.result);
+    } catch {}
   };
 
-  const handleInputChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'businessType') {
-      const selectedType = businessTypes.find(type => type.statusValue === value);
-      setFormData(prev => ({
-        ...prev,
-        [name]: value,
-        businessTypeId: selectedType ? selectedType.statusId : ''
-      }));
+      const sel = businessTypes.find(t => t.statusValue === value);
+      setFormData(p => ({ ...p, [name]: value, businessTypeId: sel?.statusId || '' }));
     } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
-  };
-
-  const handleVerifyAadhaar = () => {
-    if (formData.aadhaarNumber) {
-      setFormData(prev => ({ ...prev, isAadhaarVerified: true }));
-    }
-  };
-
-  const handleVerifyPan = () => {
-    if (formData.panNumber) {
-      setFormData(prev => ({ ...prev, isPanVerified: true }));
+      setFormData(p => ({ ...p, [name]: value }));
     }
   };
 
   const handleCreateAgent = async () => {
     try {
       setLoading(true);
-      
-      const apiFormData = new FormData();
-      
-      apiFormData.append('fullName', formData.fullName || '');
-      apiFormData.append('email', formData.email || '');
-      apiFormData.append('contactNo', formData.mobile || '');
-      apiFormData.append('aadharNo', formData.aadhaarNumber || '');
-      apiFormData.append('panNo', formData.panNumber || '');
-      apiFormData.append('agentAddress', formData.operatingArea || '');
-      apiFormData.append('businessTypeId', formData.businessTypeId || '');
-      apiFormData.append('businessName', formData.businessName || '');
-      apiFormData.append('businessAddress', formData.address || '');
-      apiFormData.append('agentStatusId', '1');
-      apiFormData.append('operationsAreas', formData.operatingArea || '');
-      apiFormData.append('languagePreferences', formData.languagePreferred || '');
-      apiFormData.append('serviceRadius', formData.serviceRadius || '0');
-      apiFormData.append('commission', '0');
-      apiFormData.append('isAadharVerify', formData.isAadhaarVerified.toString());
-      apiFormData.append('isPanNoVerify', formData.isPanVerified.toString());
-      apiFormData.append('IsActive', 'true');
-      
-      // Handle document files - create placeholder if not uploaded
-      const createPlaceholderFile = (name) => {
-        return new File(['placeholder'], `${name}.txt`, { type: 'text/plain' });
-      };
-      
-      console.log('Uploaded files:', uploadedFiles);
-      
-      // Handle document files - map API document types to required parameters
+      const fd = new FormData();
+      fd.append('fullName', formData.fullName);
+      fd.append('email', formData.email);
+      fd.append('contactNo', formData.mobile);
+      fd.append('aadharNo', formData.aadhaarNumber);
+      fd.append('panNo', formData.panNumber);
+      fd.append('agentAddress', formData.operatingArea);
+      fd.append('businessTypeId', formData.businessTypeId);
+      fd.append('businessName', formData.businessName);
+      fd.append('businessAddress', formData.address);
+      fd.append('agentStatusId', '1');
+      fd.append('operationsAreas', formData.operatingArea);
+      fd.append('languagePreferences', formData.languagePreferred);
+      fd.append('serviceRadius', formData.serviceRadius || '0');
+      fd.append('commission', '0');
+      fd.append('isAadharVerify', formData.isAadhaarVerified.toString());
+      fd.append('isPanNoVerify', formData.isPanVerified.toString());
+      fd.append('IsActive', 'true');
       Object.entries(uploadedFiles).forEach(([docType, file]) => {
-        console.log('Processing document:', docType, file);
-        if (docType === 'ID Proof') {
-          apiFormData.append('idProofDoc', file);
-          console.log('Added Adhaar ID as idProofDoc');
-        } else if (docType === 'Address Proof') {
-          apiFormData.append('addressProofDoc', file);
-          console.log('Added Voter ID as addressProofDoc');
-        } else if (docType === 'Bank Proof') {
-          apiFormData.append('bankProofDoc', file);
-          console.log('Added Bank ID as bankProofDoc');
-        } else if (docType === 'Profile Photo') {
-          apiFormData.append('profilePhotoDoc', file);
-          console.log('Added Profile Photo as profilePhotoDoc');
-        }
-        // Ignore PAN ID and VISA ID documents - don't add them to payload
+        if (docType === 'ID Proof') fd.append('idProofDoc', file);
+        else if (docType === 'Address Proof') fd.append('addressProofDoc', file);
+        else if (docType === 'Bank Proof') fd.append('bankProofDoc', file);
+        else if (docType === 'Profile Photo') fd.append('profilePhotoDoc', file);
       });
-      
-      console.log("====== CREATE AGENT PAYLOAD (FormData) ======");
-
-      for (let [key, value] of apiFormData.entries()) {
-        console.log(`${key}:`, value);
-      }
-
-      console.log("====== END PAYLOAD ======");
-
-      
-      const response = await agentService.onboardAgent(apiFormData);
-      
-      console.log('API Response:', response);
-      
-      if (response.status === 1) {
+      const res = await agentService.onboardAgent(fd);
+      if (res.status === 1) {
         toast.success('Agent created successfully!');
-        setFormData({
-          aadhaarNumber: '', panNumber: '', fullName: '', email: '', mobile: '',
-          operatingArea: '', languagePreferred: '', businessType: '', businessName: '',
-          address: '', serviceRadius: '', commission: '', isAadhaarVerified: false,
-          isPanVerified: false, businessTypeId: ''
-        });
-        setUploadedFiles({});
-        setStep(1);
-      } else {
-        console.error('API Error Response:', response);
-        toast.error(response.message || 'Failed to create agent');
-      }
-    } catch (error) {
-      console.error('Full error:', error);
-      console.error('Error message:', error.message);
-      console.error('Error stack:', error.stack);
-      const errorMessage = error.response?.data?.message || error.message || 'Error creating agent. Please try again.';
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
+        setFormData({ aadhaarNumber: '', panNumber: '', fullName: '', email: '', mobile: '', operatingArea: '', languagePreferred: '', businessType: '', businessName: '', address: '', serviceRadius: '', isAadhaarVerified: false, isPanVerified: false, businessTypeId: '' });
+        setUploadedFiles({}); setStep(1);
+      } else toast.error(res.message || 'Failed to create agent');
+    } catch (e) { toast.error(e.response?.data?.message || e.message || 'Error creating agent'); }
+    finally { setLoading(false); }
   };
 
-  const handleFileUpload = (documentType, file) => {
-    setUploadedFiles(prev => ({
-      ...prev,
-      [documentType]: file
-    }));
-  };
-
-  const nextStep = () => setStep(step + 1);
-  const prevStep = () => setStep(step - 1);
-  const goToKyc = () => navigate('/admin/agent-kyc-verification');
+  const stepIcons = [UserCheck, Building2, FileText];
+  const StepIcon = stepIcons[step - 1];
 
   return (
-    <>
-      <style jsx>{`
-        .create-agent-container {
-          padding: 40px 20px;
-          background-color: #f7f9fc;
-          min-height: 100vh;
-          font-family: 'Segoe UI', sans-serif;
-        }
+    <div>
+      <PageHeader title="Create Agent" subtitle="Onboard a new agent to the platform" />
+      <StepIndicator steps={STEPS} current={step} />
 
-        .title {
-          font-size: 28px;
-          font-weight: 600;
-          color: #2d3748;
-          margin-bottom: 32px;
-          text-align: left;
-          max-width: 900px;
-          margin-left: auto;
-          margin-right: auto;
-        }
-
-        .card {
-          max-width: 900px;
-          margin: 0 auto 32px auto;
-          background: white;
-          border-radius: 16px;
-          padding: 32px;
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-        }
-
-        .step-title {
-          font-size: 18px;
-          font-weight: 600;
-          color: #4a5568;
-          margin-bottom: 24px;
-        }
-
-        .form-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 24px;
-          margin-bottom: 32px;
-        }
-
-        .form-group {
-          display: flex;
-          flex-direction: column;
-        }
-
-        .form-group.full-width {
-          grid-column: 1 / -1;
-        }
-
-        label {
-          font-size: 14px;
-          font-weight: 600;
-          color: #4a5568;
-          margin-bottom: 8px;
-        }
-
-        input {
-          padding: 12px 16px;
-          border: 1px solid #e2e8f0;
-          border-radius: 8px;
-          font-size: 15px;
-          background-color: #fff;
-          transition: border-color 0.2s;
-        }
-
-        .input-wrapper {
-          display: flex;
-          align-items: stretch;
-        }
-
-        .input-wrapper input {
-          flex: 1;
-          border-radius: 8px 0 0 8px;
-          border-right: none;
-        }
-
-        .verify-btn {
-          padding: 0 24px;
-          background: #10b981;
-          color: white;
-          border: none;
-          border-radius: 0 8px 8px 0;
-          font-weight: 600;
-          cursor: pointer;
-          white-space: nowrap;
-          font-size: 14px;
-        }
-
-        .verify-btn:hover {
-          background: #059669;
-        }
-
-        select {
-          padding: 12px 16px;
-          border: 1px solid #e2e8f0;
-          border-radius: 8px;
-          font-size: 15px;
-          background-color: #fff;
-          transition: border-color 0.2s;
-          cursor: pointer;
-        }
-
-        input:focus,
-        select:focus {
-          outline: none;
-          border-color: #6366f1;
-          box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        .actions {
-          display: flex;
-          justify-content: flex-end;
-          gap: 16px;
-        }
-
-        .btn {
-          padding: 12px 28px;
-          border-radius: 8px;
-          font-size: 15px;
-          font-weight: 600;
-          cursor: pointer;
-          border: none;
-          transition: all 0.2s;
-        }
-
-        .btn-next {
-          background-color: #54CF17;
-          color: white;
-        }
-
-        .btn-next:hover {
-          background-color: #54CF17;
-        }
-
-        .btn-cancel {
-          background-color: #f7fafc;
-          color: #4a5568;
-          border: 1px solid #e2e8f0;
-        }
-
-        .btn-cancel:hover {
-          background-color: #edf2f7;
-        }
-
-        /* Form Validation Styles */
-        input:required:invalid:not(:placeholder-shown):not(:focus),
-        select:required:invalid:not(:focus) {
-          border-color: #ef4444;
-        }
-
-        input:valid:not(:placeholder-shown),
-        select:valid {
-          border-color: #10b981;
-        }
-
-        input:focus:invalid,
-        select:focus:invalid {
-          border-color: #ef4444;
-          box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
-        }
-
-        .upload-section {
-          margin-bottom: 24px;
-        }
-
-        .upload-item {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 16px;
-          border: 1px solid #e2e8f0;
-          border-radius: 8px;
-          margin-bottom: 16px;
-          background: #f8fafc;
-        }
-
-        .upload-info {
-          flex: 1;
-        }
-
-        .upload-label {
-          font-weight: 600;
-          color: #2d3748;
-          margin-bottom: 4px;
-        }
-
-        .upload-description {
-          font-size: 13px;
-          color: #718096;
-        }
-
-        .file-input {
-          display: none;
-        }
-
-        .upload-btn {
-          padding: 8px 16px;
-          background: #54CF17;
-          color: white;
-          border: none;
-          border-radius: 6px;
-          cursor: pointer;
-          font-size: 14px;
-          font-weight: 500;
-        }
-
-        .upload-btn:hover {
-          background: #48b814;
-        }
-
-        .file-selected {
-          color: #059669;
-          font-size: 13px;
-          font-weight: 500;
-        }
-
-        @media (max-width: 768px) {
-          .form-grid {
-            grid-template-columns: 1fr;
-          }
-
-          .input-wrapper {
-            flex-direction: column;
-          }
-
-          .verify-btn {
-            border-radius: 8px;
-            margin-top: 8px;
-            width: 100%;
-          }
-
-          .actions {
-            flex-direction: column;
-          }
-
-          .btn {
-            width: 100%;
-          }
-        }
-      `}</style>
-
-      <div className="create-agent-container">
-        <h1 className="title">Create Agent</h1>
-
-        {/* STEP 1: Agent Basic Details */}
-        {step === 1 && (
-          <div className="card">
-            <h2 className="step-title">STEP 1: Agent Basic Details</h2>
-
-            <div className="form-grid">
-              {/* Aadhaar Number + Verify */}
-              <div className="form-group full-width">
-                <label>Aadhaar Number *</label>
-                <div className="input-wrapper">
-                  <input 
-                    type="text" 
-                    name="aadhaarNumber"
-                    value={formData.aadhaarNumber}
-                    onChange={handleInputChange}
-                    placeholder="Enter 12-digit Aadhaar Number" 
-                    required
-                    pattern="[0-9]{12}"
-                    minLength="12"
-                    maxLength="12"
-                  />
-                  <button type="button" className="verify-btn" onClick={handleVerifyAadhaar}>
-                    Verify →
-                  </button>
-                </div>
+      {/* Step 1 — Basic Details */}
+      {step === 1 && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', alignItems: 'start' }}>
+          {/* Left: Identity */}
+          <Card>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <UserCheck size={16} color="white" />
               </div>
-
-              {/* PAN Number + Verify */}
-              <div className="form-group full-width">
-                <label>PAN Number *</label>
-                <div className="input-wrapper">
-                  <input 
-                    type="text" 
-                    name="panNumber"
-                    value={formData.panNumber}
-                    onChange={handleInputChange}
-                    placeholder="Enter PAN (e.g., ABCDE1234F)" 
-                    required
-                    pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
-                    maxLength="10"
-                    style={{ textTransform: 'uppercase' }}
-                  />
-                  <button type="button" className="verify-btn" onClick={handleVerifyPan}>
-                    Verify →
-                  </button>
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label>Full Name *</label>
-                <input 
-                  type="text" 
-                  name="fullName"
-                  value={formData.fullName}
-                  onChange={handleInputChange}
-                  placeholder="Enter full name" 
-                  required
-                  minLength="2"
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Email ID *</label>
-                <input 
-                  type="email" 
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="Enter email ID" 
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Mobile Number *</label>
-                <input 
-                  type="tel" 
-                  name="mobile"
-                  value={formData.mobile}
-                  onChange={handleInputChange}
-                  placeholder="Enter 10-digit mobile" 
-                  required
-                  pattern="[0-9]{10}"
-                  minLength="10"
-                  maxLength="10"
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Operating Area *</label>
-                <input 
-                  type="text" 
-                  name="operatingArea"
-                  value={formData.operatingArea}
-                  onChange={handleInputChange}
-                  placeholder="Enter Operating Area" 
-                  required
-                />
-              </div>
-
-              <div className="form-group full-width">
-                <label>Language Preferred</label>
-                <input 
-                  type="text" 
-                  name="languagePreferred"
-                  value={formData.languagePreferred}
-                  onChange={handleInputChange}
-                  placeholder="Enter Language (optional)" 
-                />
+              <div>
+                <p style={{ margin: 0, fontSize: T.fontMd, fontWeight: 700, color: T.text }}>Identity Verification</p>
+                <p style={{ margin: 0, fontSize: T.fontSm, color: T.textMuted }}>Verify Aadhaar & PAN</p>
               </div>
             </div>
-
-            <div className="actions">
-              <button className="btn btn-next" onClick={nextStep}>
-                Next
-              </button>
-              <button className="btn btn-cancel">Cancel</button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <VerifyInput label="Aadhaar Number *" name="aadhaarNumber" value={formData.aadhaarNumber} onChange={handleChange}
+                placeholder="Enter 12-digit Aadhaar"
+                onVerify={() => setFormData(p => ({ ...p, isAadhaarVerified: true }))}
+                verified={formData.isAadhaarVerified} />
+              <VerifyInput label="PAN Number *" name="panNumber" value={formData.panNumber} onChange={handleChange}
+                placeholder="Enter PAN (e.g. ABCDE1234F)"
+                onVerify={() => setFormData(p => ({ ...p, isPanVerified: true }))}
+                verified={formData.isPanVerified} />
             </div>
+          </Card>
+
+          {/* Right: Personal Info */}
+          <Card>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg,#10b981,#059669)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <UserCheck size={16} color="white" />
+              </div>
+              <div>
+                <p style={{ margin: 0, fontSize: T.fontMd, fontWeight: 700, color: T.text }}>Personal Information</p>
+                <p style={{ margin: 0, fontSize: T.fontSm, color: T.textMuted }}>Agent contact & area details</p>
+              </div>
+            </div>
+            <FormGrid>
+              <FormField label="Full Name *">
+                <InputField name="fullName" value={formData.fullName} onChange={handleChange} placeholder="Enter full name" required />
+              </FormField>
+              <FormField label="Email ID *">
+                <InputField type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Enter email" required />
+              </FormField>
+              <FormField label="Mobile Number *">
+                <InputField type="tel" name="mobile" value={formData.mobile} onChange={handleChange} placeholder="10-digit mobile" maxLength="10" required />
+              </FormField>
+              <FormField label="Operating Area *">
+                <InputField name="operatingArea" value={formData.operatingArea} onChange={handleChange} placeholder="Enter operating area" required />
+              </FormField>
+              <FormField label="Language Preferred" fullWidth>
+                <InputField name="languagePreferred" value={formData.languagePreferred} onChange={handleChange} placeholder="e.g. Hindi, English (optional)" />
+              </FormField>
+            </FormGrid>
+          </Card>
+
+          {/* Full-width actions */}
+          <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+            <GhostBtn>Cancel</GhostBtn>
+            <Btn onClick={() => setStep(2)}>Next →</Btn>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* STEP 2: Bank Details */}
-        {step === 2 && (
-          <div className="card">
-            <h2 className="step-title">STEP 2: Bank Details</h2>
-
-            <div className="form-grid">
-              <div className="form-group">
-                <label>Business Type *</label>
-                <select 
-                  name="businessType"
-                  value={formData.businessType}
-                  onChange={handleInputChange}
-                  disabled={loading}
-                  required
-                >
+      {/* Step 2 — Business Info */}
+      {step === 2 && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', alignItems: 'start' }}>
+          <Card style={{ gridColumn: '1 / -1' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg,#f59e0b,#d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Building2 size={16} color="white" />
+              </div>
+              <div>
+                <p style={{ margin: 0, fontSize: T.fontMd, fontWeight: 700, color: T.text }}>Business Information</p>
+                <p style={{ margin: 0, fontSize: T.fontSm, color: T.textMuted }}>Agent's business and operational details</p>
+              </div>
+            </div>
+            <FormGrid>
+              <FormField label="Business Type *">
+                <SelectField name="businessType" value={formData.businessType} onChange={handleChange} disabled={loading} required>
                   <option value="">Select Business Type</option>
-                  {businessTypes.map((type) => (
-                    <option key={type.statusId} value={type.statusValue}>
-                      {type.statusValue}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label>Business Name *</label>
-                <input 
-                  type="text" 
-                  name="businessName"
-                  value={formData.businessName}
-                  onChange={handleInputChange}
-                  placeholder="Enter Business Name" 
-                  required
-                  minLength="2"
-                />
-              </div>
-
-              <div className="form-group full-width">
-                <label>Business Address *</label>
-                <input 
-                  type="text" 
-                  name="address"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                  placeholder="Enter Business Address" 
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Service Radius (km)</label>
-                <input 
-                  type="number" 
-                  name="serviceRadius"
-                  value={formData.serviceRadius}
-                  onChange={handleInputChange}
-                  placeholder="Enter Service Radius (optional)" 
-                  min="0"
-                  step="0.1"
-                />
-              </div>
+                  {businessTypes.map(t => <option key={t.statusId} value={t.statusValue}>{t.statusValue}</option>)}
+                </SelectField>
+              </FormField>
+              <FormField label="Business Name *">
+                <InputField name="businessName" value={formData.businessName} onChange={handleChange} placeholder="Enter business name" required />
+              </FormField>
+              <FormField label="Business Address *" fullWidth>
+                <InputField name="address" value={formData.address} onChange={handleChange} placeholder="Enter full business address" required />
+              </FormField>
+              <FormField label="Service Radius (km)">
+                <InputField type="number" name="serviceRadius" value={formData.serviceRadius} onChange={handleChange} placeholder="e.g. 50" min="0" />
+              </FormField>
+            </FormGrid>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '24px' }}>
+              <GhostBtn onClick={() => setStep(1)}>← Back</GhostBtn>
+              <Btn onClick={() => setStep(3)}>Next →</Btn>
             </div>
+          </Card>
+        </div>
+      )}
 
-            <div className="actions">
-              <button className="btn btn-next" onClick={nextStep}>
-                Next
-              </button>
-              <button className="btn btn-cancel" onClick={prevStep}>
-                Back
-              </button>
+      {/* Step 3 — Documents */}
+      {step === 3 && (
+        <Card>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg,#3b82f6,#1d4ed8)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <FileText size={16} color="white" />
+            </div>
+            <div>
+              <p style={{ margin: 0, fontSize: T.fontMd, fontWeight: 700, color: T.text }}>Upload Documents</p>
+              <p style={{ margin: 0, fontSize: T.fontSm, color: T.textMuted }}>Upload required KYC documents</p>
             </div>
           </div>
-        )}
-
-        {/* STEP 3: Upload Documents */}
-        {step === 3 && (
-          <div className="card">
-            <h2 className="step-title">STEP 3: Upload Documents</h2>
-
-            <div className="upload-section">
-              {documentTypes.map((docType) => (
-                <div key={docType.statusId} className="upload-item">
-                  <div className="upload-info">
-                    <div className="upload-label">{docType.statusValue}</div>
-                    <div className="upload-description">{docType.stausDiscription}</div>
-                    {uploadedFiles[docType.statusValue] && (
-                      <div className="file-selected">
-                        ✓ {uploadedFiles[docType.statusValue].name}
-                      </div>
-                    )}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '24px' }}>
+            {documentTypes.map(doc => (
+              <div key={doc.statusId} style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '16px 20px',
+                border: `1px solid ${uploadedFiles[doc.statusValue] ? T.success : T.border}`,
+                borderRadius: T.radius,
+                backgroundColor: uploadedFiles[doc.statusValue] ? '#f0fdf4' : T.bg,
+                transition: 'all 0.2s'
+              }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
+                    {uploadedFiles[doc.statusValue]
+                      ? <CheckCircle size={14} color={T.success} />
+                      : <Upload size={14} color={T.textMuted} />}
+                    <span style={{ fontWeight: 700, fontSize: T.fontMd, color: T.text }}>{doc.statusValue}</span>
                   </div>
-                  <div>
-                    <input
-                      type="file"
-                      id={`file-${docType.statusId}`}
-                      className="file-input"
-                      accept=".pdf,.jpg,.jpeg,.png"
-                      onChange={(e) => {
-                        const file = e.target.files[0];
-                        if (file) {
-                          handleFileUpload(docType.statusValue, file);
-                        }
-                      }}
-                    />
-                    <label htmlFor={`file-${docType.statusId}`} className="upload-btn">
-                      {uploadedFiles[docType.statusValue] ? 'Change File' : 'Choose File'}
-                    </label>
-                  </div>
+                  <p style={{ margin: 0, fontSize: T.fontSm, color: T.textMuted }}>{doc.stausDiscription}</p>
+                  {uploadedFiles[doc.statusValue] && (
+                    <p style={{ margin: '4px 0 0', fontSize: T.fontSm, color: T.success, fontWeight: 600 }}>✓ {uploadedFiles[doc.statusValue].name}</p>
+                  )}
                 </div>
-              ))}
-            </div>
-
-            <div className="actions">
-              <button className="btn btn-next" onClick={handleCreateAgent} disabled={loading}>
-                {loading ? 'Creating...' : 'Create Agent'}
-              </button>
-              <button className="btn btn-cancel" onClick={prevStep}>
-                Back
-              </button>
-            </div>
+                <div style={{ marginLeft: '12px' }}>
+                  <input type="file" id={`file-${doc.statusId}`} accept=".pdf,.jpg,.jpeg,.png" style={{ display: 'none' }}
+                    onChange={e => { const f = e.target.files[0]; if (f) setUploadedFiles(p => ({ ...p, [doc.statusValue]: f })); }} />
+                  <label htmlFor={`file-${doc.statusId}`} style={{
+                    padding: '8px 16px',
+                    backgroundColor: uploadedFiles[doc.statusValue] ? T.success : T.primary,
+                    color: 'white', borderRadius: T.radiusSm, fontSize: T.fontBase,
+                    fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', display: 'block'
+                  }}>
+                    {uploadedFiles[doc.statusValue] ? 'Change' : 'Choose File'}
+                  </label>
+                </div>
+              </div>
+            ))}
           </div>
-        )}
-      </div>
-    </>
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+            <GhostBtn onClick={() => setStep(2)}>← Back</GhostBtn>
+            <Btn onClick={handleCreateAgent} disabled={loading}>{loading ? 'Creating...' : 'Create Agent'}</Btn>
+          </div>
+        </Card>
+      )}
+    </div>
   );
 };
 

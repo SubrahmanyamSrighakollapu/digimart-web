@@ -11,6 +11,7 @@ import icon1 from '../../assets/about/Icon1.png';
 import icon2 from '../../assets/about/Icon2.png';
 import agentIcon from '../../assets/MainPage/Agent/Icon.png';
 import revenueIcon from '../../assets/services/Icon1.png';
+import colors from '../../styles/colors';
 
 const WhatMakesUsDifferent = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -94,7 +95,7 @@ const WhatMakesUsDifferent = () => {
             <div key={`${currentIndex}-${index}`} className="d-flex flex-column align-items-center rounded p-4 different-card" style={{
               width: '18rem',
               height: 'auto',
-              backgroundColor: '#EFFFF0',
+              backgroundColor: colors.bgLightGreen,
               borderRadius: '0.5rem',
               padding: '2.5rem 1.5rem',
               boxSizing: 'border-box'
@@ -112,7 +113,7 @@ const WhatMakesUsDifferent = () => {
                 {feature.title}
               </h3>
 
-              <p className="mt-3" style={{color:"#565656", textAlign: 'center', lineHeight: '1.6'}}>
+              <p className="mt-3" style={{color:colors.textTertiary, textAlign: 'center', lineHeight: '1.6'}}>
                 {feature.text}
               </p>
             </div>
@@ -129,8 +130,8 @@ const WhatMakesUsDifferent = () => {
             transform: 'translateY(-50%)',
             width: '50px',
             height: '50px',
-            border: '2px solid #4BAF47',
-            color: '#4BAF47',
+            border: `2px solid ${colors.primary}`,
+            color: colors.primary,
             zIndex: 20
           }}
         >
@@ -145,8 +146,8 @@ const WhatMakesUsDifferent = () => {
             transform: 'translateY(-50%)',
             width: '50px',
             height: '50px',
-            border: '2px solid #4BAF47',
-            color: '#4BAF47',
+            border: `2px solid ${colors.primary}`,
+            color: colors.primary,
             zIndex: 20
           }}
         >
@@ -165,7 +166,7 @@ const WhatMakesUsDifferent = () => {
                 height: '12px',
                 borderRadius: '50%',
                 border: 'none',
-                backgroundColor: Math.floor(currentIndex / 4) === index ? '#4BAF47' : '#ccc'
+                backgroundColor: Math.floor(currentIndex / 4) === index ? colors.primary : '#ccc'
               }}
             />
           ))}

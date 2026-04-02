@@ -1,8 +1,6 @@
 // src/styles/authStyles.js
 // Export only class names - CSS is now in authStyles.css
 
-import backgroundImage from '../assets/auth_Imgs/background-image.png';
-
 export const styles = {
   // Main card container
   card: 'auth-card',
@@ -34,10 +32,7 @@ export const styles = {
   timerText: 'timer-text',
   
   // Success page
-  successImg: 'success-img',
-  
-  // Background image
-  backgroundImage: backgroundImage
+  successImg: 'success-img'
 };
 
 export default styles;

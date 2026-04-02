@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import navbarBg from '../assets/Navbar_bgImg.png';
-import logo from '../assets/total-needs-logo.png';
+import logo from '../assets/digimart.png';
 import { useCart } from '../context/CartContext';
 
 const SearchIcon = () => (
@@ -43,14 +43,14 @@ const Navbar = () => {
   const { cartItems } = useCart();
 
   const navItems = [
-    { name: 'Home', path: '/home' },
+    { name: 'Home', path: '/' },
     { name: 'About', path: '/about' },
     { name: 'Partners', path: '/partners' },
     { name: 'Shop', path: '/shop' },
     { name: 'Contact', path: '/contact' },
   ];
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => path === '/' ? location.pathname === '/' : location.pathname === path;
   const cartCount = cartItems.length;
 
   return (
@@ -71,8 +71,8 @@ const Navbar = () => {
             
             {/* Logo */}
             <div className="col-auto">
-              <Link to="/home" className="text-decoration-none">
-                <img src={logo} alt="Total Needs" style={{ height: '5rem', marginBottom: '1rem' }} />
+              <Link to="/" className="text-decoration-none">
+                <img src={logo} alt="DigiMart" style={{ height: '6rem', marginBottom: '1rem' }} />
               </Link>
             </div>
 
@@ -108,7 +108,7 @@ const Navbar = () => {
                   style={{
                     width: '11.3125rem',
                     height: '2.6875rem',
-                    background: '#0A6806',
+                    background: '#EC5B13',
                     fontFamily: 'Manrope, sans-serif',
                     fontSize: '1rem',
                     borderRadius: '0.25rem',
@@ -146,7 +146,7 @@ const Navbar = () => {
                       style={{
                         top: '-2px',
                         left: '12px',
-                        background: '#4BAF47',
+                        background: '#EC5B13',
                         color: 'white',
                         borderRadius: '50%',
                         width: '20px',
@@ -181,7 +181,7 @@ const Navbar = () => {
                       style={{
                         top: '-8px',
                         left: '12px',
-                        background: '#4BAF47',
+                        background: '#EC5B13',
                         color: 'white',
                         borderRadius: '50%',
                         width: '20px',
@@ -238,7 +238,7 @@ const Navbar = () => {
                 style={{
                   fontFamily: 'Manrope, sans-serif',
                   fontSize: '1.25rem',
-                  color: isActive(item.path) ? '#4BAF47' : 'white',
+                  color: isActive(item.path) ? '#EC5B13' : 'white',
                   fontWeight: isActive(item.path) ? 800 : 600
                 }}
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -252,7 +252,7 @@ const Navbar = () => {
                 fontFamily: 'Manrope, sans-serif',
                 fontSize: '1.25rem',
                 fontWeight: 500,
-                color: '#4BAF47',
+                color: '#EC5B13',
                 cursor: 'pointer'
               }}
               onClick={() => {
@@ -279,7 +279,7 @@ const Navbar = () => {
           height: 2px;
           bottom: 0;
           left: 50%;
-          background-color: #4BAF47;
+          background-color: #EC5B13;
           transition: all 0.3s ease;
           transform: translateX(-50%);
         }

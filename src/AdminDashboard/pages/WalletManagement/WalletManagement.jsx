@@ -1,295 +1,122 @@
-// WalletManagement.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { Upload, Wallet, ArrowDownLeft, ArrowUpRight } from 'lucide-react';
+import { T, PageHeader, Card, Btn, GhostBtn, FormGrid, FormField, InputField, SelectField } from '../../components/AdminUI';
+
+const TABS = [
+  { key: 'credit', label: 'Credit Wallet', icon: ArrowDownLeft, color: T.success, gradient: 'linear-gradient(135deg,#10b981,#059669)' },
+  { key: 'debit', label: 'Debit Wallet', icon: ArrowUpRight, color: T.danger, gradient: 'linear-gradient(135deg,#ef4444,#dc2626)' },
+];
 
 const WalletManagement = () => {
-  const [activeTab, setActiveTab] = useState('credit'); // 'credit' or 'debit'
+  const [activeTab, setActiveTab] = useState('credit');
+  const tab = TABS.find(t => t.key === activeTab);
 
   return (
-    <>
-      <style>{`
-        .wallet-management-page {
-          padding: 24px 32px;
-          background: #f5f7fa;
-          min-height: 100vh;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
+    <div>
+      <PageHeader title="Wallet Management" subtitle="Manage credit and debit transactions for user wallets" />
 
-        .page-title {
-          font-size: 28px;
-          font-weight: 700;
-          color: #1a1a1a;
-          margin: 0 0 8px 0;
-        }
-
-        .page-subtitle {
-          color: #64748b;
-          font-size: 15px;
-          margin: 0 0 32px 0;
-        }
-
-        .tabs {
-          display: flex;
-          gap: 0;
-          margin-bottom: 24px;
-          border-bottom: 2px solid #e5e7eb;
-        }
-
-        .tab-btn {
-          padding: 12px 32px;
-          font-size: 15px;
-          font-weight: 600;
-          background: transparent;
-          border: none;
-          border-bottom: 3px solid transparent;
-          cursor: pointer;
-          color: #64748b;
-          transition: all 0.2s;
-        }
-
-        .tab-btn.active {
-          color: #10b981;
-          border-bottom-color: #10b981;
-        }
-
-        .tab-btn:hover:not(.active) {
-          color: #374151;
-        }
-
-        .form-card {
-          background: white;
-          border-radius: 12px;
-          box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-          padding: 32px;
-          max-width: 900px;
-        }
-
-        .form-title {
-          font-size: 20px;
-          font-weight: 600;
-          color: #1a1a1a;
-          margin: 0 0 24px 0;
-        }
-
-        .form-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 24px 32px;
-        }
-
-        .form-group {
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-        }
-
-        .form-label {
-          font-size: 14px;
-          font-weight: 500;
-          color: #334155;
-        }
-
-        .form-input,
-        .form-select {
-          padding: 10px 14px;
-          border: 1px solid #d1d9e0;
-          border-radius: 8px;
-          font-size: 15px;
-          outline: none;
-          background: white;
-        }
-
-        .form-input:focus,
-        .form-select:focus {
-          border-color: #10b981;
-          box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
-        }
-
-        .form-input::placeholder,
-        .form-select option:disabled {
-          color: #94a3b8;
-        }
-
-        .upload-wrapper {
-          grid-column: 1 / -1;
-        }
-
-        .upload-label {
-          font-size: 14px;
-          font-weight: 500;
-          color: #334155;
-          margin-bottom: 6px;
-          display: block;
-        }
-
-        .upload-box {
-          border: 2px dashed #d1d9e0;
-          border-radius: 8px;
-          padding: 32px 24px;
-          text-align: center;
-          cursor: pointer;
-          transition: border-color 0.2s;
-        }
-
-        .upload-box:hover {
-          border-color: #10b981;
-        }
-
-        .upload-icon {
-          width: 48px;
-          height: 48px;
-          color: #10b981;
-          margin-bottom: 12px;
-        }
-
-        .upload-text {
-          font-size: 14px;
-          color: #64748b;
-          margin: 0;
-        }
-
-        .upload-hint {
-          font-size: 13px;
-          color: #94a3b8;
-          margin-top: 8px;
-        }
-
-        .submit-btn {
-          grid-column: 1 / -1;
-          padding: 12px 32px;
-          background: #10b981;
-          color: white;
-          border: none;
-          border-radius: 8px;
-          font-size: 15px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: background 0.2s;
-          margin-top: 16px;
-        }
-
-        .submit-btn:hover {
-          background: #059669;
-        }
-
-        .current-balance {
-          color: #10b981;
-          font-weight: 600;
-          font-size: 16px;
-        }
-      `}</style>
-
-      <div className="wallet-management-page">
-        <h1 className="page-title">Wallet Management</h1>
-        <p className="page-subtitle">
-          Manage credit and debit transactions for user wallets
-        </p>
-
-        <div className="tabs">
-          <button
-            className={`tab-btn ${activeTab === 'credit' ? 'active' : ''}`}
-            onClick={() => setActiveTab('credit')}
-          >
-            Credit Wallet
+      {/* Tab Switcher */}
+      <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
+        {TABS.map(t => (
+          <button key={t.key} onClick={() => setActiveTab(t.key)} style={{
+            display: 'flex', alignItems: 'center', gap: '8px',
+            padding: '10px 24px', borderRadius: '10px', fontWeight: 700, fontSize: T.fontMd,
+            cursor: 'pointer', border: `2px solid ${activeTab === t.key ? t.color : T.border}`,
+            backgroundColor: activeTab === t.key ? t.color : 'white',
+            color: activeTab === t.key ? 'white' : T.textMuted,
+            boxShadow: activeTab === t.key ? `0 4px 16px ${t.color}44` : 'none',
+            transition: 'all 0.2s'
+          }}>
+            <t.icon size={16} />
+            {t.label}
           </button>
-          <button
-            className={`tab-btn ${activeTab === 'debit' ? 'active' : ''}`}
-            onClick={() => setActiveTab('debit')}
-          >
-            Debit Wallet
-          </button>
-        </div>
+        ))}
+      </div>
 
-        <div className="form-card">
-          <h2 className="form-title">Credit Transaction details</h2>
-
-          <div className="form-grid">
-            <div className="form-group">
-              <label className="form-label">User Name</label>
-              <input
-                type="text"
-                className="form-input"
-                placeholder="Enter User Name"
-              />
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', alignItems: 'start' }}>
+        {/* Form */}
+        <Card>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: tab.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <tab.icon size={18} color="white" />
             </div>
-
-            <div className="form-group">
-              <label className="form-label">User ID</label>
-              <input
-                type="text"
-                className="form-input"
-                placeholder="Enter user ID"
-              />
+            <div>
+              <p style={{ margin: 0, fontSize: T.fontMd, fontWeight: 700, color: T.text }}>{tab.label} Transaction</p>
+              <p style={{ margin: 0, fontSize: T.fontSm, color: T.textMuted }}>Fill in the transaction details below</p>
             </div>
+          </div>
 
-            <div className="form-group">
-              <label className="form-label">Wallet Type</label>
-              <select className="form-select">
-                <option>Select Type</option>
-                <option>Credit Wallet</option>
-                <option>Debit Wallet</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Current Balance</label>
-              <div className="current-balance">₹14,000</div>
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Credit Amount</label>
-              <input
-                type="text"
-                className="form-input"
-                placeholder="Enter Amount"
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Payment Mode</label>
-              <select className="form-select">
-                <option>Select Payment Mode</option>
+          <FormGrid>
+            <FormField label="User Name"><InputField placeholder="Enter user name" /></FormField>
+            <FormField label="User ID"><InputField placeholder="Enter user ID" /></FormField>
+            <FormField label="Wallet Type">
+              <SelectField>
+                <option value="">Select Type</option>
+                <option>Main Wallet</option>
+                <option>Lean Wallet</option>
+              </SelectField>
+            </FormField>
+            <FormField label="Current Balance">
+              <div style={{ padding: '10px 14px', backgroundColor: T.successLight, borderRadius: T.radius, fontWeight: 700, fontSize: '16px', color: T.success }}>₹14,000</div>
+            </FormField>
+            <FormField label={activeTab === 'credit' ? 'Credit Amount (₹)' : 'Debit Amount (₹)'}>
+              <InputField type="number" placeholder="Enter amount" min="0" />
+            </FormField>
+            <FormField label="Payment Mode">
+              <SelectField>
+                <option value="">Select Payment Mode</option>
                 <option>UPI</option>
                 <option>Bank Transfer</option>
                 <option>Cash</option>
-              </select>
-            </div>
+                <option>NEFT/RTGS</option>
+              </SelectField>
+            </FormField>
+            <FormField label="Transaction ID" fullWidth>
+              <InputField placeholder="Enter transaction ID" />
+            </FormField>
+          </FormGrid>
 
-            <div className="form-group">
-              <label className="form-label">Transaction Id</label>
-              <input
-                type="text"
-                className="form-input"
-                placeholder="Enter Transaction id"
-              />
-            </div>
-
-            <div className="upload-wrapper">
-              <label className="upload-label">Upload Proof</label>
-              <div className="upload-box">
-                <svg
-                  className="upload-icon"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                  />
-                </svg>
-                <p className="upload-text">Upload PAN Card</p>
-                <p className="upload-hint">PDF, JPG, or PNG (Max 5MB)</p>
-              </div>
-            </div>
-
-            <button className="submit-btn">Credit Wallet Now</button>
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '20px' }}>
+            <GhostBtn>Cancel</GhostBtn>
+            <Btn color={tab.color}>{activeTab === 'credit' ? 'Credit Wallet Now' : 'Debit Wallet Now'}</Btn>
           </div>
-        </div>
+        </Card>
+
+        {/* Upload Proof */}
+        <Card>
+          <p style={{ margin: '0 0 16px', fontSize: T.fontMd, fontWeight: 700, color: T.text }}>Upload Payment Proof</p>
+          <div style={{
+            border: `2px dashed ${T.border}`, borderRadius: T.radiusLg, padding: '48px 24px',
+            textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s',
+            backgroundColor: T.bg
+          }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = T.primary; e.currentTarget.style.backgroundColor = T.primaryLight; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.backgroundColor = T.bg; }}
+          >
+            <div style={{ width: '56px', height: '56px', borderRadius: '50%', backgroundColor: T.primaryLight, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+              <Upload size={24} color={T.primary} />
+            </div>
+            <p style={{ margin: '0 0 6px', fontSize: T.fontLg, fontWeight: 600, color: T.text }}>Upload Payment Proof</p>
+            <p style={{ margin: '0 0 16px', fontSize: T.fontBase, color: T.textMuted }}>Drag & drop or click to browse</p>
+            <p style={{ margin: 0, fontSize: T.fontSm, color: T.textLight }}>PDF, JPG, or PNG (Max 5MB)</p>
+          </div>
+
+          <div style={{ marginTop: '20px', padding: '16px', backgroundColor: T.bg, borderRadius: T.radius, border: `1px solid ${T.borderLight}` }}>
+            <p style={{ margin: '0 0 8px', fontSize: T.fontBase, fontWeight: 600, color: T.text }}>Transaction Summary</p>
+            {[
+              { label: 'Type', value: tab.label },
+              { label: 'Status', value: 'Pending' },
+              { label: 'Date', value: new Date().toLocaleDateString('en-IN') },
+            ].map(row => (
+              <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: `1px solid ${T.borderLight}` }}>
+                <span style={{ fontSize: T.fontBase, color: T.textMuted }}>{row.label}</span>
+                <span style={{ fontSize: T.fontBase, fontWeight: 600, color: T.text }}>{row.value}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
       </div>
-    </>
+    </div>
   );
 };
 

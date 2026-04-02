@@ -80,6 +80,7 @@ const OurApproach = () => {
                   className="fw-bold mb-0"
                   style={{
                     fontSize: '2.4rem',
+                    color:'#fff'
                   }}
                 >
                   Our Approach

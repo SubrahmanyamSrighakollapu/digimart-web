@@ -192,7 +192,7 @@ const Details = () => {
                 <Button 
                   text="Add To Cart"
                   onClick={handleAddToCart}
-                  bgColor="#4BAF47"
+                  bgColor="#EC5B13"
                   className="w-100"
                 />
                 <Button 

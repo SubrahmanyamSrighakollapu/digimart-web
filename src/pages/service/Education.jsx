@@ -3,6 +3,7 @@
 import img2 from '../../assets/services/Img2.jpg';
 import img3 from '../../assets/services/Img3.jpg';
 import img4 from '../../assets/services/Img4.jpg';
+import colors from '../../styles/colors';
 
 const Education = () => {
   const educationCards = [
@@ -50,7 +51,7 @@ const Education = () => {
                 <img src={card.img} alt={card.alt} className="card-img-top" />
                 <div className="p-4 flex-grow-1 d-flex flex-column">
                   <h3 className="card-title mb-2">{card.title}</h3>
-                  <p style={{color:'#565656'}}>
+                  <p style={{color:colors.textTertiary}}>
                     {card.description}
                   </p>
                   <a href="#" className="mt-auto learn-more-link">
@@ -72,9 +73,9 @@ const Education = () => {
         .education-card {
           width: 25rem;
           max-width: 100%;
-          background: #FFFFFF;
+          background: ${colors.bgWhite};
           border-radius: 10px;
-          border: 0.5px solid #959595;
+          border: 0.5px solid ${colors.border};
           box-shadow: 2px 2px 4px 0px #00000040;
         }
 
@@ -96,7 +97,7 @@ const Education = () => {
           font-weight: 600;
           font-size: 1rem;
           line-height: 30px;
-          color: #0A6806;
+          color: ${colors.primaryDark};
           text-decoration: none;
           align-self: flex-start;
         }

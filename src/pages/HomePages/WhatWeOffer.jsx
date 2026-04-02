@@ -3,6 +3,7 @@ import card1Icon from '../../assets/MainPage/WhatWeOffer/Card1Icon.png';
 import card1Img from '../../assets/MainPage/WhatWeOffer/Card1Img.png';
 import card2Icon from '../../assets/MainPage/WhatWeOffer/Card2Icon.png';
 import card2Img from '../../assets/MainPage/WhatWeOffer/Card2Img.jpg';
+import colors from '../../styles/colors';
 
 const WhatWeOffer = () => {
     const cards = [
@@ -57,9 +58,9 @@ const WhatWeOffer = () => {
                                 style={{
                                     width: '28.5rem',
                                     height: '34rem',
-                                    backgroundColor: '#FFFFFF',
+                                    backgroundColor: colors.bgWhite,
                                     borderRadius: '0.625rem',
-                                    boxShadow: '0 0.25rem 1.5rem rgba(0, 0, 0, 0.1)',
+                                    boxShadow: `0 0.25rem 1.5rem ${colors.shadow}`,
                                     transition: 'transform 0.3s ease, box-shadow 0.3s ease'
                                 }}
                             >
@@ -99,7 +100,7 @@ const WhatWeOffer = () => {
                                     <h3 className="card-title">
                                         {card.title}
                                     </h3>
-                                    <p style={{color:'#565656'}}>
+                                    <p style={{color:colors.textTertiary}}>
                                         {card.text}
                                     </p>
                                 </div>

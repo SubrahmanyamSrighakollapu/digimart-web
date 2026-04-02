@@ -23,25 +23,22 @@ body {
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
 }
 
 .auth-card {
   position: relative;
   width: min(60%, 42rem);
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   border-radius: 0.9375rem;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 4rem 2rem 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
   overflow: visible;
   max-height: 90vh;
 }
@@ -67,7 +64,7 @@ body {
   width: 5.5rem;
   height: 5.5rem;
   background: #FFFFFF;
-  border: 2px solid #8EA198;
+  border: 2px solid #f39d71;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -94,7 +91,7 @@ body {
   display: block;
   background: #FFFFFF;
   border-radius: 50%;
-  border: 2px solid #8EA198;
+  border: 2px solid #f39d71;
   box-shadow: 0 6px 18px rgba(0,0,0,0.12);
 }
 
@@ -104,7 +101,7 @@ body {
   font-size: clamp(1.5rem, 4vw, 1.7rem);
   line-height: 100%;
   text-align: center;
-  color: #0A6806;
+  color: #EC5B13;
   margin-bottom: 0.75rem;
   margin-top: 2rem;
 }
@@ -115,7 +112,7 @@ body {
   font-size: 1rem;
   line-height: 100%;
   text-align: center;
-  color: #000000;
+  color: #000;
   margin-bottom: 2rem;
 }
 
@@ -124,7 +121,7 @@ body {
   font-weight: 300;
   font-size: clamp(0.75rem, 1.5vw, 0.875rem);
   line-height: 120%;
-  color: #666666;
+  color: #000;
   margin-top: 0.5rem;
   margin-bottom: 0.75rem;
   text-align: left;
@@ -148,12 +145,12 @@ body {
   font-size: clamp(0.75rem, 1.5vw, 0.875rem);
   line-height: 100%;
   text-align: center;
-  color: #000000;
+  color: #000;
   margin-top: 1rem;
 }
 
 .link-text a {
-  color: #0A6806;
+  color: #EC5B13;
   text-decoration: none;
   font-weight: 600;
   cursor: pointer;
@@ -177,7 +174,7 @@ body {
 .input-icon {
   width: 10%;
   min-width: 3.5rem;
-  background: #0A6806;
+  background: #EC5B13;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -191,7 +188,7 @@ body {
 
 .input-field {
   flex: 1;
-  background: rgba(75, 175, 71, 0.42);
+  background: #fad1bd;
   border: none;
   outline: none;
   padding: 0 1rem;
@@ -211,8 +208,8 @@ body {
 .input-field[name="emailOrUsername"]:-webkit-autofill:hover,
 .input-field[name="emailOrUsername"]:-webkit-autofill:focus,
 .input-field[name="emailOrUsername"]:-internal-autofill-selected {
-  -webkit-box-shadow: 0 0 0px 1000px rgba(75, 175, 71, 0.42) inset !important;
-  box-shadow: 0 0 0px 1000px rgba(75, 175, 71, 0.42) inset !important;
+  -webkit-box-shadow: 0 0 0px 1000px #EC5B13 inset !important;
+  box-shadow: 0 0 0px 1000px #EC5B13 inset !important;
   -webkit-text-fill-color: #000000 !important;
   background-clip: content-box;
 }
@@ -239,7 +236,7 @@ body {
 .auth-button {
   width: 25rem;
   height: 3rem;
-  background: #0A6806;
+  background: #EC5B13;
   color: white;
   border: none;
   border-radius: 0.5rem;
@@ -248,14 +245,14 @@ body {
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(10, 104, 6, 0.3);
+  box-shadow: 0 4px 12px #EC5B13;
   margin-top: 0.8rem;
 }
 
 .auth-button:hover {
-  background: #085a04;
+  background: #EC5B13;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(10, 104, 6, 0.4);
+  box-shadow: 0 6px 16px #EC5B13;
 }
 
 .auth-button:active {
@@ -297,7 +294,7 @@ body {
 .otp-box {
   width: 3rem;
   height: 3rem;
-  border: 0.2px solid #055D69;
+  border: 0.2px solid #EC5B13;
   border-radius: 0.5rem;
   text-align: center;
   font-size: 1.5rem;
@@ -310,9 +307,9 @@ body {
 }
 
 .otp-box:focus {
-  border-color: #0A6806;
+  border-color: #EC5B13;
   border-width: 2px;
-  box-shadow: 0 0 8px rgba(10, 104, 6, 0.3);
+  box-shadow: 0 0 8px #EC5B13;
 }
 
 .timer-text {
@@ -350,8 +347,8 @@ body {
   background: #E8F5E9;
   border-radius: 50%;
   z-index: 110;
-  border: 2px solid rgba(10,104,6,0.12);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  border: 2px solid #EC5B13;
+  box-shadow: 0 6px 18px #EC5B13;
   padding: 0.25rem;
 }
 

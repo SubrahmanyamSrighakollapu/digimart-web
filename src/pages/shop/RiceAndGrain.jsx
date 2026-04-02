@@ -1,8 +1,10 @@
 import { useState, useMemo } from 'react';
 import ProductCard from '../../components/ProductCard/ProductCard';
+import productsData from '../../data/products.json';
 
-const RiceAndGrain = ({ filters, products = [], loading = false }) => {
+const RiceAndGrain = ({ filters }) => {
   const [visibleCount, setVisibleCount] = useState(6);
+  const products = productsData.products;
 
   // Filter products based on applied filters
   const filteredProducts = useMemo(() => {
@@ -62,8 +64,8 @@ const RiceAndGrain = ({ filters, products = [], loading = false }) => {
       <div 
         className="banner-card px-4 py5"
       >
-        <h2 className="mb-2">Wholesale Rice & Grains</h2>
-        <p className="green mb-0 col-8" >
+        <h2 className="mb-2 fs-3">Wholesale Rice & Grains</h2>
+        <p className="green mb-0 col-8 fs-5" >
           Verified direct-from-farm sourcing for enterprise buyers. Bulk pricing available for orders over 10 tons.
         </p>
       </div>
@@ -77,18 +79,12 @@ const RiceAndGrain = ({ filters, products = [], loading = false }) => {
             color: '#000000'
           }}
         >
-          {loading ? 'Loading...' : `${filteredProducts.length} Products Found`}
+          {`${filteredProducts.length} Products Found`}
         </h5>
       </div>
 
       {/* Product Grid */}
-      {loading ? (
-        <div className="text-center py-5">
-          <div className="spinner-border text-success" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      ) : filteredProducts.length === 0 ? (
+      {filteredProducts.length === 0 ? (
         <div className="text-center py-5">
           <p className="text-muted">No products found matching your filters</p>
         </div>

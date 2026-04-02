@@ -1,586 +1,284 @@
-// src/AdminDashboard/pages/Dashboard/Dashboard.jsx
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  ShoppingCart, Users, Leaf, TrendingUp, Clock,
+  CreditCard, Wheat, UserCheck, ArrowUpRight,
+  ArrowDownRight, UserPlus, Briefcase, CheckCircle,
+  AlertTriangle, Zap, Activity
+} from 'lucide-react';
+
+const P  = '#EC5B13';
+const PH = '#D44E0E';
+const PL = '#FEF0E9';
+const SEC = '#F7EEEA';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  
-  // Get base route based on user role
   const user = JSON.parse(sessionStorage.getItem('user') || '{}');
-  const getBaseRoute = () => {
+
+  const getBase = () => {
     if (user.roleName === 'Super Distributor') return '/super-distributor';
     if (user.roleName === 'Master Distributor') return '/master-distributor';
     if (user.roleName === 'Distributor') return '/distributor';
     return '/admin';
   };
-  const baseRoute = getBaseRoute();
-  
-  // Check if user is a distributor role
-  const isDistributor = user.roleName === 'Super Distributor' || 
-                        user.roleName === 'Master Distributor' || 
-                        user.roleName === 'Distributor';
-  
-  // Data objects for easy maintenance
-  const overviewData = [
-    { title: 'Total Orders', value: '2345', subtitle: 'Customer Request', borderColor: '#0A6806' },
-    { title: 'Active Agents', value: '24', subtitle: 'Active', borderColor: '#AA871B' },
-    { title: 'Active Farmers', value: '17', subtitle: 'Active deliveries', borderColor: '#3B82F6' },
-    { title: 'Gross Trade value', value: '₹ 80,000', subtitle: 'Pending release', borderColor: '#A855F7' },
-    { title: 'Pending Payouts', value: '₹ 80,000', subtitle: 'This Month', borderColor: '#88DB15' },
+  const base = getBase();
+  const isDistributor = ['Super Distributor', 'Master Distributor', 'Distributor'].includes(user.roleName);
+
+  const overviewCards = [
+    { label: 'Total Orders',      value: '2,345', sub: '+12% this month',   icon: ShoppingCart, gradient: `linear-gradient(135deg, ${P} 0%, ${PH} 100%)`,    glow: 'rgba(236,91,19,0.3)' },
+    { label: 'Active Agents',     value: '24',    sub: '+3 this week',       icon: UserCheck,    gradient: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)', glow: 'rgba(217,119,6,0.3)' },
+    { label: 'Active Farmers',    value: '17',    sub: 'Active deliveries',  icon: Leaf,         gradient: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)', glow: 'rgba(22,163,74,0.3)' },
+    { label: 'Gross Trade Value', value: '₹80K',  sub: 'Pending release',    icon: TrendingUp,   gradient: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)', glow: 'rgba(124,58,237,0.3)' },
+    { label: 'Pending Payouts',   value: '₹80K',  sub: 'This month',         icon: Clock,        gradient: 'linear-gradient(135deg, #0369a1 0%, #075985 100%)', glow: 'rgba(3,105,161,0.3)' },
   ];
 
-  const financialData = [
-    { title: 'Customer Payments', value: '₹ 80,000', change: '+5% in last month', positive: true, gradientFrom: '#fdba74' },
-    { title: 'Farmer Payouts', value: '₹ 80,000', change: '+10% in last month', positive: true, gradientFrom: '#c4b5fd' },
-    { title: 'Agent Earnings', value: '₹ 80,000', change: '-7% in last month', positive: false, gradientFrom: '#a7f3d0' },
-    { title: 'Platform margin', value: '₹ 80,000', change: '+5% in last month', positive: true, gradientFrom: '#fbcfe8' },
+  const financialCards = [
+    { label: 'Customer Payments', value: '₹80,000', change: '+5% last month',  positive: true,  icon: CreditCard, accent: P,        iconBg: PL },
+    { label: 'Farmer Payouts',    value: '₹80,000', change: '+10% last month', positive: true,  icon: Wheat,      accent: '#7c3aed', iconBg: '#f5f3ff' },
+    { label: 'Agent Earnings',    value: '₹80,000', change: '-7% last month',  positive: false, icon: Users,      accent: '#16a34a', iconBg: '#f0fdf4' },
+    { label: 'Platform Margin',   value: '₹80,000', change: '+5% last month',  positive: true,  icon: TrendingUp, accent: '#0369a1', iconBg: '#e0f2fe' },
   ];
 
-  const orderStatusData = [
-    { label: 'Pending Assignment', count: 14, color: '#FFB732' },
-    { label: 'In Procurement', count: 23, color: '#324DFF' },
-    { label: 'In Transit', count: 36, color: '#CC32FF' },
-    { label: 'Delivered', count: 89, color: '#0A6806' },
-    { label: 'Disputes raised', count: 89, color: '#FF3232' },  
+  const orderStatuses = [
+    { label: 'Pending Assignment', count: 14, color: '#d97706', bg: '#fef3c7' },
+    { label: 'In Procurement',     count: 23, color: P,         bg: PL       },
+    { label: 'In Transit',         count: 36, color: '#7c3aed', bg: '#f5f3ff'},
+    { label: 'Delivered',          count: 89, color: '#16a34a', bg: '#dcfce7'},
+    { label: 'Disputes Raised',    count: 5,  color: '#dc2626', bg: '#fee2e2'},
   ];
+
+  const now = new Date();
+  const hour = now.getHours();
+  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
   return (
-    <>
-      <style jsx>{`
-        .dashboard-container {
-          padding: 25px;
-          background-color: #f7f9fc;
-          font-family: 'Segoe UI', sans-serif;
-          color: #333;
-          max-width: 1600px;
-          margin: 0 auto;
-          min-height: 100vh;
-        }
+    <div style={{ fontFamily: "'Inter','Segoe UI',sans-serif" }}>
 
-        .header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 40px;
-        }
+      {/* ── Hero Header ─────────────────────────────────────────── */}
+      <div style={{
+        background: `linear-gradient(135deg, ${P} 0%, #F07030 60%, #F5924A 100%)`,
+        borderRadius: '16px', padding: '28px 32px', marginBottom: '28px',
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        boxShadow: `0 8px 32px rgba(236,91,19,0.28)`,
+        position: 'relative', overflow: 'hidden'
+      }}>
+        {/* decorative circles — lighter tones only */}
+        <div style={{ position: 'absolute', top: '-40px', right: '120px', width: '200px', height: '200px', borderRadius: '50%', background: 'rgba(255,255,255,0.12)', filter: 'blur(50px)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: '-30px', right: '20px', width: '150px', height: '150px', borderRadius: '50%', background: 'rgba(255,255,255,0.08)', filter: 'blur(30px)', pointerEvents: 'none' }} />
 
-        .section-title {
-          font-size: 24px;
-          font-weight: 600;
-          color: #2d3748;
-          margin: 0;
-        }
-
-        .financial-title {
-          margin: 40px 0 24px;
-        }
-
-        .action-buttons .btn {
-          padding: 10px 20px;
-          border: none;
-          border-radius: 8px;
-          font-weight: 600;
-          margin-left: 12px;
-          cursor: pointer;
-          font-size: 14px;
-          transition: all 0.2s ease;
-        }
-
-        .btn-agent { 
-          background-color: #4159D3; 
-          color: white; 
-        }
-        
-        .btn-agent:hover {
-          background-color: #3146b8;
-          transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(65, 89, 211, 0.3);
-        }
-        
-        .btn-user { 
-          background-color: #12AE0C; 
-          color: white; 
-        }
-        
-        .btn-user:hover {
-          background-color: #0f9209;
-          transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(18, 174, 12, 0.3);
-        }
-        
-        .btn-employee { 
-          background-color: #CA28B7; 
-          color: white; 
-        }
-        
-        .btn-employee:hover {
-          background-color: #b0229c;
-          transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(202, 40, 183, 0.3);
-        }
-
-        .overview-cards,
-        .financial-cards {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-          gap: 32px;
-          margin-bottom: 48px;
-        }
-
-        .card {
-          background: white;
-          border-radius: 12px;
-          padding: 24px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-          border-left: 6px solid transparent;
-        }
-
-        .overview-card {
-          border-left-color: var(--border-color);
-        }
-
-        .financial-card {
-          background: linear-gradient(to bottom, #fff 60%, #f1f5f9 100%);
-          border-left-color: var(--gradient-from);
-        }
-
-        .card h3 {
-          font-size: 16px;
-          color: #64748b;
-          margin: 0 0 12px 0;
-        }
-
-        .big-number {
-          font-size: 28px;
-          font-weight: 700;
-          margin: 8px 0;
-          color: #1e293b;
-        }
-
-        .subtitle {
-          font-size: 14px;
-          color: #64748b;
-          margin: 0;
-        }
-
-        .change {
-          font-size: 14px;
-          margin-top: 12px;
-        }
-
-        .positive { color: #22c55e; }
-        .negative { color: #ef4444; }
-
-        .bottom-sections {
-          display: grid;
-          grid-template-columns: 1fr 1fr 1fr;
-          gap: 24px;
-        }
-
-        .bottom-card {
-          min-height: 320px;
-          display: flex;
-          flex-direction: column;
-          background: white;
-          border-radius: 12px;
-          padding: 20px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        .bottom-card h3 {
-          font-size: 18px;
-          font-weight: 600;
-          margin-bottom: 20px;
-          color: #2d3748;
-        }
-
-        .status-item {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 12px 0;
-          border-bottom: 1px solid #e2e8f0;
-        }
-
-        .status-item:last-child {
-          border-bottom: none;
-        }
-
-        .dot {
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-          background-color: var(--dot-color);
-          display: inline-block;
-          margin-right: 12px;
-        }
-
-        .status-label {
-          flex: 1;
-          display: flex;
-          align-items: center;
-        }
-
-        .count {
-          font-weight: 600;
-          font-size: 18px;
-          color: #1e293b;
-        }
-
-        .user-overview {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.user-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
-  gap: 20px;
-  margin-bottom: 40px;
-  align-items: start;
-}
-  
-
-.user-grid > .user-main-box:nth-child(1) {
-  /* Farmers - top left */
-}
-
-.user-grid > .user-main-box:nth-child(2) {
-  /* KYC pending - top right */
-}
-
-.user-grid > .user-main-box:nth-child(3) {
-  /* Active Agents - spans full width below */
-  grid-column: 1 / -1;
-  background-color: transparent !important; /* No background card */
-  padding: 0;
-  text-align: left;
-}
-
-.agents-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  width: 100%;
-}
-
-.agents-left {
-  text-align: left;
-}
-
-.agents-left h4 {
-  font-size: 18px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-  color: #4f46e5;
-}
-
-.agents-left .user-note {
-  margin: 0;
-  font-size: 14px;
-  color: #64748b;
-}
-
-.agents-right {
-  text-align: right;
-}
-
-.agents-right .user-big {
-  font-size: 24px;
-  font-weight: 700;
-  margin: 0 0 4px 0;
-  color: #1e293b;
-}
-
-.agents-right .small-count {
-  font-size: 28px;
-  font-weight: 700;
-  margin: 0;
-  color: #1e293b;
-}
-
-/* Improve button spacing and size */
-.user-actions {
-  display: flex;
-  gap: 16px;
-  margin-top: auto; /* Ensures buttons stick to bottom */
-}
-
-.user-actions button {
-  flex: 1;
-  padding: 12px 20px;
-  font-size: 15px;
-  border-radius: 8px;
-}
-.user-main-box {
-  background-color: var(--user-bg);
-  padding: 24px;
-  border-radius: 12px;
-  text-align: center;
-  margin-bottom: 8px;
-  border-left: 4px solid var(--border-color, transparent);
-}
-
-.user-main-box h4 {
-  font-size: 18px;
-  font-weight: 600;
-  margin: 0 0 12px 0;
-}
-
-.user-main-box .user-big {
-  font-size: 34px;
-  font-weight: 700;
-  margin: 12px 0;
-  color: #1e293b;
-}
-
-.user-main-box .user-note {
-  font-size: 14px;
-  color: #64748b;
-  margin: 0;
-}
-
-.agents-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 8px;
-}
-
-.small-count {
-  font-size: 24px;
-  font-weight: 700;
-  color: #1e293b;
-}
-
-.kyc-box h4 {
-  color: #dc2626 !important;
-}
-
-/* Remove or comment out the old .user-box styles if still present */
-        .btn-approve {
-          background-color: #22c55e;
-          color: white;
-          flex: 1;
-          padding: 10px;
-          border: none;
-          border-radius: 8px;
-          font-weight: 600;
-          cursor: pointer;
-        }
-
-        .btn-view {
-          background-color: #64748b;
-          color: white;
-          flex: 1;
-          padding: 10px;
-          border: none;
-          border-radius: 8px;
-          font-weight: 600;
-          cursor: pointer;
-        }
-
-        .critical-alerts h3 {
-          margin-bottom: 20px;
-        }
-
-        .alert-box.kyc {
-          background-color: #fee2e2;
-          padding: 24px;
-          border-radius: 12px;
-          text-align: center;
-          margin-bottom: 32px;
-        }
-
-        .alert-title {
-          font-weight: 600;
-          color: #dc2626;
-          margin: 0 0 8px 0;
-        }
-
-        .alert-desc {
-          font-size: 36px;
-          font-weight: 700;
-          color: #dc2626;
-          margin: 8px 0;
-        }
-
-        .alert-note {
-          color: #64748b;
-          font-size: 14px;
-        }
-
-        .alert-item {
-          padding: 16px 0;
-          border-bottom: 1px solid #e2e8f0;
-        }
-
-        .alert-item:last-child {
-          border-bottom: none;
-        }
-
-        .alert-item p {
-          margin: 4px 0;
-          font-size: 15px;
-        }
-
-        .resolve-btn, .assign-btn {
-          background-color: transparent;
-          border-radius: 6px;
-          padding: 6px 16px;
-          margin-top: 8px;
-          font-weight: 600;
-          cursor: pointer;
-        }
-
-        .resolve-btn {
-          border: 1px solid #ef4444;
-          color: #ef4444;
-        }
-
-        .assign-btn {
-          border: 1px solid #f59e0b;
-          color: #f59e0b;
-        }
-
-        @media (max-width: 1200px) {
-          .bottom-sections {
-            grid-template-columns: 1fr;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .header {
-            flex-direction: column;
-            align-items: flex-start;
-          }
-          .action-buttons {
-            margin-top: 16px;
-            width: 100%;
-          }
-          .action-buttons .btn {
-            flex: 1;
-            margin-left: 0;
-            margin-right: 8px;
-          }
-          .action-buttons .btn:last-child {
-            margin-right: 0;
-          }
-        }
-      `}</style>
-
-      <div className="dashboard-container">
-        <div className="header">
-          <h1 className="section-title">Platform Overview</h1>
-          <div className="action-buttons">
-            <button className="btn btn-agent" onClick={() => navigate(`${baseRoute}/agent-management/add-agent`)}>+ Add Agent</button>
-            <button className="btn btn-user" onClick={() => navigate(`${baseRoute}/user-management/create-user`)}>+ Add User</button>
-            {!isDistributor && (
-              <button className="btn btn-employee" onClick={() => navigate(`${baseRoute}/create-employee`)}>+ Add Employee</button>
-            )}
+        <div style={{ position: 'relative' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+            <div style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: '#fff', boxShadow: '0 0 8px rgba(255,255,255,0.8)' }} />
+            <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.75)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Live Dashboard</span>
           </div>
+          <h1 style={{ margin: 0, fontSize: '26px', fontWeight: 800, color: 'white', letterSpacing: '-0.02em' }}>
+            {greeting}, {user.roleName || 'Admin'} 👋
+          </h1>
+          <p style={{ margin: '6px 0 0', fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>
+            {now.toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+          </p>
         </div>
 
-        <div className="overview-cards">
-          {overviewData.map((item, index) => (
-            <div key={index} className="card overview-card" style={{ '--border-color': item.borderColor }}>
-              <h3>{item.title}</h3>
-              <p className="big-number">{item.value}</p>
-              <p className="subtitle">{item.subtitle}</p>
+        <div style={{ display: 'flex', gap: '10px', position: 'relative' }}>
+          {[
+            { label: 'Add Agent',    color: 'rgba(255,255,255,0.22)', border: 'rgba(255,255,255,0.4)', onClick: () => navigate(`${base}/agent-management/add-agent`),  icon: UserPlus  },
+            { label: 'Add User',     color: 'rgba(255,255,255,0.22)', border: 'rgba(255,255,255,0.4)', onClick: () => navigate(`${base}/user-management/create-user`), icon: UserPlus  },
+            ...(!isDistributor ? [{ label: 'Add Employee', color: 'rgba(255,255,255,0.22)', border: 'rgba(255,255,255,0.4)', onClick: () => navigate(`${base}/create-employee`), icon: Briefcase }] : [])
+          ].map(({ label, color, border, onClick, icon: Icon }) => (
+            <button key={label} onClick={onClick} style={{
+              display: 'flex', alignItems: 'center', gap: '7px',
+              padding: '10px 18px', backgroundColor: color, color: 'white',
+              border: `1px solid ${border}`, borderRadius: '10px', fontWeight: 700,
+              fontSize: '13px', cursor: 'pointer', backdropFilter: 'blur(4px)',
+              transition: 'background 0.15s, transform 0.15s'
+            }}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.32)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = color; e.currentTarget.style.transform = 'translateY(0)'; }}
+            >
+              <Icon size={14} /> {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Section Label ────────────────────────────────────────── */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+        <Activity size={14} color={P} />
+        <span style={{ fontSize: '11px', fontWeight: 700, color: P, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Platform Overview</span>
+        <div style={{ flex: 1, height: '1px', backgroundColor: '#edddd6' }} />
+      </div>
+
+      {/* ── Stat Cards ───────────────────────────────────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '16px', marginBottom: '28px' }}>
+        {overviewCards.map((c, i) => (
+          <div key={i} style={{
+            background: c.gradient, borderRadius: '16px', padding: '22px 20px',
+            boxShadow: `0 8px 24px ${c.glow}`,
+            position: 'relative', overflow: 'hidden',
+            transition: 'transform 0.2s, box-shadow 0.2s'
+          }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = `0 16px 40px ${c.glow}`; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = `0 8px 24px ${c.glow}`; }}
+          >
+            <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '90px', height: '90px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.1)', pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', bottom: '-30px', right: '10px', width: '70px', height: '70px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.07)', pointerEvents: 'none' }} />
+            <div style={{ width: '40px', height: '40px', borderRadius: '12px', backgroundColor: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '14px' }}>
+              <c.icon size={18} color="white" />
+            </div>
+            <p style={{ margin: '0 0 6px', fontSize: '12px', color: 'rgba(255,255,255,0.75)', fontWeight: 500 }}>{c.label}</p>
+            <p style={{ margin: '0 0 8px', fontSize: '28px', fontWeight: 800, color: 'white', letterSpacing: '-0.02em' }}>{c.value}</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>
+              <ArrowUpRight size={12} />{c.sub}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Section Label ────────────────────────────────────────── */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+        <Zap size={14} color="#d97706" />
+        <span style={{ fontSize: '11px', fontWeight: 700, color: '#d97706', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Revenue & Financial Flow</span>
+        <div style={{ flex: 1, height: '1px', backgroundColor: '#edddd6' }} />
+      </div>
+
+      {/* ── Financial Cards ──────────────────────────────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '16px', marginBottom: '28px' }}>
+        {financialCards.map((c, i) => (
+          <div key={i} style={{
+            backgroundColor: '#ffffff', borderRadius: '14px', padding: '20px',
+            border: '1px solid #f3ede9', boxShadow: '0 2px 8px rgba(236,91,19,0.06)',
+            transition: 'transform 0.2s, box-shadow 0.2s', position: 'relative', overflow: 'hidden'
+          }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(236,91,19,0.12)'; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(236,91,19,0.06)'; }}
+          >
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: `linear-gradient(90deg, ${c.accent}, ${c.accent}66)`, borderRadius: '14px 14px 0 0' }} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '12px', backgroundColor: c.iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <c.icon size={18} color={c.accent} />
+              </div>
+              <span style={{
+                display: 'inline-flex', alignItems: 'center', gap: '3px',
+                padding: '3px 8px', borderRadius: '999px', fontSize: '11px', fontWeight: 700,
+                backgroundColor: c.positive ? '#dcfce7' : '#fee2e2',
+                color: c.positive ? '#15803d' : '#b91c1c'
+              }}>
+                {c.positive ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />}
+                {c.change.split(' ')[0]}
+              </span>
+            </div>
+            <p style={{ margin: '0 0 4px', fontSize: '12px', color: '#78716c', fontWeight: 500 }}>{c.label}</p>
+            <p style={{ margin: '0 0 4px', fontSize: '24px', fontWeight: 800, color: '#1c1917', letterSpacing: '-0.02em' }}>{c.value}</p>
+            <p style={{ margin: 0, fontSize: '11px', color: '#a8897a' }}>{c.change}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Bottom 3-col ─────────────────────────────────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
+
+        {/* Order Status */}
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '22px', border: '1px solid #f3ede9', boxShadow: '0 2px 8px rgba(236,91,19,0.06)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#1c1917' }}>Order Status</h3>
+            <span style={{ fontSize: '11px', color: P, fontWeight: 600, cursor: 'pointer' }}>View all →</span>
+          </div>
+          {orderStatuses.map((s, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: i < orderStatuses.length - 1 ? '1px solid #faf5f2' : 'none' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: s.color, boxShadow: `0 0 6px ${s.color}88`, flexShrink: 0 }} />
+                <span style={{ fontSize: '13px', color: '#44403c' }}>{s.label}</span>
+              </div>
+              <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: '28px', height: '22px', padding: '0 8px', borderRadius: '999px', backgroundColor: s.bg, color: s.color, fontSize: '12px', fontWeight: 700 }}>
+                {s.count}
+              </span>
             </div>
           ))}
         </div>
 
-        <h1 className="section-title financial-title">Revenue & Financial Flow</h1>
+        {/* User Overview */}
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '22px', border: '1px solid #f3ede9', boxShadow: '0 2px 8px rgba(236,91,19,0.06)', display: 'flex', flexDirection: 'column' }}>
+          <h3 style={{ margin: '0 0 18px', fontSize: '15px', fontWeight: 700, color: '#1c1917' }}>User Overview</h3>
 
-        <div className="financial-cards">
-          {financialData.map((item, index) => (
-            <div key={index} className="card financial-card" style={{ '--gradient-from': item.gradientFrom }}>
-              <h3>{item.title}</h3>
-              <p className="big-number">{item.value}</p>
-              <p className={`change ${item.positive ? 'positive' : 'negative'}`}>{item.change}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="bottom-sections">
-          {/* Order Status */}
-          <div className="bottom-card">
-            <h3>Order Status</h3>
-            {orderStatusData.map((status, index) => (
-              <div key={index} className="status-item">
-                <div className="status-label">
-                  <span className="dot" style={{ '--dot-color': status.color }}></span>
-                  <span>{status.label}</span>
-                </div>
-                <span className="count">{status.count}</span>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+            {[
+              { label: 'Farmers',     value: '25', note: 'New registrations', gradient: `linear-gradient(135deg, ${P}, ${PH})`,    glow: `rgba(236,91,19,0.2)` },
+              { label: 'KYC Pending', value: '6',  note: 'Action required',   gradient: 'linear-gradient(135deg,#dc2626,#b91c1c)', glow: 'rgba(220,38,38,0.2)' },
+            ].map(box => (
+              <div key={box.label} style={{ background: box.gradient, borderRadius: '12px', padding: '16px', boxShadow: `0 4px 16px ${box.glow}`, position: 'relative', overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', top: '-10px', right: '-10px', width: '50px', height: '50px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.1)', pointerEvents: 'none' }} />
+                <p style={{ margin: '0 0 4px', fontSize: '11px', color: 'rgba(255,255,255,0.75)', fontWeight: 600 }}>{box.label}</p>
+                <p style={{ margin: '0 0 2px', fontSize: '30px', fontWeight: 800, color: 'white', letterSpacing: '-0.02em' }}>{box.value}</p>
+                <p style={{ margin: 0, fontSize: '11px', color: 'rgba(255,255,255,0.65)' }}>{box.note}</p>
               </div>
             ))}
           </div>
 
-          {/* User Overview */}
-          <div className="bottom-card user-overview">
-            <h3>User Overview</h3>
-            <div className="user-grid">
-              {/* Farmers - left top */}
-              <div className="user-main-box" style={{ '--user-bg': '#dbeafe' }}>
-                <h4 style={{ color: '#1e40af' }}>Farmers</h4>
-                <p className="user-big">25</p>
-                <p className="user-note">New Registration</p>
+          <div style={{ backgroundColor: SEC, borderRadius: '10px', padding: '12px 14px', marginBottom: '14px' }}>
+            {[{ label: 'Active Agents', value: '87' }, { label: 'New Buyers', value: '21' }].map((row, i) => (
+              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: i === 0 ? '0 0 8px' : '8px 0 0', borderBottom: i === 0 ? `1px solid #edddd6` : 'none' }}>
+                <span style={{ fontSize: '12px', color: '#78716c' }}>{row.label}</span>
+                <span style={{ fontSize: '16px', fontWeight: 800, color: '#1c1917' }}>{row.value}</span>
               </div>
-
-              {/* KYC pending - right top */}
-              <div className="user-main-box" style={{ '--user-bg': '#fee2e2' }}>
-                <h4 style={{ color: '#dc2626' }}>KYC pending</h4>
-                <p className="user-big">6</p>
-                <p className="user-note">Action Required</p>
-              </div>
-
-              {/* Active Agents - full width below, no background card */}
-              <div className="user-main-box">
-                <div className="agents-section">
-                  <div className="agents-left">
-                    <p className="user-note">Active Agents</p>
-                    <p className="user-note">New Buyers</p>
-                  </div>
-                  <div className="agents-right">
-                    <p className="small-count">87</p>
-                    <p className="small-count">21</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="user-actions">
-              <button className="btn-approve">Approve KYC</button>
-              <button className="btn-view">View User</button>
-            </div>
+            ))}
           </div>
 
-          {/* Critical Alerts */}
-          <div className="bottom-card critical-alerts">
-            <h3>Critical Alerts</h3>
-            <div className="alert-box kyc">
-              <p className="alert-title">KYC pending</p>
-              <p className="alert-desc">6</p>
-              <p className="alert-note">Action Required</p>
-            </div>
-            <div className="alert-item">
-              <p>Failed Payments</p>
-              <p>Farmer ID: #12345 Payout</p>
-              <button className="resolve-btn">Resolve</button>
-            </div>
-            <div className="alert-item">
-              <p>Quality Issue</p>
-              <p>Order ID: #12345 flagged for moisture Content</p>
-              <button className="assign-btn">Assign Inspector</button>
-            </div>
+          <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
+            <button onClick={() => navigate(`${base}/agent-kyc-verification`)} style={{
+              flex: 1, padding: '10px', background: `linear-gradient(135deg, ${P}, ${PH})`,
+              color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700,
+              fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+              boxShadow: `0 4px 12px rgba(236,91,19,0.3)`
+            }}>
+              <CheckCircle size={13} /> Approve KYC
+            </button>
+            <button onClick={() => navigate(`${base}/user-management/users-list`)} style={{
+              flex: 1, padding: '10px', backgroundColor: SEC,
+              color: '#6b5c55', border: `1px solid #edddd6`, borderRadius: '10px', fontWeight: 700,
+              fontSize: '12px', cursor: 'pointer'
+            }}>
+              View Users
+            </button>
           </div>
         </div>
+
+        {/* Critical Alerts */}
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '22px', border: '1px solid #f3ede9', boxShadow: '0 2px 8px rgba(236,91,19,0.06)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '18px' }}>
+            <div style={{ width: '28px', height: '28px', borderRadius: '8px', backgroundColor: '#fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <AlertTriangle size={14} color="#dc2626" />
+            </div>
+            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#1c1917' }}>Critical Alerts</h3>
+            <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '20px', height: '20px', borderRadius: '50%', backgroundColor: '#dc2626', color: 'white', fontSize: '10px', fontWeight: 700 }}>3</span>
+          </div>
+
+          <div style={{ background: 'linear-gradient(135deg,#dc2626,#b91c1c)', borderRadius: '12px', padding: '16px', marginBottom: '14px', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', top: '-15px', right: '-15px', width: '60px', height: '60px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.1)', pointerEvents: 'none' }} />
+            <p style={{ margin: '0 0 2px', fontSize: '11px', color: 'rgba(255,255,255,0.75)', fontWeight: 600 }}>KYC PENDING</p>
+            <p style={{ margin: '0 0 2px', fontSize: '36px', fontWeight: 800, color: 'white', letterSpacing: '-0.02em' }}>6</p>
+            <p style={{ margin: 0, fontSize: '11px', color: 'rgba(255,255,255,0.7)' }}>Immediate action required</p>
+          </div>
+
+          {[
+            { title: 'Failed Payment',  sub: 'Farmer ID: #12345 — Payout failed',          btnLabel: 'Resolve',          btnColor: '#dc2626', btnBg: '#fee2e2' },
+            { title: 'Quality Issue',   sub: 'Order #12345 flagged for moisture content',   btnLabel: 'Assign Inspector', btnColor: '#d97706', btnBg: '#fef3c7' },
+          ].map((alert, i) => (
+            <div key={i} style={{ padding: '12px 0', borderBottom: i === 0 ? '1px solid #faf5f2' : 'none' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                <div>
+                  <p style={{ margin: '0 0 2px', fontSize: '13px', fontWeight: 700, color: '#1c1917' }}>{alert.title}</p>
+                  <p style={{ margin: 0, fontSize: '11px', color: '#78716c', lineHeight: 1.4 }}>{alert.sub}</p>
+                </div>
+                <button style={{ padding: '5px 12px', backgroundColor: alert.btnBg, color: alert.btnColor, border: `1px solid ${alert.btnColor}33`, borderRadius: '6px', fontSize: '11px', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                  {alert.btnLabel}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
       </div>
-    </>
+    </div>
   );
 };
 

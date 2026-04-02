@@ -1,8 +1,8 @@
-// AddPaymentGateway.jsx
-import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Plus, Edit, Trash2, CreditCard } from 'lucide-react';
 import { toast } from 'react-toastify';
 import paymentService from '../../../services/paymentService';
+import { T, PageHeader, Card, Btn, GhostBtn, Badge, DataTable, Td, Tr, EmptyState, Modal, ConfirmDialog, FormField, InputField, ModalActions, IconBtn } from '../../components/AdminUI';
 
 const AddPaymentGateway = () => {
   const [gateways, setGateways] = useState([]);
@@ -13,387 +13,122 @@ const AddPaymentGateway = () => {
   const [deleteItem, setDeleteItem] = useState(null);
   const [gatewayName, setGatewayName] = useState('');
 
-  useEffect(() => {
-    fetchGateways();
-  }, []);
+  useEffect(() => { fetchGateways(); }, []);
 
   const fetchGateways = async () => {
     try {
       setLoading(true);
-      const response = await paymentService.getGateways();
-      if (response.status === 1) {
-        setGateways(response.result || []);
-      }
-    } catch (error) {
-      console.error('Error fetching gateways:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Failed to fetch gateways';
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
+      const res = await paymentService.getGateways();
+      if (res.status === 1) setGateways(res.result || []);
+    } catch (e) { toast.error(e.response?.data?.message || 'Failed to fetch gateways'); }
+    finally { setLoading(false); }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
-      const gatewayData = {
-        gatewayId: editingGateway ? editingGateway.gatewayId : 0,
-        gatewayName: gatewayName,
-        isActive: true
-      };
-      
-      const response = await paymentService.manageGateway(gatewayData);
-      
-      if (response.status === 1) {
-        toast.success(editingGateway ? 'Gateway updated successfully!' : 'Gateway added successfully!');
-        setGatewayName('');
-        setShowModal(false);
-        setEditingGateway(null);
-        fetchGateways();
-      } else {
-        toast.error('Failed to save gateway');
-      }
-    } catch (error) {
-      console.error('Error saving gateway:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Failed to save gateway';
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleEdit = (gateway) => {
-    setEditingGateway(gateway);
-    setGatewayName(gateway.gatewayName);
-    setShowModal(true);
-  };
-
-  const handleDelete = (gateway) => {
-    setDeleteItem(gateway);
-    setShowDeleteConfirm(true);
+      const res = await paymentService.manageGateway({ gatewayId: editingGateway?.gatewayId || 0, gatewayName, isActive: true });
+      if (res.status === 1) {
+        toast.success(editingGateway ? 'Gateway updated!' : 'Gateway added!');
+        setGatewayName(''); setShowModal(false); setEditingGateway(null); fetchGateways();
+      } else toast.error('Failed to save gateway');
+    } catch (e) { toast.error(e.response?.data?.message || 'Failed to save gateway'); }
+    finally { setLoading(false); }
   };
 
   const handleDeleteConfirm = async () => {
     try {
       setLoading(true);
-      const response = await paymentService.deleteGateway(deleteItem.gatewayId);
-      
-      if (response.status === 1) {
-        toast.success('Gateway deleted successfully!');
-        fetchGateways();
-      } else {
-        toast.error('Failed to delete gateway');
-      }
-    } catch (error) {
-      console.error('Error deleting gateway:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Failed to delete gateway';
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-      setShowDeleteConfirm(false);
-      setDeleteItem(null);
-    }
+      const res = await paymentService.deleteGateway(deleteItem.gatewayId);
+      if (res.status === 1) { toast.success('Gateway deleted!'); fetchGateways(); }
+      else toast.error('Failed to delete gateway');
+    } catch (e) { toast.error(e.response?.data?.message || 'Failed to delete gateway'); }
+    finally { setLoading(false); setShowDeleteConfirm(false); setDeleteItem(null); }
   };
 
-  const closeModal = () => {
-    setShowModal(false);
-    setEditingGateway(null);
-    setGatewayName('');
-  };
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
+  const formatDate = (d) => new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 
   return (
-    <>
-      <style>{`
-        .payment-gateway-page {
-          padding: 24px 32px;
-          background: #f5f7fa;
-          min-height: 100vh;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    <div>
+      <PageHeader
+        title="Payment Gateways"
+        subtitle="Configure and manage your payment gateways"
+        actions={
+          <Btn onClick={() => { setEditingGateway(null); setGatewayName(''); setShowModal(true); }}>
+            <Plus size={14} /> Add Gateway
+          </Btn>
         }
+      />
 
-        .header-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 32px;
-        }
-
-        .page-title {
-          font-size: 28px;
-          font-weight: 700;
-          color: #1a1a1a;
-          margin: 0;
-        }
-
-        .page-subtitle {
-          color: #64748b;
-          font-size: 15px;
-          margin: 4px 0 0 0;
-        }
-
-        .add-btn {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          padding: 10px 20px;
-          background: rgba(75, 175, 71, 1);
-          color: white;
-          border: none;
-          border-radius: 8px;
-          font-size: 15px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: background 0.2s;
-        }
-
-        .add-btn:hover {
-          background: rgba(65, 155, 61, 1);
-        }
-
-        .table-container {
-          background: white;
-          border-radius: 12px;
-          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-          overflow: hidden;
-        }
-
-        .table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-
-        .table th,
-        .table td {
-          padding: 16px 20px;
-          text-align: left;
-          border-bottom: 1px solid #e5e7eb;
-          font-size: 14px;
-          color: #334155;
-        }
-
-        .table th {
-          background: #f8fafc;
-          font-weight: 600;
-          color: #475569;
-        }
-
-        .no-data {
-          padding: 80px 24px;
-          text-align: center;
-          color: #64748b;
-          font-size: 15px;
-        }
-
-        .no-data-title {
-          font-size: 18px;
-          font-weight: 600;
-          color: #334155;
-          margin: 0 0 8px 0;
-        }
-
-        .no-data-subtitle {
-          margin: 0;
-          font-size: 15px;
-        }
-
-        .status-badge {
-          padding: 4px 12px;
-          border-radius: 999px;
-          font-size: 13px;
-          font-weight: 600;
-          background: #d1fae5;
-          color: #065f46;
-        }
-
-        .action-icons {
-          display: flex;
-          gap: 8px;
-        }
-
-        .action-btn {
-          background: none;
-          border: none;
-          cursor: pointer;
-          padding: 6px;
-          border-radius: 4px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .edit-btn {
-          color: #3b82f6;
-        }
-
-        .edit-btn:hover {
-          background: #eff6ff;
-        }
-
-        .delete-btn {
-          color: #ef4444;
-        }
-
-        .delete-btn:hover {
-          background: #fef2f2;
-        }
-      `}</style>
-
-      <div className="payment-gateway-page">
-        <div className="header-row">
-          <div>
-            <h1 className="page-title">Payment Gateway Setup</h1>
-            <p className="page-subtitle">
-              Configure and manage your payment gateways
-            </p>
-          </div>
-
-          <button className="add-btn" onClick={() => setShowModal(true)}>
-            <Plus size={18} />
-            Add Payment Gateway
-          </button>
-        </div>
-
-        <div className="table-container">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Gateway Name</th>
-                <th>Status</th>
-                <th>Created At</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {gateways.length === 0 ? (
-                <tr>
-                  <td colSpan={5}>
-                    <div className="no-data">
-                      <h3 className="no-data-title">No Gateways Configured</h3>
-                      <p className="no-data-subtitle">
-                        Add your first payment gateway to start accepting payments
-                      </p>
-                    </div>
-                  </td>
-                </tr>
-              ) : (
-                gateways.map((gateway) => (
-                  <tr key={gateway.gatewayId}>
-                    <td>{gateway.gatewayName}</td>
-                    <td>
-                      <span className="status-badge">
-                        {gateway.isActive === 1 ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
-                    <td>{formatDate(gateway.createdAt)}</td>
-                    <td>
-                      <div className="action-icons">
-                        <button 
-                          className="action-btn edit-btn"
-                          onClick={() => handleEdit(gateway)}
-                        >
-                          <Edit size={16} />
-                        </button>
-                        <button 
-                          className="action-btn delete-btn"
-                          onClick={() => handleDelete(gateway)}
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Add/Edit Gateway Modal */}
-        {showModal && (
-          <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1">
-            <div className="modal-dialog modal-dialog-centered">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">
-                    {editingGateway ? 'Edit Payment Gateway' : 'Add Payment Gateway'}
-                  </h5>
-                  <button type="button" className="btn-close" onClick={closeModal}></button>
-                </div>
-                
-                <form onSubmit={handleSubmit}>
-                  <div className="modal-body">
-                    <div className="mb-3">
-                      <label className="form-label">Gateway Name *</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Enter Gateway Name (e.g., Razorpay, PayU)"
-                        value={gatewayName}
-                        onChange={(e) => setGatewayName(e.target.value)}
-                        required
-                        minLength="2"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="modal-footer">
-                    <button type="button" className="btn btn-secondary" onClick={closeModal}>
-                      Cancel
-                    </button>
-                    <button type="submit" className="btn btn-success" disabled={loading || !gatewayName}>
-                      {loading ? 'Saving...' : editingGateway ? 'Update' : 'Save'}
-                    </button>
-                  </div>
-                </form>
-              </div>
+      {/* Stats row */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px', marginBottom: '24px' }}>
+        {[
+          { label: 'Total Gateways', value: gateways.length, gradient: 'linear-gradient(135deg,#6366f1,#4f46e5)', glow: 'rgba(99,102,241,0.3)' },
+          { label: 'Active', value: gateways.filter(g => g.isActive === 1).length, gradient: 'linear-gradient(135deg,#10b981,#059669)', glow: 'rgba(16,185,129,0.3)' },
+          { label: 'Inactive', value: gateways.filter(g => g.isActive !== 1).length, gradient: 'linear-gradient(135deg,#f59e0b,#d97706)', glow: 'rgba(245,158,11,0.3)' },
+        ].map((s, i) => (
+          <div key={i} style={{ background: s.gradient, borderRadius: '14px', padding: '20px', boxShadow: `0 8px 24px ${s.glow}`, position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', top: '-15px', right: '-15px', width: '60px', height: '60px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.1)', pointerEvents: 'none' }} />
+            <div style={{ width: '34px', height: '34px', borderRadius: '10px', backgroundColor: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
+              <CreditCard size={16} color="white" />
             </div>
+            <p style={{ margin: '0 0 4px', fontSize: T.fontSm, color: 'rgba(255,255,255,0.75)', fontWeight: 500 }}>{s.label}</p>
+            <p style={{ margin: 0, fontSize: '28px', fontWeight: 800, color: 'white' }}>{s.value}</p>
           </div>
-        )}
-        {showModal && <div className="modal-backdrop fade show"></div>}
-
-        {/* Delete Confirmation Modal */}
-        {showDeleteConfirm && deleteItem && (
-          <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1">
-            <div className="modal-dialog modal-dialog-centered">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">Confirm Delete</h5>
-                  <button type="button" className="btn-close" onClick={() => setShowDeleteConfirm(false)}></button>
-                </div>
-                <div className="modal-body text-center">
-                  <p>Are you sure you want to delete <strong>{deleteItem.gatewayName}</strong>? This action cannot be undone.</p>
-                </div>
-                <div className="modal-footer justify-content-center">
-                  <button 
-                    className="btn btn-secondary" 
-                    onClick={() => setShowDeleteConfirm(false)}
-                  >
-                    Cancel
-                  </button>
-                  <button 
-                    className="btn btn-danger" 
-                    onClick={handleDeleteConfirm}
-                    disabled={loading}
-                  >
-                    {loading ? 'Deleting...' : 'Delete'}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-        {showDeleteConfirm && <div className="modal-backdrop fade show"></div>}
+        ))}
       </div>
-    </>
+
+      <Card noPad>
+        <DataTable headers={['Gateway Name', 'Status', 'Created At', 'Actions']} loading={loading} empty={gateways.length === 0}>
+          {gateways.map(gw => (
+            <Tr key={gw.gatewayId}>
+              <Td>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <CreditCard size={16} color="white" />
+                  </div>
+                  <span style={{ fontWeight: 700, color: T.text }}>{gw.gatewayName}</span>
+                </div>
+              </Td>
+              <Td><Badge variant={gw.isActive === 1 ? 'success' : 'neutral'}>{gw.isActive === 1 ? 'Active' : 'Inactive'}</Badge></Td>
+              <Td style={{ color: T.textMuted }}>{formatDate(gw.createdAt)}</Td>
+              <Td>
+                <div style={{ display: 'flex', gap: '4px' }}>
+                  <IconBtn onClick={() => { setEditingGateway(gw); setGatewayName(gw.gatewayName); setShowModal(true); }} title="Edit" hoverColor={T.primary}><Edit size={15} /></IconBtn>
+                  <IconBtn onClick={() => { setDeleteItem(gw); setShowDeleteConfirm(true); }} title="Delete" hoverColor={T.danger}><Trash2 size={15} /></IconBtn>
+                </div>
+              </Td>
+            </Tr>
+          ))}
+        </DataTable>
+      </Card>
+
+      {/* Add/Edit Modal */}
+      <Modal open={showModal} onClose={() => { setShowModal(false); setEditingGateway(null); setGatewayName(''); }} title={editingGateway ? 'Edit Payment Gateway' : 'Add Payment Gateway'} width="460px">
+        <form onSubmit={handleSubmit}>
+          <FormField label="Gateway Name *">
+            <InputField value={gatewayName} onChange={e => setGatewayName(e.target.value)} placeholder="e.g. Razorpay, PayU, Stripe" required minLength={2} />
+          </FormField>
+          <ModalActions>
+            <GhostBtn type="button" onClick={() => { setShowModal(false); setEditingGateway(null); setGatewayName(''); }}>Cancel</GhostBtn>
+            <Btn type="submit" disabled={loading || !gatewayName}>{loading ? 'Saving...' : editingGateway ? 'Update' : 'Add Gateway'}</Btn>
+          </ModalActions>
+        </form>
+      </Modal>
+
+      {/* Delete Confirm */}
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        onClose={() => { setShowDeleteConfirm(false); setDeleteItem(null); }}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Gateway"
+        message={`Are you sure you want to delete "${deleteItem?.gatewayName}"? This action cannot be undone.`}
+        confirmLabel="Delete"
+        confirmColor={T.danger}
+        loading={loading}
+      />
+    </div>
   );
 };
 

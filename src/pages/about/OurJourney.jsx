@@ -29,19 +29,18 @@ const OurJourney = () => {
             style={{
               color: '#EC5609',
               fontSize: '2.5rem',
-              textTransform: 'uppercase',
               letterSpacing: '0.05em',
               marginBottom: '0.5rem',
             }}
           >
-            OUR JOURNEY
+            Our Journey
           </h2>
 
           <h3
             className="fw-bold"
             style={{
               color: '#24231D',
-              fontSize: '2.1rem',
+              fontSize: '1.5rem',
               marginBottom: '1.5rem',
             }}
           >

@@ -29,8 +29,6 @@ import AgentItemDetails from "./AgentDashboard/pages/BuyFromFarmers/AgentItemDet
 import BuyFromFarmers from './AgentDashboard/pages/BuyFromFarmers/BuyFromFarmers';
 import AgentWishlist from './AgentDashboard/pages/Wishlist/AgentWishlist';
 import AgentCheckout from './AgentDashboard/pages/Checkout/AgentCheckout';
-import PaymentFallback from './AgentDashboard/pages/Checkout/PaymentFallback';
-import InvoiceDetails from './AgentDashboard/pages/Checkout/InvoiceDetails';
 import AgentOrderPlaced from './AgentDashboard/pages/Checkout/AgentOrderPlaced';
 import Dashboard from './AgentDashboard/pages/Dashboard/Dashboard';
 import PlaceOrders from './AgentDashboard/pages/PlaceOrders/PlaceOrders';
@@ -90,9 +88,8 @@ function App() {
           {/* Public/auth routes without any Layout (no navbar) */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/otp-verification" element={<OtpVerification />} />
-          <Route path="/verified-success" element={<VerifiedSuccess />} />
-
+          {/* <Route path="/otp-verification" element={<OtpVerification />} />
+          <Route path="/verified-success" element={<VerifiedSuccess />} /> */}
           {/* AGRICULTURE WEBSITE routes wrapped with Layout (agriculture navbar) */}
           <Route element={<Layout />}>
             <Route path="/" element={<MainPage />} />
@@ -117,8 +114,6 @@ function App() {
             <Route path="cart" element={<AgentCart />} />
             <Route path="wishlist" element={<AgentWishlist />} />
             <Route path="checkout" element={<AgentCheckout />} />
-            <Route path="payment-fallback" element={<PaymentFallback />} />
-            <Route path="invoice-details" element={<InvoiceDetails />} />
             <Route path="order-placed" element={<AgentOrderPlaced />} />
             <Route path="place-orders" element={<PlaceOrders />} />
             <Route path="vendor-payments" element={<VendorPayments />} />
@@ -131,10 +126,10 @@ function App() {
             <Route path="products/add-category" element={<AddProductCategory />} />
             <Route path="products/add-product" element={<AddProducts />} />
 
-            {/* <Route path="place-orders" element={<PlaceOrders />} /> */}
-            {/* <Route path="vendor-payments" element={<VendorPayments />} /> */}
-            {/* <Route path="settlements" element={<Settlements />} /> */}
-            {/* <Route path="reports" element={<Reports />} /> */}
+            <Route path="place-orders" element={<PlaceOrders />} />
+            <Route path="vendor-payments" element={<VendorPayments />} />
+            <Route path="settlements" element={<Settlements />} />
+            <Route path="reports" element={<Reports />} />
           </Route>
           {/* ADMIN DASHBOARD routes wrapped with AdminLayout */}
             <Route path="/admin" element={<AdminLayout />}>
@@ -197,51 +192,6 @@ function App() {
             <Route path="hold-funds" element={<HoldFunds />} />
             <Route path="add-wallet" element={<AddWallet />} />
             <Route path="confirm-wallet-credit" element={<ConfirmWalletCredit />} />
-          </Route>
-
-          {/* SUPER DISTRIBUTOR routes */}
-          <Route path="/super-distributor" element={<AdminLayout />}>
-            <Route index element={<AdminDashboard />} />
-            <Route path="agent-management/add-agent" element={<CreateAgent />} />
-            <Route path="agent-management/agents-list" element={<AgentsList />} />
-            <Route path="user-management/create-user" element={<CreateUser />} />
-            <Route path="user-management/users-list" element={<UsersList />} />
-            <Route path="reports/hold-transactions" element={<HoldTransactions />} />
-            <Route path="reports/transaction-reports" element={<AdminReports />} />
-            <Route path="user-management/user-service-settings" element={<UserServiceSettings />} />
-            <Route path="user-management/add-wallet" element={<AddWallet />} />
-            <Route path="user-management/hold-funds" element={<HoldFunds />} />
-            <Route path="reports" element={<AdminReports />} />
-          </Route>
-
-          {/* MASTER DISTRIBUTOR routes */}
-          <Route path="/master-distributor" element={<AdminLayout />}>
-            <Route index element={<AdminDashboard />} />
-            <Route path="agent-management/add-agent" element={<CreateAgent />} />
-            <Route path="agent-management/agents-list" element={<AgentsList />} />
-            <Route path="user-management/create-user" element={<CreateUser />} />
-            <Route path="user-management/users-list" element={<UsersList />} />
-            <Route path="reports/hold-transactions" element={<HoldTransactions />} />
-            <Route path="reports/transaction-reports" element={<AdminReports />} />
-            <Route path="user-management/user-service-settings" element={<UserServiceSettings />} />
-            <Route path="user-management/add-wallet" element={<AddWallet />} />
-            <Route path="user-management/hold-funds" element={<HoldFunds />} />
-            <Route path="reports" element={<AdminReports />} />
-          </Route>
-
-          {/* DISTRIBUTOR routes */}
-          <Route path="/distributor" element={<AdminLayout />}>
-            <Route index element={<AdminDashboard />} />
-            <Route path="agent-management/add-agent" element={<CreateAgent />} />
-            <Route path="agent-management/agents-list" element={<AgentsList />} />
-            <Route path="user-management/create-user" element={<CreateUser />} />
-            <Route path="user-management/users-list" element={<UsersList />} />
-            <Route path="reports/hold-transactions" element={<HoldTransactions />} />
-            <Route path="reports/transaction-reports" element={<AdminReports />} />
-            <Route path="user-management/user-service-settings" element={<UserServiceSettings />} />
-            <Route path="user-management/add-wallet" element={<AddWallet />} />
-            <Route path="user-management/hold-funds" element={<HoldFunds />} />
-            <Route path="reports" element={<AdminReports />} />
           </Route>
           </Routes>
         </RouteGuard>

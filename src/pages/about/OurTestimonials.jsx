@@ -8,6 +8,7 @@ import line from '../../assets/about/line.png';
 import farmerTestimonial from '../../assets/MainPage/testimonials/farmer-testimonial.jpg';
 import agentTestimonial from '../../assets/MainPage/testimonials/agent-testimonial.jpg';
 import customerTestimonial from '../../assets/MainPage/testimonials/customer-testimonial.jpg';
+import colors from '../../styles/colors';
 
 const OurTestimonials = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -156,8 +157,8 @@ const OurTestimonials = () => {
             transform: 'translateY(-50%)',
             width: '50px',
             height: '50px',
-            border: '2px solid #4BAF47',
-            color: '#4BAF47',
+            border: `2px solid ${colors.primary}`,
+            color: colors.primary,
             zIndex: 20
           }}
         >
@@ -172,8 +173,8 @@ const OurTestimonials = () => {
             transform: 'translateY(-50%)',
             width: '50px',
             height: '50px',
-            border: '2px solid #4BAF47',
-            color: '#4BAF47',
+            border: `2px solid ${colors.primary}`,
+            color: colors.primary,
             zIndex: 20
           }}
         >
@@ -192,7 +193,7 @@ const OurTestimonials = () => {
                 height: '12px',
                 borderRadius: '50%',
                 border: 'none',
-                backgroundColor: index === currentIndex ? '#4BAF47' : '#ccc'
+                backgroundColor: index === currentIndex ? colors.primary : '#ccc'
               }}
             />
           ))}

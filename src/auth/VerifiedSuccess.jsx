@@ -9,7 +9,7 @@ const VerifiedSuccess = () => {
   }; 
 
   return (
-    <div className="auth-container" style={{ backgroundImage: `url(${styles.backgroundImage})` }}>
+    <div className="auth-container">
       <div className={styles.card}>
         <div className="success-content">
           <svg 

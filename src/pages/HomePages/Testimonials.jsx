@@ -12,17 +12,17 @@ const testimonials = [
   },
   {
     quote:
-      '"Ordering from local distributors was a nightmare. Now I do it all from my phone at 11 PM and get my stock the next afternoon."',
-    author: 'Ram Kumar',
-    initials: 'RK',
-    store: 'Rani General Store, Mumbai',
+      '"Managing inventory used to take a lot of time. With this platform, I can place orders anytime and get deliveries quickly without calling multiple suppliers."',
+    author: 'Suresh Patel',
+    initials: 'SP',
+    store: 'Patel Kirana Store, Ahmedabad',
   },
   {
     quote:
-      '"Ordering from local distributors was a nightmare. Now I do it all from my phone at 11 PM and get my stock the next afternoon."',
-    author: 'Ram Kumar',
+      '"Before this, I had to depend on distributors’ schedules. Now I order whenever I want and my store never runs out of products."',
+    author: 'Vikram Singh',
     initials: 'RK',
-    store: 'Rani General Store, Mumbai',
+    store: 'Singh Grocery Store, Jaipur',
   },
 ];
 
@@ -42,7 +42,7 @@ const Testimonials = () => {
             className="fw-bold"
             style={{
               color: '#EC5609',
-              fontSize: '2.5rem',
+              fontSize: '2rem',
               marginBottom: '0.75rem',
             }}
           >
@@ -51,7 +51,7 @@ const Testimonials = () => {
           <p
             style={{
               color: '#555555',
-              fontSize: '1.25rem',
+              fontSize: '1rem',
               fontWeight: 500,
               textAlign:"center"
             }}

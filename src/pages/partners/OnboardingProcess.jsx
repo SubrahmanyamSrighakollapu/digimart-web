@@ -45,7 +45,7 @@ const OnboardingProcess = () => {
             className="fw-bold"
             style={{
               color: '#EC5609',
-              fontSize: '2.5rem',
+              fontSize: '2rem',
               marginBottom: '0.75rem',
             }}
           >
@@ -58,6 +58,7 @@ const OnboardingProcess = () => {
               color: '#555555',
               maxWidth: '720px',
               lineHeight: '1.6',
+              textAlign:'center'
             }}
           >
             From application to distribution in less than 2 weeks
@@ -89,11 +90,11 @@ const OnboardingProcess = () => {
                 <div
                   className="d-flex align-items-center justify-content-center rounded-circle mb-4 flex-shrink-0"
                   style={{
-                    width: '110px',
-                    height: '110px',
+                    width: '70px',
+                    height: '70px',
                     backgroundColor: '#EC5609',
                     color: '#ffffff',
-                    fontSize: '2.8rem',
+                    fontSize: '2rem',
                     fontWeight: 700,
                     lineHeight: 1,
                   }}
@@ -107,7 +108,7 @@ const OnboardingProcess = () => {
                   style={{
                     color: '#24231D',
                     fontSize: '1.55rem',
-                    minHeight: '50px',
+                    minHeight: '20px',
                   }}
                 >
                   {step.title}
@@ -120,6 +121,7 @@ const OnboardingProcess = () => {
                     fontSize: '1.05rem',
                     lineHeight: '1.65',
                     marginBottom: 0,
+                    textAlign:'center'
                   }}
                 >
                   {step.description}

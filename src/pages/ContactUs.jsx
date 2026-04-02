@@ -1,183 +1,171 @@
-import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
+// src/components/ContactUs.jsx
 
-import ContactImg from "../assets/contact/Contact_img.png";
-import BackImg from "../assets/contact/back_img.png";
+import React from 'react';
 
 const ContactUs = () => {
   return (
-    <>
+    <div className="container my-5">
       <div
+        className="rounded-4 overflow-hidden shadow-lg"
         style={{
-          backgroundImage: `url(${ContactImg})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          height: "280px",
-          position: "relative",
-          color: "#fff",
+          backgroundColor: '#ffffff',
+          border: '1px solid #e0e0e0',
+          maxWidth: '1100px',
+          margin: '0 auto',
         }}
       >
-        <div
-          className="d-flex flex-column justify-content-center align-items-center h-100"
-          style={{ background: "rgba(0,0,0,0.45)" }}
-        >
-          <small className="text-uppercase">Home / Contact</small>
-          <h1 className="fw-bold">Contact</h1>
-        </div>
-      </div>
+        <div className="row g-0">
+          {/* Left - Form Section */}
+          <div className="col-lg-6 p-5">
+            <h2 className="fw-bold mb-4" style={{ fontSize: '2.4rem' }}>
+              Get in <span style={{ color: '#EC5609' }}>Touch</span>
+            </h2>
 
-      <div className="container my-5">
-        <div className="row g-4 justify-content-center">
-          <div className="col-md-4">
-            <div
-              className="p-4 text-white rounded text-center h-100 d-flex flex-column justify-content-center"
-              style={{ background: "#4CAF50", minHeight: "200px" }}
-            >
-              <h4 className="fw-bold mb-3" style={{ fontSize: "1.5rem", letterSpacing: "0.5px", color: "black" }}>About</h4>
-              <p className="mb-0" style={{ 
-                fontSize: "1rem", 
-                lineHeight: "1.6", 
-                fontWeight: "400",
-                color: "black"
-              }}>
-                Fresh, naturally grown produce without chemicals or harmful additives. 
-                Connecting farmers directly with consumers for sustainable agriculture.
-              </p>
-            </div>
-          </div>
+            <p className="text-muted mb-5" style={{ fontSize: '1.1rem', lineHeight: '1.7' }}>
+              Have questions about a property or need assistance? We are here to help
+              you find your dream home.
+            </p>
 
-          <div className="col-md-4">
-            <div
-              className="p-4 text-white rounded text-center h-100 d-flex flex-column justify-content-center"
-              style={{ background: "#C5D63C", minHeight: "200px" }}
-            >
-              <h4 className="fw-bold mb-3" style={{ fontSize: "1.5rem", letterSpacing: "0.5px", color: "black" }}>Contact</h4>
-              <div className="d-flex flex-column gap-2">
-                <p className="mb-0" style={{ fontSize: "1.1rem", fontWeight: "500", color: "black" }}>+91 9581906060</p>
-                <p className="mb-0" style={{ fontSize: "1rem", fontWeight: "400", color: "black" }}>support@totalneeds.in</p>
-                <p className="mb-0" style={{ 
-                  fontSize: "0.95rem", 
-                  fontWeight: "400",
-                  color: "black",
-                  marginTop: "8px"
-                }}>Mon – Fri: 7:00 am – 6:00 pm</p>
+            <form>
+              <div className="mb-4">
+                <label className="form-label fw-medium">Name *</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Name *"
+                  required
+                  style={{
+                    height: '50px',
+                    borderRadius: '8px',
+                    border: '1px solid #ced4da',
+                    padding: '0 1.25rem',
+                  }}
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="form-label fw-medium">Email</label>
+                <input
+                  type="email"
+                  className="form-control"
+                  placeholder="Email"
+                  style={{
+                    height: '50px',
+                    borderRadius: '8px',
+                    border: '1px solid #ced4da',
+                    padding: '0 1.25rem',
+                  }}
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="form-label fw-medium">Phone number *</label>
+                <input
+                  type="tel"
+                  className="form-control"
+                  placeholder="Phone number *"
+                  required
+                  style={{
+                    height: '50px',
+                    borderRadius: '8px',
+                    border: '1px solid #ced4da',
+                    padding: '0 1.25rem',
+                  }}
+                />
+              </div>
+
+              <div className="mb-5">
+                <label className="form-label fw-medium">How did you find us?</label>
+                <select
+                  className="form-select"
+                  style={{
+                    height: '50px',
+                    borderRadius: '8px',
+                    border: '1px solid #ced4da',
+                    padding: '0 1.25rem',
+                  }}
+                >
+                  <option value="">Select</option>
+                  <option>Google</option>
+                  <option>Friend / Family</option>
+                  <option>Social Media</option>
+                  <option>Advertisement</option>
+                  <option>Other</option>
+                </select>
+              </div>
+
+              <button
+                type="submit"
+                className="btn text-white fw-semibold w-100"
+                style={{
+                  backgroundColor: '#EC5609',
+                  height: '52px',
+                  fontSize: '1.1rem',
+                  borderRadius: '8px',
+                  border: 'none',
+                }}
+              >
+                SEND
+              </button>
+            </form>
+
+            {/* Contact Info at Bottom */}
+            <div className="mt-5 pt-4 border-top">
+              <div className="d-flex align-items-center mb-3">
+                <span style={{ fontSize: '1.4rem', color: '#EC5609', marginRight: '12px' }}>☎</span>
+                <div>
+                  <small className="text-muted d-block">PHONE</small>
+                  <span style={{ color: '#EC5609', fontWeight: 600 }}>
+                    +91 9652283222
+                  </span>
+                </div>
+              </div>
+
+              <div className="d-flex align-items-center">
+                <span style={{ fontSize: '1.4rem', color: '#EC5609', marginRight: '12px' }}>✉</span>
+                <div>
+                  <small className="text-muted d-block">EMAIL</small>
+                  <span style={{ color: '#EC5609', fontWeight: 600 }}>
+                    digimart.com
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="col-md-4">
-            <div
-              className="p-4 text-white rounded text-center h-100 d-flex flex-column justify-content-center"
-              style={{ background: "#F2C94C", minHeight: "200px" }}
-            >
-              <h4 className="fw-bold mb-3" style={{ fontSize: "1.5rem", letterSpacing: "0.5px", color: "black" }}>Address</h4>
-              <p className="mb-0" style={{ 
-                fontSize: "1rem", 
-                lineHeight: "1.5", 
-                fontWeight: "400",
-                color: "black"
-              }}>
-                #405, ALLURI TRADE CENTRE<br />
-                BHAGYANAGAR COLONY KUKATPALLY<br />
-                HYDERABAD 500072
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="container mb-5">
-        <div className="row g-4 align-items-stretch">
-          <div className="col-lg-6">
+          {/* Right - Map Section */}
+          <div className="col-lg-6 bg-dark position-relative">
             <iframe
-              title="Hyderabad Map"
-              src="https://www.google.com/maps?q=ALLURI+TRADE+CENTRE+BHAGYANAGAR+COLONY+KUKATPALLY+HYDERABAD&output=embed"
+              title="Company Location"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.927!2d78.400!3d17.484!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTfCsDI5JzAyLjQiTiA3OMKwMjQnMDAuMCJF!5e0!3m2!1sen!2sin!4v1690000000000"
               width="100%"
               height="100%"
-              style={{
-                border: 0,
-                minHeight: "360px",
-                borderRadius: "8px",
-              }}
+              style={{ border: 0, filter: 'grayscale(30%)' }}
+              allowFullScreen=""
               loading="lazy"
-            />
-          </div>
-          <div className="col-lg-6">
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
+
+            {/* Optional overlay pin (you can customize or remove) */}
             <div
-              className="p-4 rounded h-100"
-              style={{
-                backgroundImage: `url(${BackImg})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
+              className="position-absolute top-50 start-50 translate-middle"
+              style={{ zIndex: 2 }}
             >
-              <small className="text-success fw-semibold">Contact us</small>
-              <h3 className="fw-bold mb-4">Write a Message</h3>
-
-              <form>
-                <div className="row g-3 mb-3">
-                  <div className="col-md-6">
-                    <input
-                      type="text"
-                      placeholder="Name"
-                      className="form-control"
-                      style={{
-                        height: "48px",
-                        borderRadius: "6px",
-                        border: "1px solid #e5e5e5",
-                        backgroundColor: "#ffffff",
-                        fontSize: "14px",
-                      }}
-                    />
-                  </div>
-
-                  <div className="col-md-6">
-                    <input
-                      type="email"
-                      placeholder="Email Address"
-                      className="form-control"
-                      style={{
-                        height: "48px",
-                        borderRadius: "6px",
-                        border: "1px solid #e5e5e5",
-                        backgroundColor: "#ffffff",
-                        fontSize: "14px",
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div className="mb-4">
-                  <textarea
-                    rows="4"
-                    placeholder="Write a Message"
-                    className="form-control"
-                    style={{
-                      borderRadius: "6px",
-                      border: "1px solid #e5e5e5",
-                      backgroundColor: "#ffffff",
-                      fontSize: "14px",
-                      resize: "none",
-                    }}
-                  />
-                </div>
-
-                <button
-                  className="btn btn-success"
-                  style={{
-                    height: "42px",
-                    padding: "0 24px",
-                    fontSize: "14px",
-                  }}
-                >
-                  Send a Message
-                </button>
-              </form>
+              <div
+                style={{
+                  width: '48px',
+                  height: '48px',
+                  backgroundColor: '#EC5609',
+                  borderRadius: '50%',
+                  border: '6px solid white',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+                }}
+              />
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

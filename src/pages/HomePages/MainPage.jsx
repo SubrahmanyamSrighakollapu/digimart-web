@@ -1,22 +1,23 @@
 // HomePages/MainPage.jsx
 import BusinessAsAgent from "./BusinessAsAgent";
-import ExploreProjects from "./ExploreProjects";
-import OurFarmBenefits from "./OurFarmBenefits";
-import OurIntroduction from "./OurIntroduction";
 import QualityProducts from "./QualityProducts";
-import WelcomeAgri from "./WelcomeAgri";
-import WhatWeOffer from "./WhatWeOffer";
+import colors from '../../styles/colors';
+import Hero from "./Hero";
+import WhyChooseUs from "./WhyChooseUs";
+import ShopByCategory from "./ShopByCategory";
+import ThreeSimpleSteps from "./ThreeSimpleSteps";
+import Testimonials from "./Testimonials";
 
 const MainPage = () => {
   return (
     <div style={styles.container}>
       {/* Navbar is fixed in Layout; render sections in normal flow */}
-      <WelcomeAgri />
-      <OurIntroduction />
-      <WhatWeOffer />
+      <Hero />
+      <WhyChooseUs />
+      <ShopByCategory />
+      <ThreeSimpleSteps/>
       <QualityProducts />
-      <ExploreProjects />
-      <OurFarmBenefits />
+      <Testimonials />
       <BusinessAsAgent />
     </div>
   );
@@ -26,7 +27,7 @@ const styles = {
   container: {
     width: '100%',
     minHeight: 'auto',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.bgWhite,
   },
 };
 

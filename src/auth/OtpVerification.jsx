@@ -150,7 +150,7 @@ const OtpVerification = () => {
   };
 
   return (
-    <div className="auth-container" style={{ backgroundImage: `url(${styles.backgroundImage})` }}>
+    <div className="auth-container">
       <div className={styles.card}>
         <img src={badgeImg} alt="Badge" className={styles.badgeImg} />
         
@@ -199,7 +199,7 @@ const OtpVerification = () => {
                 <span 
                   onClick={handleResend} 
                   style={{ 
-                    color: '#0A6806', 
+                    color: '#EC5B13', 
                     cursor: 'pointer', 
                     fontWeight: 600 
                   }}

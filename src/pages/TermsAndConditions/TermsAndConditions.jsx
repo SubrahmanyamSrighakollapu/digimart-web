@@ -37,7 +37,7 @@ const TermsAndConditions = () => {
 
         case 'contact':
           return (
-            <div key={index} className="mb-3 p-3 rounded" style={{ background: '#F8F9FA', borderLeft: '4px solid #4BAF47' }}>
+            <div key={index} className="mb-3 p-3 rounded" style={{ background: '#F8F9FA', borderLeft: '4px solid #EC5B13' }}>
               {item.details.company && (
                 <p className="terms-content-text mb-1">
                   <strong className="text-dark">{item.details.company}</strong>

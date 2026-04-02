@@ -15,11 +15,11 @@ const DiscoverMoreButton = ({ text = "Discover More", onClick = null, href = nul
       style={styles.button}
       onClick={handleClick}
       onMouseEnter={(e) => {
-        e.currentTarget.style.backgroundColor = '#3d8f3a';
+        e.currentTarget.style.backgroundColor = '#EC5B13';
         e.currentTarget.style.transform = 'translateY(-0.1875rem)';
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.backgroundColor = '#4BAF47';
+        e.currentTarget.style.backgroundColor = '#EC5609';
         e.currentTarget.style.transform = 'translateY(0)';
       }}
     >
@@ -32,7 +32,7 @@ const styles = {
   button: {
     width: '12.269rem',
     height: '3.625rem',
-    background: '#4BAF47',
+    background: '#EC5B13',
     color: 'white',
     fontFamily: 'Manrope, sans-serif',
     fontWeight: 700,
