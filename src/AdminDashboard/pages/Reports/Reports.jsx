@@ -6,10 +6,10 @@ import { T, PageHeader, Card, SectionLabel, SearchBar, SelectInput, FilterBar, B
 ChartJS.register(ArcElement, Tooltip);
 
 const kpis = [
-  { label: 'Total Orders', value: '1,234', change: '+10%', icon: ShoppingCart, gradient: 'linear-gradient(135deg,#3b82f6,#1d4ed8)', glow: 'rgba(59,130,246,0.3)' },
-  { label: 'Total Revenue', value: '₹98,000', change: '+12%', icon: TrendingUp, gradient: 'linear-gradient(135deg,#f59e0b,#d97706)', glow: 'rgba(245,158,11,0.3)' },
-  { label: 'Farmer Payments', value: '₹57,000', change: '+5%', icon: Wheat, gradient: 'linear-gradient(135deg,#10b981,#059669)', glow: 'rgba(16,185,129,0.3)' },
-  { label: 'Agent Margin', value: '₹80,000', change: '+10%', icon: Users, gradient: 'linear-gradient(135deg,#a855f7,#7c3aed)', glow: 'rgba(168,85,247,0.3)' },
+  { label: 'Total Orders',    value: '1,234', change: '+10%', icon: ShoppingCart, bg: '#eff6ff', accent: '#3b82f6', iconBg: '#dbeafe' },
+  { label: 'Total Revenue',   value: '\u20b998,000', change: '+12%', icon: TrendingUp,  bg: '#fef9ec', accent: '#d97706', iconBg: '#fef3c7' },
+  { label: 'Farmer Payments', value: '\u20b957,000', change: '+5%',  icon: Wheat,       bg: '#e6f7ed', accent: '#32a862', iconBg: '#bbf7d0' },
+  { label: 'Agent Margin',    value: '\u20b980,000', change: '+10%', icon: Users,       bg: '#f5f3ff', accent: '#7c3aed', iconBg: '#ede9fe' },
 ];
 
 const txns = [
@@ -38,7 +38,7 @@ const Reports = () => (
         <div style={{ position: 'relative' }}>
           <Calendar size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: T.textLight, pointerEvents: 'none' }} />
           <input type="date" style={{ padding: '10px 14px 10px 34px', border: `1px solid ${T.border}`, borderRadius: T.radius, fontSize: T.fontMd, outline: 'none', color: T.text, backgroundColor: T.surface }}
-            onFocus={e => e.target.style.borderColor = T.primary} onBlur={e => e.target.style.borderColor = T.border} />
+            onFocus={e => e.target.style.borderColor = '#32a862'} onBlur={e => e.target.style.borderColor = T.border} />
         </div>
         <SearchBar placeholder="Enter crop type..." style={{ width: '200px' }} />
         <SelectInput style={{ minWidth: '160px' }}>
@@ -53,17 +53,20 @@ const Reports = () => (
     {/* KPI Cards */}
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '16px', marginBottom: '24px' }}>
       {kpis.map((k, i) => (
-        <div key={i} style={{ background: k.gradient, borderRadius: '14px', padding: '20px', boxShadow: `0 8px 24px ${k.glow}`, position: 'relative', overflow: 'hidden', transition: 'transform 0.2s' }}
-          onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-3px)'}
-          onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+        <div key={i} style={{
+          backgroundColor: k.bg, borderRadius: '14px', padding: '20px',
+          border: `1px solid ${k.accent}22`, boxShadow: `0 2px 12px ${k.accent}14`,
+          transition: 'transform 0.2s, box-shadow 0.2s', position: 'relative', overflow: 'hidden'
+        }}
+          onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = `0 8px 24px ${k.accent}28`; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = `0 2px 12px ${k.accent}14`; }}
         >
-          <div style={{ position: 'absolute', top: '-15px', right: '-15px', width: '70px', height: '70px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.1)', pointerEvents: 'none' }} />
-          <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
-            <k.icon size={16} color="white" />
+          <div style={{ width: '38px', height: '38px', borderRadius: '10px', backgroundColor: k.iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
+            <k.icon size={18} color={k.accent} />
           </div>
-          <p style={{ margin: '0 0 4px', fontSize: T.fontSm, color: 'rgba(255,255,255,0.75)', fontWeight: 500 }}>{k.label}</p>
-          <p style={{ margin: '0 0 6px', fontSize: '22px', fontWeight: 800, color: 'white', letterSpacing: '-0.02em' }}>{k.value}</p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: 'rgba(255,255,255,0.8)', fontWeight: 600 }}>
+          <p style={{ margin: '0 0 4px', fontSize: T.fontSm, color: '#6b7280', fontWeight: 500 }}>{k.label}</p>
+          <p style={{ margin: '0 0 6px', fontSize: '22px', fontWeight: 800, color: '#1c1917', letterSpacing: '-0.02em' }}>{k.value}</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: k.accent, fontWeight: 600 }}>
             <ArrowUpRight size={11} />{k.change} this month
           </div>
         </div>
@@ -74,14 +77,14 @@ const Reports = () => (
     <Card noPad style={{ marginBottom: '24px' }}>
       <div style={{ padding: '16px 20px', borderBottom: `1px solid ${T.borderLight}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h3 style={{ margin: 0, fontSize: T.fontXl, fontWeight: 700, color: T.text }}>Recent Transactions</h3>
-        <span style={{ fontSize: T.fontBase, color: T.primary, fontWeight: 600, cursor: 'pointer' }}>View all →</span>
+        <span style={{ fontSize: T.fontBase, color: '#32a862', fontWeight: 600, cursor: 'pointer' }}>View all →</span>
       </div>
       <div style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ backgroundColor: '#f8fafc' }}>
               {['Transaction ID', 'Order ID', 'Agent', 'Product', 'Amount', 'Payment Mode', 'Status', 'Date'].map(h => (
-                <th key={h} style={{ padding: '12px 18px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: T.textMuted, borderBottom: `1px solid ${T.border}`, textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>{h}</th>
+                <th key={h} style={{ padding: '12px 18px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: '#32a862', borderBottom: `1px solid ${T.border}`, textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap', backgroundColor: '#e6f7ed' }}>{h}</th>
               ))}
             </tr>
           </thead>
@@ -91,7 +94,7 @@ const Reports = () => (
                 onMouseEnter={e => e.currentTarget.style.backgroundColor = '#fafbff'}
                 onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
               >
-                <td style={{ padding: '13px 18px' }}><span style={{ fontFamily: 'monospace', fontSize: T.fontBase, color: T.primary, fontWeight: 600 }}>{t.id}</span></td>
+                <td style={{ padding: '13px 18px' }}><span style={{ fontFamily: 'monospace', fontSize: T.fontBase, color: '#32a862', fontWeight: 600 }}>{t.id}</span></td>
                 <td style={{ padding: '13px 18px', color: T.textMuted, fontSize: T.fontBase }}>{t.orderId}</td>
                 <td style={{ padding: '13px 18px', fontWeight: 600, color: T.text }}>{t.agent}</td>
                 <td style={{ padding: '13px 18px', color: T.textMuted }}>{t.product}</td>

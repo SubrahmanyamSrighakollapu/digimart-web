@@ -1,314 +1,130 @@
 import Icon10 from '../../../assets/AgentDashboard/Dashboard/Icon10.png';
-import Icon7 from '../../../assets/AgentDashboard/Dashboard/Icon7.png';
-import Icon8 from '../../../assets/AgentDashboard/Dashboard/Icon8.png';
-import Icon9 from '../../../assets/AgentDashboard/Dashboard/Icon9.png';
+import Icon7  from '../../../assets/AgentDashboard/Dashboard/Icon7.png';
+import Icon8  from '../../../assets/AgentDashboard/Dashboard/Icon8.png';
+import Icon9  from '../../../assets/AgentDashboard/Dashboard/Icon9.png';
 import LineImg from '../../../assets/AgentDashboard/Dashboard/Line.png';
-import MapImg from '../../../assets/AgentDashboard/Dashboard/Map.png';
+import MapImg  from '../../../assets/AgentDashboard/Dashboard/Map.png';
+
+const G  = '#32a862';
+const GL = '#e6f7ed';
+const P  = '#EC5B13';
+const PL = '#FEF0E9';
 
 const DashboardOverview = ({ data }) => {
-  // Live Deliveries Data - Dynamic
-  const deliveries = data ? data.liveDeliveries.map((delivery, index) => ({
-    id: index + 1,
-    orderId: delivery.orderId,
-    status: delivery.status,
-    statusColor: delivery.status === 'PENDING' ? '#FF8432' : '#4BAF47',
-    location: delivery.location,
-    time: new Date(delivery.pickupTime).toLocaleString('en-IN', { dateStyle: 'short', timeStyle: 'short' }),
-    timeColor: delivery.status === 'PENDING' ? '#FFB032' : '#565656'
+  const deliveries = data ? data.liveDeliveries.map((d, i) => ({
+    id: i + 1,
+    orderId: d.orderId,
+    status: d.status,
+    statusColor: d.status === 'PENDING' ? '#d97706' : G,
+    statusBg:    d.status === 'PENDING' ? '#fef9ec' : GL,
+    location: d.location,
+    time: new Date(d.pickupTime).toLocaleString('en-IN', { dateStyle: 'short', timeStyle: 'short' }),
   })) : [];
 
-  // Payment Cards Data - Dynamic
   const paymentCards = data ? [
-    {
-      id: 1,
-      title: "Customer payment",
-      amount: data.finance.customerPayment.amount.toLocaleString('en-IN'),
-      status: data.finance.customerPayment.status,
-      statusBg: "#B2FBAF5E",
-      statusColor: "#4BAF47"
-    },
-    {
-      id: 2,
-      title: "Agent Margin",
-      amount: parseFloat(data.finance.agentMargin.amount).toLocaleString('en-IN'),
-      status: data.finance.agentMargin.status,
-      statusBg: "#7E7E7E5E",
-      statusColor: "#484848"
-    },
-    {
-      id: 3,
-      title: "Farmer payout",
-      amount: data.finance.farmerPayout.amount.toLocaleString('en-IN'),
-      status: data.finance.farmerPayout.status,
-      statusBg: "#FCE2A65E",
-      statusColor: "#EEC044"
-    }
+    { title: 'Customer Payment', amount: data.finance.customerPayment.amount.toLocaleString('en-IN'), status: data.finance.customerPayment.status, accent: G,         bg: GL        },
+    { title: 'Agent Margin',     amount: parseFloat(data.finance.agentMargin.amount).toLocaleString('en-IN'), status: data.finance.agentMargin.status, accent: '#6b7280', bg: '#f9fafb' },
+    { title: 'Farmer Payout',    amount: data.finance.farmerPayout.amount.toLocaleString('en-IN'), status: data.finance.farmerPayout.status, accent: '#d97706', bg: '#fef9ec' },
   ] : [];
 
-  // Flow Steps Data
   const flowSteps = [
-    {
-      id: 1,
-      icon: Icon7,
-      bg: "#D9DBFF",
-      border: "2px solid #1B30B2",
-      text: "Customer Pays"
-    },
-    {
-      id: 2,
-      icon: Icon8,
-      bg: "#4A4A4A",
-      border: "2px solid #4A4A4A",
-      text: "Platform Security"
-    }
+    { icon: Icon7, bg: '#e0e7ff', border: '2px solid #4f46e5', text: 'Customer Pays' },
+    { icon: Icon8, bg: '#1f2937', border: '2px solid #1f2937', text: 'Platform Security' },
   ];
-
-  // Flow Cards Data
   const flowCards = [
-    {
-      id: 1,
-      icon: Icon9,
-      bg: "#4BAF4733",
-      border: "1px solid #0A6806",
-      text: "Farmer Credit"
-    },
-    {
-      id: 2,
-      icon: Icon10,
-      bg: "#F7F8F6",
-      border: "1px solid #4C4C4C",
-      text: "Agent Margin"
-    }
+    { icon: Icon9,  bg: GL,       border: `1px solid ${G}`,    text: 'Farmer Credit' },
+    { icon: Icon10, bg: '#f9fafb', border: '1px solid #e5e7eb', text: 'Agent Margin'  },
   ];
 
   return (
-    <div className="container-fluid py-4" style={{ backgroundColor: '#f5f5f5' }}>
-      <div className="row g-2">
-        {/* Left Side - Live Deliveries */}
-        <div className="col-12 col-lg-4">
-                      <div className="card shadow-sm" 
-            style={{
-              backgroundColor: '#FFFFFF',
-              borderRadius: '10px',
-              border: '1px solid #000000',
-              padding: '20px'
-            }}
-          >
-            {/* Title */}
-            <p className="text-inter-26 mb-3 text-start">Live Deliveries</p>
+    <div style={{ marginTop: '24px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '20px' }}>
 
-            {/* Delivery Items */}
-            <div className="d-flex flex-column gap-2">
-              {deliveries.length > 0 ? deliveries.map((delivery) => (
-                <div 
-                  key={delivery.id}
-                  style={{
-                    borderRadius: '10px',
-                    padding: '15px',
-                    backgroundColor: '#FAFAFA'
-                  }}
-                >
-                  {/* Order and Status Row */}
-                  <div className="d-flex justify-content-between align-items-center flex-wrap">
-                    <p className="table-cell text-gray-20">{delivery.orderId}</p>
-                    <p className="mb-0" style={{ color: delivery.timeColor }}>{delivery.status}</p>
-                  </div>
+        {/* Live Deliveries */}
+        <div style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '22px', border: '1px solid #e5e7eb', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
+            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#1c1917' }}>Live Deliveries</h3>
+            <span style={{ fontSize: '11px', color: G, fontWeight: 600, cursor: 'pointer' }}>View all →</span>
+          </div>
 
-                  {/* Status Bar */}
-                  <div 
-                    style={{
-                      width: '100%',
-                      height: '8px',
-                      borderRadius: '10px',
-                      backgroundColor: delivery.statusColor,
-                    }}
-                  />
-
-                  {/* Location and Time Row */}
-                  <div className="d-flex justify-content-between align-items-center flex-wrap">
-                    <p className="table-cell text-gray-20">{delivery.location}</p>
-                    <p className="mb-0" style={{ color: delivery.timeColor }}>{delivery.time}</p>
-                  </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {deliveries.length > 0 ? deliveries.map(d => (
+              <div key={d.id} style={{ backgroundColor: '#f9fafb', borderRadius: '10px', padding: '12px 14px', border: '1px solid #f3f4f6' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#374151', fontFamily: 'monospace' }}>{d.orderId}</span>
+                  <span style={{ fontSize: '11px', fontWeight: 700, color: d.statusColor, backgroundColor: d.statusBg, padding: '2px 10px', borderRadius: '999px' }}>{d.status}</span>
                 </div>
-              )) : (
-                <p className="text-muted text-center">No live deliveries</p>
-              )}
-            </div>
+                <div style={{ height: '4px', borderRadius: '4px', backgroundColor: '#e5e7eb', marginBottom: '8px', overflow: 'hidden' }}>
+                  <div style={{ width: d.status === 'PENDING' ? '40%' : '80%', height: '100%', backgroundColor: d.statusColor, borderRadius: '4px', transition: 'width 0.4s' }} />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '11px', color: '#6b7280' }}>{d.location}</span>
+                  <span style={{ fontSize: '11px', color: '#9ca3af' }}>{d.time}</span>
+                </div>
+              </div>
+            )) : (
+              <p style={{ textAlign: 'center', color: '#9ca3af', fontSize: '13px', padding: '24px 0' }}>No live deliveries</p>
+            )}
+          </div>
 
-            {/* Map */}
-            <div className="mt-3" >
-              <img 
-                src={MapImg} 
-                alt="Delivery Map"
-                style={{
-                  width: '100%',
-                  maxHeight: '8rem',
-                  borderRadius: '10px',
-                  objectFit: 'cover'
-                }}
-              />
-            </div>
+          <div style={{ marginTop: '16px', borderRadius: '10px', overflow: 'hidden' }}>
+            <img src={MapImg} alt="Map" style={{ width: '100%', maxHeight: '120px', objectFit: 'cover', display: 'block' }} />
           </div>
         </div>
 
-        {/* Right Side */}
-        <div className="col-12 col-lg-8 dashboard-col">
-          {/* Payment Cards Row */}
-          <div className="row g-3 g-md-3 mb-3">
-            {paymentCards.map((card) => (
-              <div key={card.id} className="col-12 col-sm-6 col-md-4 mb-3 mb-md-3">
-                <div 
-                  className="card shadow-sm" 
-                  style={{
-                    backgroundColor: '#FFFFFF',
-                    borderRadius: '10px',
-                    border: '0.8px solid #878787',
-                    padding: '20px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  {/* Title */}
-                  <p className="text-inter-22 mb-3 text-start">{card.title}</p>
+        {/* Right column */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
 
-                  {/* Amount */}
-                  <p className="text-number mb-3 text-start">₹ {card.amount}</p>
-
-                  {/* Status Badge */}
-                  <div 
-                    style={{
-                      backgroundColor: card.statusBg,
-                      borderRadius: '50px',
-                      padding: '8px 16px',
-                      width: 'fit-content',
-                      textAlign: 'center'
-                    }}
-                  >
-                    <p 
-                      className="mb-0" 
-                      style={{ 
-                        color: card.statusColor,
-                        fontSize: '14px',
-                        fontWeight: '500'
-                      }}
-                    >
-                      {card.status}
-                    </p>
-                  </div>
-                </div>
+          {/* Payment Cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '14px' }}>
+            {paymentCards.map((c, i) => (
+              <div key={i} style={{
+                backgroundColor: '#fff', borderRadius: '14px', padding: '18px',
+                border: '1px solid #e5e7eb', boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                position: 'relative', overflow: 'hidden',
+                transition: 'transform 0.2s, box-shadow 0.2s',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = `0 8px 24px ${c.accent}20`; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)'; }}
+              >
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: `linear-gradient(90deg, ${c.accent}, ${c.accent}66)`, borderRadius: '14px 14px 0 0' }} />
+                <p style={{ margin: '0 0 8px', fontSize: '12px', color: '#6b7280', fontWeight: 500 }}>{c.title}</p>
+                <p style={{ margin: '0 0 10px', fontSize: '22px', fontWeight: 800, color: '#1c1917', letterSpacing: '-0.02em' }}>₹{c.amount}</p>
+                <span style={{ fontSize: '11px', fontWeight: 700, color: c.accent, backgroundColor: c.bg, padding: '3px 10px', borderRadius: '999px', border: `1px solid ${c.accent}33` }}>{c.status}</span>
               </div>
             ))}
           </div>
 
-          {/* Payment Flow Diagram */}
-          <div 
-            className="card shadow-sm" 
-            style={{
-              backgroundColor: '#FFFFFF',
-              borderRadius: '10px',
-              border: '1px solid #000000',
-              padding: '40px',
-              marginBottom: '15px'
-            }}
-          >
-            <div className="payment-flow-container d-flex align-items-center justify-content-center gap-2">
-              {/* Flow Steps with Icons and Arrows */}
-              {flowSteps.map((step, index) => (
-                <>
-                  {/* Icon and Text */}
-                  <div key={step.id} className="d-flex flex-column align-items-center gap-2 flow-step">
-                    <div 
-                      style={{
-                        width: '4rem',
-                        height: '4rem',
-                        borderRadius: '50%',
-                        backgroundColor: step.bg,
-                        border: step.border,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                    >
-                      <img 
-                        src={step.icon} 
-                        alt={step.text}
-                        style={{ width: '2rem', height: '2rem' }}
-                      />
+          {/* Payment Flow */}
+          <div style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px', border: '1px solid #e5e7eb', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+            <h3 style={{ margin: '0 0 20px', fontSize: '15px', fontWeight: 700, color: '#1c1917' }}>Payment Flow</h3>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', flexWrap: 'wrap' }}>
+              {flowSteps.map((step, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ width: '56px', height: '56px', borderRadius: '50%', backgroundColor: step.bg, border: step.border, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <img src={step.icon} alt={step.text} style={{ width: '28px', height: '28px' }} />
                     </div>
-                    <p className="text-inter-22 mb-0 text-center">{step.text}</p>
+                    <p style={{ margin: 0, fontSize: '12px', fontWeight: 600, color: '#374151', textAlign: 'center' }}>{step.text}</p>
                   </div>
-
-                  {/* Arrow Line */}
-                  <img 
-                    key={`arrow-${step.id}`}
-                    src={LineImg} 
-                    alt="arrow"
-                    className="flow-arrow"
-                    style={{ height: '20px', width: '5rem' }}
-                  />
-                </>
+                  <img src={LineImg} alt="→" style={{ height: '16px', width: '48px', opacity: 0.5 }} />
+                </div>
               ))}
-
-              {/* Flow Cards */}
-              {flowCards.map((card) => (
-                <>
-                  <div key={card.id} className="d-flex flex-column align-items-center gap-2 flow-step">
-                    <div 
-                      style={{
-                        backgroundColor: card.bg,
-                        border: card.border,
-                        borderRadius: '10px',
-                        padding: '1rem',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        gap: '10px'
-                      }}
-                    >
-                      <img 
-                        src={card.icon} 
-                        alt={card.text}
-                        style={{ width: '2rem', height: '2rem' }}
-                      />
-                      <p className="text-inter-22 mb-0 text-center">{card.text}</p>
+              {flowCards.map((card, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ backgroundColor: card.bg, border: card.border, borderRadius: '12px', padding: '12px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+                      <img src={card.icon} alt={card.text} style={{ width: '28px', height: '28px' }} />
+                      <p style={{ margin: 0, fontSize: '12px', fontWeight: 600, color: '#374151' }}>{card.text}</p>
                     </div>
                   </div>
-                  
-                </>
+                  {i < flowCards.length - 1 && <img src={LineImg} alt="→" style={{ height: '16px', width: '48px', opacity: 0.5 }} />}
+                </div>
               ))}
             </div>
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @media (max-width: 991px) {
-          .dashboard-col {
-            width: 90% !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
-            margin-bottom: 20px !important;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .payment-flow-container {
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .flow-step {
-            margin-bottom: 20px !important;
-          }
-
-          .flow-arrow {
-            transform: rotate(90deg);
-            margin: 10px 0 !important;
-          }
-        }
-      `}</style>
     </div>
   );
 };

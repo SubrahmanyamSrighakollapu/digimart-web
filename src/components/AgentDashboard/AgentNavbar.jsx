@@ -1,447 +1,273 @@
-// src/components/AgentDashboard/AgentNavbar.jsx
-
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import Icon1 from '../../assets/AgentDashboard/Navbar/Icon1.png';
-import Icon2 from '../../assets/AgentDashboard/Navbar/Icon2.png';
+import { Heart, ShoppingCart, RefreshCw, LogOut, ChevronDown, Wallet } from 'lucide-react';
 import logo from '../../assets/digimart.png';
 import authService from '../../services/authService';
-import { useNavigate } from 'react-router-dom';
 
-const AgentNavbar = () => {
+const G = '#32a862';
+const GL = '#e6f7ed';
+const P = '#EC5B13';
+
+const AgentNavbar = ({ sidebarCollapsed }) => {
   const navigate = useNavigate();
-  const [showProfileCard, setShowProfileCard] = useState(false);
+  const location = useLocation();
+  const [showProfile, setShowProfile] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [agentDetails, setAgentDetails] = useState(null);
   const [walletDetails, setWalletDetails] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
   const profileRef = useRef(null);
 
-  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    const d = sessionStorage.getItem('agentDetails');
+    if (d) setAgentDetails(JSON.parse(d));
+    const w = sessionStorage.getItem('walletDetails');
+    if (w) setWalletDetails(JSON.parse(w));
+  }, []);
 
   useEffect(() => {
-    const details = sessionStorage.getItem('agentDetails');
-    if (details) {
-      setAgentDetails(JSON.parse(details));
-    }
-    
-    const wallet = sessionStorage.getItem('walletDetails');
-    if (wallet) {
-      setWalletDetails(JSON.parse(wallet));
-    }
-
-    const handleClickOutside = (event) => {
-      if (profileRef.current && !profileRef.current.contains(event.target)) {
-        setShowProfileCard(false);
-      }
+    const handler = (e) => {
+      if (profileRef.current && !profileRef.current.contains(e.target)) setShowProfile(false);
     };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
   const handleRefreshWallet = async () => {
-    // console.log('Refresh wallet clicked');
-    setLoading(true);
-    
-    // Get userId from user object
+    setRefreshing(true);
     const userStr = sessionStorage.getItem('user');
     const token = sessionStorage.getItem('token');
-    
     let userId = null;
     if (userStr) {
-      try {
-        const user = JSON.parse(userStr);
-        userId = user.userId;
-      } catch (e) {
-        console.error('Error parsing user data:', e);
-      }
+      try { userId = JSON.parse(userStr).userId; } catch {}
     }
-    
-    // console.log('UserId:', userId, 'Token:', token ? 'exists' : 'missing');
-    
     if (userId && token) {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/payment/wallet-details/${userId}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/payment/wallet-details/${userId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
         });
-        
-        const data = await response.json();
-        // console.log('Wallet API response:', data);
-        
+        const data = await res.json();
         if (data.status === 1) {
           sessionStorage.setItem('walletDetails', JSON.stringify(data.result));
           setWalletDetails(data.result);
-          toast.success('Wallet refreshed successfully');
-        } else {
-          toast.error('Failed to refresh wallet');
-        }
-      } catch (error) {
-        console.error('Error fetching wallet details:', error);
-        toast.error('Error refreshing wallet');
-      }
-    } else {
-      toast.error('User session not found');
-    }
-    setLoading(false);
-  };
-  
-  const handleLogout = () => {
-    const logoutRoute = authService.logout();
-    navigate(logoutRoute);
+          toast.success('Wallet refreshed');
+        } else toast.error('Failed to refresh wallet');
+      } catch { toast.error('Error refreshing wallet'); }
+    } else toast.error('User session not found');
+    setRefreshing(false);
   };
 
+  const handleLogout = () => navigate(authService.logout());
+
   const getInitials = (name) => {
-    if (!name) return 'U';
+    if (!name) return 'AG';
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
   };
 
+  const getBreadcrumbs = () => {
+    const segments = location.pathname.split('/').filter(Boolean);
+    return segments.map((seg, i) => ({
+      label: seg.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+      path: '/' + segments.slice(0, i + 1).join('/')
+    }));
+  };
+
+  const breadcrumbs = getBreadcrumbs();
+
   return (
-    <div className="border" style={{ borderColor: '#929292', backgroundColor: '#FFFFFF' }}>
-      <div className="container-fluid">
-        <div className="row align-items-center py-2 px-3">
-          {/* Left Side - Logo */}
-          <div className="col-4 col-sm-4 col-md-4 col-lg-3">
-            <img 
-              src={logo} 
-              alt="Total Needs" 
-              style={{ height: '6rem', cursor: 'pointer' }}
-              onClick={() => navigate('/agent')}
-            />
-          </div>
-
-          {/* Right Side - Icons and Wallet */}
-          <div className="col-8 col-sm-8 col-md-8 col-lg-9">
-            <div className="d-flex align-items-center justify-content-end gap-3">
-              {/* Icon 1 */}
-              <div className="d-none d-md-flex">
-                <img
-                  src={Icon1}
-                  alt="Icon 1"
-                  style={{ width: '25px', height: '25px', opacity: 1 }}
-                />
-              </div>
-
-              {/* Wallet Balance Container with Reload */}
-              <div className="d-flex align-items-center gap-2">
-                <div 
-                  className="d-flex align-items-center gap-2 px-3 py-2"
-                  style={{
-                    backgroundColor: '#98F894',
-                    border: '1px solid #98F894',
-                    borderRadius: '10px',
-                    minWidth: '170px',
-                    height: '50px'
-                  }}
-                >
-                  <img 
-                    src={Icon2} 
-                    alt="Wallet" 
-                    style={{ width: '24px', height: '24px' }}
-                  />
-                  <div className="d-flex flex-column justify-content-center">
-                    <p className="mb-0 fw-bold" style={{ fontSize: '0.95rem', lineHeight: '1.2' }}>
-                      Main: {walletDetails?.balance ? `₹${parseFloat(walletDetails.balance).toFixed(2)}` : '₹0.00'}
-                    </p>
-                    <p className="mb-0" style={{ fontSize: '0.9rem', lineHeight: '1.2' }}>
-                      Lean: {walletDetails?.holdBalance ? `₹${parseFloat(walletDetails.holdBalance).toFixed(2)}` : '₹0.00'}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Reload Icon */}
-                <div
-                  onClick={handleRefreshWallet}
-                  style={{
-                    width: '40px',
-                    height: '40px',
-                    backgroundColor: '#4BAF47',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: loading ? 'not-allowed' : 'pointer',
-                    transition: 'all 0.3s ease',
-                    opacity: loading ? 0.6 : 1
-                  }}
-                  onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = '#3d9a3a')}
-                  onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = '#4BAF47')}
-                >
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="white"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    style={{
-                      animation: loading ? 'spin 1s linear infinite' : 'none'
-                    }}
-                  >
-                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
-                  </svg>
-                </div>
-              </div>
-
-              {/* Wishlist Icon */}
-              <div 
-                className="d-flex align-items-center justify-content-center"
-                onClick={() => navigate('/agent/wishlist')}
-                style={{
-                  width: '46px',
-                  height: '46px',
-                  background: 'white',
-                  borderRadius: '50%',
-                  border: '1px solid #929292',
-                  cursor: 'pointer'
-                }}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="#FF0000" stroke="#FF0000" strokeWidth="2">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
-              </div>
-
-              {/* Cart Icon */}
-              <div 
-                className="d-flex align-items-center justify-content-center"
-                onClick={() => navigate('/agent/cart')}
-                style={{
-                  width: '46px',
-                  height: '46px',
-                  background: 'white',
-                  borderRadius: '50%',
-                  border: '1px solid #929292',
-                  cursor: 'pointer'
-                }}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2">
-                  <circle cx="9" cy="21" r="1"></circle>
-                  <circle cx="20" cy="21" r="1"></circle>
-                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                </svg>
-              </div>
-
-              {/* User Profile Container */}
-              <div
-                ref={profileRef}
-                style={{
-                  position: 'relative',
-                  cursor: 'pointer'
-                }}
-                onClick={() => setShowProfileCard(!showProfileCard)}
-              >
-                {/* User Avatar */}
-                <div
-                  style={{
-                    width: '50px',
-                    height: '50px',
-                    backgroundColor: '#4BAF47',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'white',
-                    fontWeight: '600',
-                    fontSize: '1.2rem',
-                    transition: 'transform 0.2s'
-                  }}
-                  onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
-                  onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
-                >
-                  {getInitials(agentDetails?.userFullName)}
-                </div>
-
-                {/* Profile Dropdown Card */}
-                {showProfileCard && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '100%',
-                      right: 0,
-                      marginTop: '8px',
-                      width: '280px',
-                      background: 'white',
-                      borderRadius: '12px',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                      padding: '20px',
-                      zIndex: 1000
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <div style={{ marginBottom: '16px', textAlign: 'center' }}>
-                      <div
-                        style={{
-                          width: '60px',
-                          height: '60px',
-                          backgroundColor: '#4BAF47',
-                          borderRadius: '50%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: 'white',
-                          fontWeight: '600',
-                          fontSize: '1.5rem',
-                          margin: '0 auto 12px'
-                        }}
-                      >
-                        {getInitials(agentDetails?.userFullName)}
-                      </div>
-                      <h6 style={{ margin: '0 0 4px', fontWeight: '600' }}>{agentDetails?.userFullName}</h6>
-                      <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>{agentDetails?.emailAddress}</p>
-                    </div>
-                    <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '12px', marginBottom: '12px' }}>
-                      <div style={{ fontSize: '0.875rem', marginBottom: '8px' }}>
-                        <span style={{ color: '#6b7280' }}>Contact:</span>
-                        <span style={{ marginLeft: '8px', fontWeight: '500' }}>{agentDetails?.contactNo}</span>
-                      </div>
-                      <div style={{ fontSize: '0.875rem', marginBottom: '8px' }}>
-                        <span style={{ color: '#6b7280' }}>Business:</span>
-                        <span style={{ marginLeft: '8px', fontWeight: '500' }}>{agentDetails?.businessName}</span>
-                      </div>
-                      <div style={{ fontSize: '0.875rem' }}>
-                        <span style={{ color: '#6b7280' }}>Area:</span>
-                        <span style={{ marginLeft: '8px', fontWeight: '500' }}>{agentDetails?.operationsAreas}</span>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => setShowLogoutConfirm(true)}
-                      style={{
-                        width: '100%',
-                        padding: '10px',
-                        background: '#4BAF47',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '8px',
-                        fontWeight: '600',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      Logout
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+    <header style={{
+      height: '64px',
+      backgroundColor: '#ffffff',
+      borderBottom: '1px solid #e5e7eb',
+      display: 'flex', alignItems: 'center',
+      padding: '0 24px', gap: '16px',
+      position: 'relative', zIndex: 1,
+      boxShadow: '0 1px 8px rgba(50,168,98,0.08)',
+    }}>
+      {/* Logo */}
+      <div style={{ display: 'flex', alignItems: 'center', minWidth: sidebarCollapsed ? '64px' : '200px', transition: 'min-width 0.3s' }}>
+        <img src={logo} alt="DigiMart" style={{ height: '76px', cursor: 'pointer', objectFit: 'contain' }}
+          onClick={() => navigate('/agent')} />
       </div>
 
-      {/* Logout Confirmation Modal */}
-      {showLogoutConfirm && (
-        <div 
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0,0,0,0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 2000
-          }}
-          onClick={() => setShowLogoutConfirm(false)}
+      {/* Breadcrumbs */}
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', overflow: 'hidden' }}>
+        {breadcrumbs.map((crumb, i) => (
+          <span key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}>
+            {i > 0 && <span style={{ color: '#d1d5db' }}>/</span>}
+            <span onClick={() => i < breadcrumbs.length - 1 && navigate(crumb.path)} style={{
+              cursor: i < breadcrumbs.length - 1 ? 'pointer' : 'default',
+              color: i === breadcrumbs.length - 1 ? '#1c1917' : '#9ca3af',
+              fontWeight: i === breadcrumbs.length - 1 ? 600 : 400,
+            }}>
+              {crumb.label}
+            </span>
+          </span>
+        ))}
+      </div>
+
+      {/* Wallet */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: '10px',
+          backgroundColor: GL, border: `1px solid ${G}33`,
+          borderRadius: '10px', padding: '8px 14px',
+        }}>
+          <Wallet size={16} color={G} />
+          <div>
+            <p style={{ margin: 0, fontSize: '11px', fontWeight: 700, color: G, lineHeight: 1.2 }}>
+              ₹{walletDetails?.balance ? parseFloat(walletDetails.balance).toFixed(2) : '0.00'}
+            </p>
+            <p style={{ margin: 0, fontSize: '10px', color: '#6b7280', lineHeight: 1.2 }}>
+              Hold: ₹{walletDetails?.holdBalance ? parseFloat(walletDetails.holdBalance).toFixed(2) : '0.00'}
+            </p>
+          </div>
+        </div>
+        <button onClick={handleRefreshWallet} disabled={refreshing} style={{
+          width: '34px', height: '34px', borderRadius: '50%',
+          backgroundColor: G, border: 'none', cursor: refreshing ? 'not-allowed' : 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          opacity: refreshing ? 0.6 : 1, transition: 'all 0.2s',
+          boxShadow: `0 2px 8px ${G}40`,
+        }}
+          onMouseEnter={e => { if (!refreshing) e.currentTarget.style.backgroundColor = '#2a9054'; }}
+          onMouseLeave={e => { if (!refreshing) e.currentTarget.style.backgroundColor = G; }}
         >
-          <div 
-            style={{
-              background: 'white',
-              borderRadius: '12px',
-              padding: '24px',
-              width: '400px',
-              maxWidth: '90%'
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h5 style={{ marginBottom: '16px', fontWeight: '600' }}>Confirm Logout</h5>
-            <p style={{ marginBottom: '24px', color: '#6b7280' }}>Are you sure you want to logout?</p>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-              <button
-                onClick={() => setShowLogoutConfirm(false)}
-                style={{
-                  padding: '8px 20px',
-                  background: '#f3f4f6',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontWeight: '500'
-                }}
+          <RefreshCw size={15} color="white" style={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }} />
+        </button>
+      </div>
+
+      {/* Wishlist */}
+      <button onClick={() => navigate('/agent/wishlist')} style={{
+        width: '38px', height: '38px', borderRadius: '50%',
+        backgroundColor: '#fff', border: '1px solid #e5e7eb',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        cursor: 'pointer', transition: 'all 0.15s',
+      }}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = '#fca5a5'; e.currentTarget.style.backgroundColor = '#fff1f2'; }}
+        onMouseLeave={e => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.backgroundColor = '#fff'; }}
+      >
+        <Heart size={17} color="#ef4444" fill="#ef4444" />
+      </button>
+
+      {/* Cart */}
+      <button onClick={() => navigate('/agent/cart')} style={{
+        width: '38px', height: '38px', borderRadius: '50%',
+        backgroundColor: '#fff', border: '1px solid #e5e7eb',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        cursor: 'pointer', transition: 'all 0.15s',
+      }}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = `${G}66`; e.currentTarget.style.backgroundColor = GL; }}
+        onMouseLeave={e => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.backgroundColor = '#fff'; }}
+      >
+        <ShoppingCart size={17} color="#374151" />
+      </button>
+
+      {/* Profile */}
+      <div ref={profileRef} style={{ position: 'relative' }}>
+        <button onClick={() => setShowProfile(!showProfile)} style={{
+          display: 'flex', alignItems: 'center', gap: '8px',
+          background: showProfile ? GL : 'none', border: '1px solid #e5e7eb',
+          borderRadius: '10px', padding: '6px 12px', cursor: 'pointer', transition: 'all 0.15s',
+        }}
+          onMouseEnter={e => e.currentTarget.style.backgroundColor = GL}
+          onMouseLeave={e => e.currentTarget.style.backgroundColor = showProfile ? GL : 'transparent'}
+        >
+          <div style={{
+            width: '30px', height: '30px', borderRadius: '50%',
+            background: `linear-gradient(135deg, ${G}, #2a9054)`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: 'white', fontWeight: 700, fontSize: '11px', flexShrink: 0,
+          }}>
+            {getInitials(agentDetails?.userFullName)}
+          </div>
+          <div style={{ textAlign: 'left' }}>
+            <p style={{ margin: 0, fontSize: '12px', fontWeight: 600, color: '#1c1917', lineHeight: 1.2 }}>{agentDetails?.userFullName?.split(' ')[0] || 'Agent'}</p>
+            <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af', lineHeight: 1.2 }}>{agentDetails?.businessName || 'Agent'}</p>
+          </div>
+          <ChevronDown size={13} style={{ color: '#9ca3af', transition: 'transform 0.2s', transform: showProfile ? 'rotate(180deg)' : 'none' }} />
+        </button>
+
+        {showProfile && (
+          <div style={{
+            position: 'absolute', top: 'calc(100% + 10px)', right: 0, width: '260px',
+            backgroundColor: 'white', borderRadius: '14px',
+            boxShadow: '0 8px 32px rgba(50,168,98,0.15)', border: '1px solid #e5e7eb',
+            zIndex: 100, overflow: 'hidden',
+          }}>
+            <div style={{ padding: '20px', background: `linear-gradient(135deg, ${G}, #2a9054)`, textAlign: 'center' }}>
+              <div style={{
+                width: '52px', height: '52px', borderRadius: '50%',
+                background: 'rgba(255,255,255,0.2)', border: '2px solid rgba(255,255,255,0.4)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: 'white', fontWeight: 700, fontSize: '18px', margin: '0 auto 10px',
+              }}>
+                {getInitials(agentDetails?.userFullName)}
+              </div>
+              <p style={{ margin: 0, color: 'white', fontWeight: 700, fontSize: '14px' }}>{agentDetails?.userFullName || 'Agent'}</p>
+              <p style={{ margin: '3px 0 0', color: 'rgba(255,255,255,0.75)', fontSize: '12px' }}>{agentDetails?.emailAddress || ''}</p>
+            </div>
+            <div style={{ padding: '12px' }}>
+              {[
+                { label: 'Contact', value: agentDetails?.contactNo },
+                { label: 'Business', value: agentDetails?.businessName },
+                { label: 'Area', value: agentDetails?.operationsAreas },
+              ].map(({ label, value }) => value ? (
+                <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 4px', fontSize: '12px', borderBottom: '1px solid #f3f4f6' }}>
+                  <span style={{ color: '#9ca3af' }}>{label}</span>
+                  <span style={{ color: '#1c1917', fontWeight: 600, maxWidth: '160px', textAlign: 'right', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{value}</span>
+                </div>
+              ) : null)}
+              <button onClick={() => { setShowProfile(false); setShowLogoutConfirm(true); }} style={{
+                width: '100%', marginTop: '12px', padding: '10px',
+                backgroundColor: '#fee2e2', color: '#dc2626',
+                border: '1px solid #fca5a5', borderRadius: '8px',
+                fontWeight: 600, fontSize: '13px', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+              }}
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = '#fecaca'}
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = '#fee2e2'}
               >
-                Cancel
+                <LogOut size={14} /> Logout
               </button>
-              <button
-                onClick={handleLogout}
-                style={{
-                  padding: '8px 20px',
-                  background: '#ef4444',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontWeight: '500'
-                }}
-              >
-                Logout
-              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Logout confirm */}
+      {showLogoutConfirm && (
+        <div onClick={() => setShowLogoutConfirm(false)} style={{
+          position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000,
+        }}>
+          <div onClick={e => e.stopPropagation()} style={{
+            backgroundColor: 'white', borderRadius: '14px', padding: '32px',
+            width: '380px', maxWidth: '90vw', textAlign: 'center',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+          }}>
+            <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: '#fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+              <LogOut size={22} color="#dc2626" />
+            </div>
+            <h3 style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: 700, color: '#1c1917' }}>Confirm Logout</h3>
+            <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#6b7280' }}>Are you sure you want to logout?</p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+              <button onClick={() => setShowLogoutConfirm(false)} style={{
+                padding: '10px 24px', backgroundColor: '#f9fafb', color: '#374151',
+                border: '1px solid #e5e7eb', borderRadius: '8px', fontWeight: 600, cursor: 'pointer',
+              }}>Cancel</button>
+              <button onClick={handleLogout} style={{
+                padding: '10px 24px', backgroundColor: '#dc2626', color: 'white',
+                border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer',
+              }}>Logout</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Custom Responsive Styles */}
-      <style jsx="true">{`
-        @keyframes spin {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-
-        @media (max-width: 767.98px) {
-          h1 {
-            font-size: 1.5rem;
-          }
-          
-          .gap-3 {
-            gap: 0.5rem !important;
-          }
-          
-          div[style*="minHeight"] {
-            min-height: 60px !important;
-            padding: 0.5rem 1rem !important;
-          }
-          
-          div[style*="minHeight"] img {
-            width: 28px !important;
-            height: 28px !important;
-          }
-          
-          div[style*="minHeight"] p:first-child {
-            font-size: 0.65rem !important;
-          }
-          
-          div[style*="minHeight"] p:last-child {
-            font-size: 0.9rem !important;
-          }
-
-          /* Hide user profile on mobile */
-          div[style*="13rem"] {
-            display: none !important;
-          }
-        }
-
-        @media (max-width: 575.98px) {
-          h1 {
-            font-size: 1.2rem;
-          }
-        }
-      `}</style>
-    </div>
+      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+    </header>
   );
 };
 

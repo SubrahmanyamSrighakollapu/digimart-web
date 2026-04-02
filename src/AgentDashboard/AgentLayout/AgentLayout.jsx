@@ -1,109 +1,40 @@
-// src/AgentDashboard/AgentLayout/AgentLayout.jsx
-
 import { Outlet } from 'react-router-dom';
 import { useState } from 'react';
-import { MdMenu, MdClose } from 'react-icons/md';
 import AgentNavbar from '../../components/AgentDashboard/AgentNavbar';
 import AgentSidebar from '../../components/AgentDashboard/AgentSidebar';
 import ScrollingMessages from '../../components/AgentDashboard/ScrollingMessages';
-import Footer from '../../components/Footer';
+
+const NAVBAR_H = 64;
+const TICKER_H = 36;
+const TOTAL_TOP = NAVBAR_H + TICKER_H;
+const SIDEBAR_W = 220;
+const COLLAPSED_W = 64;
 
 const AgentLayout = () => {
-  const navbarHeight = '90px';
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="d-flex flex-column vh-100">
-      <div className="fixed-top" style={{ zIndex: 1030 }}>
+    <div style={{ fontFamily: "'Inter','Segoe UI',sans-serif", backgroundColor: '#f9fafb', minHeight: '100vh' }}>
+      {/* Fixed top bar */}
+      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000 }}>
         <ScrollingMessages />
-        <AgentNavbar />
+        <AgentNavbar sidebarCollapsed={collapsed} />
       </div>
 
-      {/* Toggle Button */}
-      <button
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        style={{
-          position: 'fixed',
-          top: `calc(${navbarHeight} + 60px)`,
-          left: isSidebarOpen ? 'calc(25% - 24px)' : '10px',
-          zIndex: 1050,
-          backgroundColor: '#54CF17',
-          color: 'white',
-          border: 'none',
-          borderRadius: '50%',
-          width: '40px',
-          height: '40px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          boxShadow: '0 4px 12px rgba(84, 207, 23, 0.4)',
-          transition: 'all 0.3s ease'
-        }}
-      >
-        {isSidebarOpen ? <MdClose size={20} /> : <MdMenu size={20} />}
-      </button>
+      {/* Fixed sidebar */}
+      <AgentSidebar collapsed={collapsed} onToggle={() => setCollapsed(p => !p)} />
 
-      <div className="d-flex flex-grow-1" style={{ marginTop: 'calc(90px + 50px)' }}>
-        <div 
-          className="position-fixed"
-          style={{
-            width: '25%',
-            height: `calc(100vh - ${navbarHeight} - 50px)`,
-            overflowY: 'auto',
-            top: 'calc(90px + 50px)',
-            left: isSidebarOpen ? 0 : '-25%',
-            zIndex: 1020,
-            transition: 'left 0.3s ease',
-            boxShadow: isSidebarOpen ? '4px 0 12px rgba(0,0,0,0.1)' : 'none',
-            paddingTop: '20px'
-          }}
-        >
-          <AgentSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-        </div>
-
-        {/* Overlay */}
-        {isSidebarOpen && (
-          <div
-            onClick={() => setIsSidebarOpen(false)}
-            style={{
-              position: 'fixed',
-              top: 'calc(90px + 50px)',
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: 'rgba(0,0,0,0.3)',
-              zIndex: 1010,
-              transition: 'opacity 0.3s ease'
-            }}
-          />
-        )}
-
-        <div 
-          className="flex-grow-1"
-          style={{
-            marginLeft: 0,
-            width: '100%',
-            padding: '1.5rem',
-            paddingLeft: '5rem',
-            overflowY: 'auto',
-            height: `calc(100vh - ${navbarHeight} - 50px)`,
-            transition: 'margin-left 0.3s ease'
-          }}
-        >
-          <Outlet />
-          <div style={{
-            textAlign: 'center',
-            padding: '20px',
-            marginTop: '40px',
-            background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.02))',
-            boxShadow: '0 -2px 10px rgba(0,0,0,0.05)',
-            borderRadius: '8px 8px 0 0',
-            color: '#666',
-            fontSize: '0.9rem'
-          }}>
-            © All Copyright 2024. All rights reserved
-          </div>
+      {/* Main content */}
+      <div style={{
+        marginTop: TOTAL_TOP,
+        marginLeft: collapsed ? COLLAPSED_W : SIDEBAR_W,
+        transition: 'margin-left 0.25s ease',
+        padding: '28px',
+        minHeight: `calc(100vh - ${TOTAL_TOP}px)`,
+      }}>
+        <Outlet />
+        <div style={{ textAlign: 'center', padding: '24px 0 8px', marginTop: '40px', fontSize: '12px', color: '#9ca3af', borderTop: '1px solid #e5e7eb' }}>
+          © 2024 DigiMart. All rights reserved.
         </div>
       </div>
     </div>

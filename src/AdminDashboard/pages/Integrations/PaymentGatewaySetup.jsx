@@ -136,7 +136,7 @@ const PaymentGatewaySetup = () => {
               <Td><Badge variant={m.isActive ? 'success' : 'neutral'}>{m.isActive ? 'Active' : 'Inactive'}</Badge></Td>
               <Td>
                 <div style={{ display: 'flex', gap: '4px' }}>
-                  <IconBtn onClick={() => { setEditingMapping(m); setEditForm({ gatewayId: m.gatewayId.toString(), methodId: m.methodId.toString() }); setShowEditModal(true); }} title="Edit" hoverColor={T.primary}><Edit size={15} /></IconBtn>
+                  <IconBtn onClick={() => { setEditingMapping(m); setEditForm({ gatewayId: m.gatewayId.toString(), methodId: m.methodId.toString() }); setShowEditModal(true); }} title="Edit" hoverColor="#32a862"><Edit size={15} /></IconBtn>
                   <IconBtn onClick={() => { setDeletingMapping(m); setShowDeleteModal(true); }} title="Delete" hoverColor={T.danger}><Trash2 size={15} /></IconBtn>
                 </div>
               </Td>

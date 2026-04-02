@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import authService from '../../services/authService';
 import {
@@ -9,16 +9,18 @@ import {
   Megaphone, Coins, BadgeDollarSign, Shield, ScrollText, Undo2
 } from 'lucide-react';
 
-// Brand palette for sidebar — #EC5B13 is the darkest allowed color
+// Brand palette — light sidebar with dual brand accents
 const SB = {
-  bg:          '#EC5B13',   // primary brand orange as sidebar bg
-  bgHover:     'rgba(255,255,255,0.12)',
-  accent:      '#ffffff',
-  accentLight: 'rgba(255,255,255,0.18)',
-  accentBorder:'#ffffff',
-  textMuted:   'rgba(255,255,255,0.65)',
-  textActive:  '#ffffff',
-  divider:     'rgba(255,255,255,0.15)',
+  bg:           '#ffffff',
+  bgHover:      '#f0faf4',
+  accent:       '#32a862',
+  accentLight:  '#e6f7ed',
+  accentBorder: '#32a862',
+  textNav:      '#374151',
+  textMuted:    '#9ca3af',
+  textActive:   '#32a862',
+  divider:      '#e5e7eb',
+  orange:       '#EC5B13',
 };
 
 const SIDEBAR_WIDTH   = 240;
@@ -27,6 +29,18 @@ const COLLAPSED_WIDTH = 64;
 const AdminSidebar = ({ collapsed, onToggle }) => {
   const location = useLocation();
   const [openMenu, setOpenMenu] = useState(null);
+  const [popupMenu, setPopupMenu] = useState(null); // { label, children, top }
+  const navRef = useRef(null);
+  const popupRef = useRef(null);
+
+  useEffect(() => {
+    if (!popupMenu) return;
+    const handler = (e) => {
+      if (popupRef.current && !popupRef.current.contains(e.target)) setPopupMenu(null);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [popupMenu]);
   const isLimitedAccess = authService.isLimitedAccess();
 
   const user = JSON.parse(sessionStorage.getItem('user') || '{}');
@@ -42,7 +56,7 @@ const AdminSidebar = ({ collapsed, onToggle }) => {
     { icon: LayoutDashboard, label: 'Dashboard', path: base },
     { icon: Package,         label: 'Products',  path: `${base}/products` },
     { icon: BarChart2, label: 'Reports', children: [
-      { icon: PauseCircle,  label: 'Hold Transactions',  path: `${base}/reports/hold-transactions` },
+      { icon: PauseCircle,  label: 'Hold Transactions',   path: `${base}/reports/hold-transactions` },
       { icon: TrendingUp,   label: 'Transaction Reports', path: `${base}/reports/transaction-reports` },
     ]},
     { icon: Zap, label: 'Integration', children: [
@@ -58,12 +72,12 @@ const AdminSidebar = ({ collapsed, onToggle }) => {
       { icon: Lock,         label: 'Hold Funds',    path: `${base}/user-management/hold-funds` },
     ]},
     { icon: UserCheck, label: 'Agent Management', children: [
-      { icon: UserPlus, label: 'Add Agent',   path: `${base}/agent-management/add-agent` },
-      { icon: List,     label: 'Agent List',  path: `${base}/agent-management/agents-list` },
+      { icon: UserPlus, label: 'Add Agent',  path: `${base}/agent-management/add-agent` },
+      { icon: List,     label: 'Agent List', path: `${base}/agent-management/agents-list` },
     ]},
     { icon: Briefcase, label: 'Employee Management', children: [
-      { icon: UserPlus, label: 'Add Employee',     path: `${base}/employee-management/add-employee` },
-      { icon: List,     label: 'Employees List',   path: `${base}/employee-management/employees-list` },
+      { icon: UserPlus, label: 'Add Employee',   path: `${base}/employee-management/add-employee` },
+      { icon: List,     label: 'Employees List', path: `${base}/employee-management/employees-list` },
     ]},
     { icon: Settings, label: 'Admin Settings', children: [
       { icon: UserCog,         label: 'Roles',              path: `${base}/admin-settings/roles-management` },
@@ -77,9 +91,9 @@ const AdminSidebar = ({ collapsed, onToggle }) => {
       { icon: CreditCard,      label: 'Payment Methods',    path: `${base}/admin-settings/payment-methods-manager` },
     ]},
     { icon: Globe, label: 'Website Settings', children: [
-      { icon: Shield,     label: 'Privacy Policy',    path: `${base}/website-settings/privacy-policy` },
-      { icon: ScrollText, label: 'Terms & Conditions',path: `${base}/website-settings/terms-conditions` },
-      { icon: Undo2,      label: 'Refund Policy',     path: `${base}/website-settings/refund-policy` },
+      { icon: Shield,     label: 'Privacy Policy',     path: `${base}/website-settings/privacy-policy` },
+      { icon: ScrollText, label: 'Terms & Conditions', path: `${base}/website-settings/terms-conditions` },
+      { icon: Undo2,      label: 'Refund Policy',      path: `${base}/website-settings/refund-policy` },
     ]},
     { icon: Wallet, label: 'Wallet Management', path: `${base}/wallet-management` },
   ];
@@ -110,26 +124,40 @@ const AdminSidebar = ({ collapsed, onToggle }) => {
       position: 'fixed', top: 0, left: 0, zIndex: 999,
       paddingTop: '64px',
       borderRight: `1px solid ${SB.divider}`,
+      boxShadow: '2px 0 12px rgba(0,0,0,0.06)',
     }}>
-      {/* Brand strip at top */}
+      {/* Brand strip */}
       {!collapsed && (
-        <div style={{ padding: '12px 16px 8px', borderBottom: `1px solid ${SB.divider}` }}>
+        <div style={{
+          padding: '10px 16px',
+          borderBottom: `1px solid ${SB.divider}`,
+          background: 'linear-gradient(135deg, #EC5B13 0%, #32a862 100%)',
+        }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.9)', boxShadow: '0 0 6px rgba(255,255,255,0.6)' }} />
-            <span style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(255,255,255,0.85)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Admin Panel</span>
+            <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.9)' }} />
+            <span style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(255,255,255,0.95)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Admin Panel</span>
           </div>
         </div>
       )}
 
-      <nav style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '8px 0', scrollbarWidth: 'none' }}>
+      <nav ref={navRef} style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '8px 0', scrollbarWidth: 'none' }}>
         {menuItems.map((item) => {
           if (item.children) {
             const isOpen = openMenu === item.label;
             const groupActive = isGroupActive(item.children);
             return (
-              <div key={item.label}>
+              <div key={item.label} style={{ position: 'relative' }}>
                 <button
-                  onClick={() => !collapsed && toggle(item.label)}
+                  onClick={e => {
+                    if (collapsed) {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      setPopupMenu(prev => prev?.label === item.label ? null : { label: item.label, children: item.children, top: rect.top });
+                    } else {
+                      toggle(item.label);
+                    }
+                  }}
+                  onMouseEnter={e => { if (!collapsed && !groupActive) e.currentTarget.style.backgroundColor = SB.bgHover; }}
+                  onMouseLeave={e => { if (!collapsed && !groupActive) e.currentTarget.style.backgroundColor = 'transparent'; }}
                   title={collapsed ? item.label : ''}
                   style={{
                     ...itemBase,
@@ -138,33 +166,31 @@ const AdminSidebar = ({ collapsed, onToggle }) => {
                     justifyContent: collapsed ? 'center' : 'flex-start',
                     borderLeft: `3px solid ${groupActive ? SB.accentBorder : 'transparent'}`,
                   }}
-                  onMouseEnter={e => { if (!groupActive) e.currentTarget.style.backgroundColor = SB.bgHover; }}
-                  onMouseLeave={e => { if (!groupActive) e.currentTarget.style.backgroundColor = 'transparent'; }}
                 >
                   <item.icon size={17} style={{ flexShrink: 0, color: groupActive ? SB.accent : SB.textMuted }} />
                   {!collapsed && (
                     <>
-                      <span style={{ flex: 1, textAlign: 'left', fontSize: '13px', fontWeight: groupActive ? 600 : 500, color: groupActive ? SB.textActive : SB.textMuted }}>{item.label}</span>
+                      <span style={{ flex: 1, textAlign: 'left', fontSize: '13px', fontWeight: groupActive ? 600 : 500, color: groupActive ? SB.textActive : SB.textNav }}>{item.label}</span>
                       <ChevronRight size={13} style={{ color: SB.textMuted, transform: isOpen ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }} />
                     </>
                   )}
                 </button>
 
                 {!collapsed && isOpen && (
-                  <div style={{ backgroundColor: 'rgba(0,0,0,0.1)', borderLeft: `2px solid ${SB.divider}`, marginLeft: '26px' }}>
+                  <div style={{ backgroundColor: '#f9fafb', borderLeft: `2px solid ${SB.accentBorder}33`, marginLeft: '26px' }}>
                     {item.children.map(child => (
                       <Link key={child.path} to={child.path} style={{
                         ...itemBase, display: 'flex',
                         padding: '9px 14px', fontSize: '12.5px',
                         fontWeight: isActive(child.path) ? 600 : 400,
-                        color: isActive(child.path) ? SB.accent : SB.textMuted,
+                        color: isActive(child.path) ? SB.accent : '#6b7280',
                         backgroundColor: isActive(child.path) ? SB.accentLight : 'transparent',
                         borderLeft: `2px solid ${isActive(child.path) ? SB.accentBorder : 'transparent'}`,
                       }}
                         onMouseEnter={e => { if (!isActive(child.path)) e.currentTarget.style.backgroundColor = SB.bgHover; }}
                         onMouseLeave={e => { if (!isActive(child.path)) e.currentTarget.style.backgroundColor = 'transparent'; }}
                       >
-                        <child.icon size={13} style={{ flexShrink: 0 }} />
+                        <child.icon size={13} style={{ flexShrink: 0, color: isActive(child.path) ? SB.accent : SB.textMuted }} />
                         <span>{child.label}</span>
                       </Link>
                     ))}
@@ -181,12 +207,12 @@ const AdminSidebar = ({ collapsed, onToggle }) => {
               padding: collapsed ? '11px 0' : '11px 16px',
               justifyContent: collapsed ? 'center' : 'flex-start',
               fontSize: '13px', fontWeight: active ? 600 : 500,
-              color: active ? SB.textActive : SB.textMuted,
+              color: active ? SB.textActive : SB.textNav,
               backgroundColor: active ? SB.accentLight : 'transparent',
               borderLeft: `3px solid ${active ? SB.accentBorder : 'transparent'}`,
             }}
-              onMouseEnter={e => { if (!active) e.currentTarget.style.backgroundColor = SB.bgHover; }}
-              onMouseLeave={e => { if (!active) e.currentTarget.style.backgroundColor = 'transparent'; }}
+              onMouseEnter={e => { if (!active && !collapsed) e.currentTarget.style.backgroundColor = SB.bgHover; }}
+              onMouseLeave={e => { if (!active && !collapsed) e.currentTarget.style.backgroundColor = 'transparent'; }}
             >
               <item.icon size={17} style={{ flexShrink: 0, color: active ? SB.accent : SB.textMuted }} />
               {!collapsed && <span>{item.label}</span>}
@@ -194,6 +220,42 @@ const AdminSidebar = ({ collapsed, onToggle }) => {
           );
         })}
       </nav>
+
+      {/* Collapsed popup submenu */}
+      {collapsed && popupMenu && (
+        <div
+          ref={popupRef}
+          style={{
+            position: 'fixed', left: COLLAPSED_WIDTH + 4, top: popupMenu.top,
+            backgroundColor: '#fff', borderRadius: '12px', minWidth: '200px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.14)', border: '1px solid #e5e7eb',
+            zIndex: 1100, overflow: 'hidden',
+          }}
+        >
+          <div style={{ padding: '10px 14px 8px', borderBottom: '1px solid #f3f4f6', background: 'linear-gradient(135deg, #EC5B13 0%, #32a862 100%)' }}>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: 'white', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{popupMenu.label}</span>
+          </div>
+          {popupMenu.children.map(child => (
+            <Link key={child.path} to={child.path}
+              onClick={() => setPopupMenu(null)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '10px',
+                padding: '10px 16px', textDecoration: 'none', fontSize: '13px',
+                fontWeight: isActive(child.path) ? 600 : 400,
+                color: isActive(child.path) ? SB.accent : '#374151',
+                backgroundColor: isActive(child.path) ? SB.accentLight : 'transparent',
+                borderLeft: `3px solid ${isActive(child.path) ? SB.accent : 'transparent'}`,
+                transition: 'background 0.12s',
+              }}
+              onMouseEnter={e => { if (!isActive(child.path)) e.currentTarget.style.backgroundColor = SB.bgHover; }}
+              onMouseLeave={e => { if (!isActive(child.path)) e.currentTarget.style.backgroundColor = 'transparent'; }}
+            >
+              <child.icon size={14} style={{ color: isActive(child.path) ? SB.accent : SB.textMuted, flexShrink: 0 }} />
+              <span>{child.label}</span>
+            </Link>
+          ))}
+        </div>
+      )}
 
       {/* Collapse toggle */}
       <button onClick={onToggle} style={{

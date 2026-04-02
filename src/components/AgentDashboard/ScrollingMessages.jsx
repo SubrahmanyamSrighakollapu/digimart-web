@@ -46,70 +46,25 @@ const ScrollingMessages = () => {
           0% { transform: translateX(100%); }
           100% { transform: translateX(-100%); }
         }
-        @keyframes pulse-glow {
-          0%, 100% { box-shadow: 0 0 15px rgba(75, 175, 71, 0.4); }
-          50% { box-shadow: 0 0 25px rgba(75, 175, 71, 0.6); }
-        }
-        .scroll-container { 
-          overflow: hidden; 
-          white-space: nowrap; 
-          position: relative;
-          background: rgba(255, 255, 255, 0.15);
-          border-radius: 20px;
-          padding: 8px 16px;
-          backdrop-filter: blur(10px);
-        }
-        .scroll-text { 
-          display: inline-block; 
-          animation: scroll-left 20s linear;
-        }
-        .alert-badge {
-          animation: pulse-glow 2s ease-in-out infinite;
-        }
+        .scroll-text { display: inline-block; animation: scroll-left 20s linear; }
       `}</style>
-      
       <div style={{
-        background: 'linear-gradient(135deg, #4BAF47 0%, #3d9139 100%)',
-        padding: '10px 0',
-        borderBottom: '2px solid rgba(255, 255, 255, 0.2)',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+        background: 'linear-gradient(135deg, #EC5B13 0%, #32a862 100%)',
+        height: '36px', display: 'flex', alignItems: 'center',
+        padding: '0 20px', gap: '12px', overflow: 'hidden',
+        borderBottom: '1px solid rgba(255,255,255,0.15)',
       }}>
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: '12px', 
-          maxWidth: '100%'
-        }}>
-          <div className="alert-badge" style={{
-            background: 'rgba(255, 255, 255, 0.25)',
-            padding: '6px 16px',
-            borderRadius: '20px',
-            fontSize: '0.7rem',
-            fontWeight: '700',
-            color: 'white',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            whiteSpace: 'nowrap',
-            marginLeft: '20px',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px'
+        <span style={{
+          background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)',
+          borderRadius: '20px', padding: '2px 12px', fontSize: '10px',
+          fontWeight: 700, color: 'white', textTransform: 'uppercase',
+          letterSpacing: '0.08em', whiteSpace: 'nowrap', flexShrink: 0,
+        }}>📢 Notice</span>
+        <div style={{ flex: 1, overflow: 'hidden' }}>
+          <div key={currentIndex} className="scroll-text" style={{
+            color: 'white', fontSize: '13px', fontWeight: 500,
           }}>
-            <span style={{ fontSize: '0.9rem' }}>📢</span>
-            <span>ALERT</span>
-          </div>
-          
-          <div className="scroll-container" style={{ flex: 1, marginRight: '20px' }}>
-            <div key={currentIndex} className="scroll-text" style={{
-              color: '#ffffff',
-              fontSize: '0.95rem',
-              fontWeight: '600',
-              textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
-              lineHeight: '1.5'
-            }}>
-              {messages[currentIndex]?.alertMessage}
-            </div>
+            {messages[currentIndex]?.alertMessage}
           </div>
         </div>
       </div>

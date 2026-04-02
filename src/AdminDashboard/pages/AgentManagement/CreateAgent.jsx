@@ -102,7 +102,7 @@ const CreateAgent = () => {
           {/* Left: Identity */}
           <Card>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
-              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg,#32a862,#2a9054)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <UserCheck size={16} color="white" />
               </div>
               <div>

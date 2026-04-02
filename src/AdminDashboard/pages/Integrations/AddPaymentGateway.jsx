@@ -64,17 +64,23 @@ const AddPaymentGateway = () => {
       {/* Stats row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px', marginBottom: '24px' }}>
         {[
-          { label: 'Total Gateways', value: gateways.length, gradient: 'linear-gradient(135deg,#6366f1,#4f46e5)', glow: 'rgba(99,102,241,0.3)' },
-          { label: 'Active', value: gateways.filter(g => g.isActive === 1).length, gradient: 'linear-gradient(135deg,#10b981,#059669)', glow: 'rgba(16,185,129,0.3)' },
-          { label: 'Inactive', value: gateways.filter(g => g.isActive !== 1).length, gradient: 'linear-gradient(135deg,#f59e0b,#d97706)', glow: 'rgba(245,158,11,0.3)' },
+          { label: 'Total Gateways', value: gateways.length,                          bg: '#eff6ff', accent: '#3b82f6', iconBg: '#dbeafe' },
+          { label: 'Active',         value: gateways.filter(g => g.isActive === 1).length, bg: '#e6f7ed', accent: '#32a862', iconBg: '#bbf7d0' },
+          { label: 'Inactive',       value: gateways.filter(g => g.isActive !== 1).length, bg: '#fef9ec', accent: '#d97706', iconBg: '#fef3c7' },
         ].map((s, i) => (
-          <div key={i} style={{ background: s.gradient, borderRadius: '14px', padding: '20px', boxShadow: `0 8px 24px ${s.glow}`, position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', top: '-15px', right: '-15px', width: '60px', height: '60px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.1)', pointerEvents: 'none' }} />
-            <div style={{ width: '34px', height: '34px', borderRadius: '10px', backgroundColor: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
-              <CreditCard size={16} color="white" />
+          <div key={i} style={{
+            backgroundColor: s.bg, borderRadius: '14px', padding: '20px',
+            border: `1px solid ${s.accent}22`, boxShadow: `0 2px 12px ${s.accent}14`,
+            transition: 'transform 0.2s', position: 'relative', overflow: 'hidden'
+          }}
+            onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-3px)'}
+            onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+          >
+            <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: s.iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
+              <CreditCard size={16} color={s.accent} />
             </div>
-            <p style={{ margin: '0 0 4px', fontSize: T.fontSm, color: 'rgba(255,255,255,0.75)', fontWeight: 500 }}>{s.label}</p>
-            <p style={{ margin: 0, fontSize: '28px', fontWeight: 800, color: 'white' }}>{s.value}</p>
+            <p style={{ margin: '0 0 4px', fontSize: T.fontSm, color: '#6b7280', fontWeight: 500 }}>{s.label}</p>
+            <p style={{ margin: 0, fontSize: '28px', fontWeight: 800, color: '#1c1917' }}>{s.value}</p>
           </div>
         ))}
       </div>
@@ -85,8 +91,8 @@ const AddPaymentGateway = () => {
             <Tr key={gw.gatewayId}>
               <Td>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <CreditCard size={16} color="white" />
+                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#e6f7ed', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <CreditCard size={16} color="#32a862" />
                   </div>
                   <span style={{ fontWeight: 700, color: T.text }}>{gw.gatewayName}</span>
                 </div>
@@ -95,7 +101,7 @@ const AddPaymentGateway = () => {
               <Td style={{ color: T.textMuted }}>{formatDate(gw.createdAt)}</Td>
               <Td>
                 <div style={{ display: 'flex', gap: '4px' }}>
-                  <IconBtn onClick={() => { setEditingGateway(gw); setGatewayName(gw.gatewayName); setShowModal(true); }} title="Edit" hoverColor={T.primary}><Edit size={15} /></IconBtn>
+                  <IconBtn onClick={() => { setEditingGateway(gw); setGatewayName(gw.gatewayName); setShowModal(true); }} title="Edit" hoverColor="#32a862"><Edit size={15} /></IconBtn>
                   <IconBtn onClick={() => { setDeleteItem(gw); setShowDeleteConfirm(true); }} title="Delete" hoverColor={T.danger}><Trash2 size={15} /></IconBtn>
                 </div>
               </Td>

@@ -1,4 +1,4 @@
-// Shared Admin Design System — Brand: Primary #EC5B13 | Secondary #F7EEEA
+// Shared Admin Design System — Brand: Orange #EC5B13 | Green #32a862
 
 export const T = {
   // ── Brand ──────────────────────────────────────────────────
@@ -7,6 +7,11 @@ export const T = {
   primaryLight:  '#FEF0E9',
   primaryMid:    '#FDDCCC',
   primaryDark:   '#B84510',
+
+  green:         '#32a862',
+  greenHover:    '#2a9054',
+  greenLight:    '#e6f7ed',
+  greenMid:      '#bbf7d0',
 
   secondary:     '#F7EEEA',
   secondaryDark: '#EDD9CF',
@@ -26,13 +31,13 @@ export const T = {
   infoLight:     '#e0f2fe',
 
   // ── Neutrals ───────────────────────────────────────────────
-  bg:            '#faf8f6',       // warm off-white
+  bg:            '#f9fafb',
   surface:       '#ffffff',
-  border:        '#e8ddd8',       // warm border
-  borderLight:   '#f3ede9',       // very light warm
-  text:          '#1c1917',       // neutral near-black (not warm-tinted)
-  textMuted:     '#78716c',       // warm-neutral muted
-  textLight:     '#a8a29e',       // warm-neutral light
+  border:        '#e5e7eb',
+  borderLight:   '#f3f4f6',
+  text:          '#1c1917',
+  textMuted:     '#6b7280',
+  textLight:     '#9ca3af',
 
   // ── Typography ─────────────────────────────────────────────
   fontSm:   '12px',
@@ -46,17 +51,19 @@ export const T = {
   radius:   '10px',
   radiusSm: '6px',
   radiusLg: '14px',
-  shadow:   '0 1px 3px rgba(236,91,19,0.06), 0 4px 16px rgba(0,0,0,0.04)',
-  shadowMd: '0 4px 24px rgba(236,91,19,0.12)',
-  shadowLg: '0 8px 32px rgba(236,91,19,0.16)',
+  shadow:   '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)',
+  shadowMd: '0 4px 24px rgba(50,168,98,0.12)',
+  shadowLg: '0 8px 32px rgba(50,168,98,0.16)',
 };
 
 // ─── Gradient helpers ────────────────────────────────────────
 export const G = {
   primary:  'linear-gradient(135deg, #EC5B13 0%, #D44E0E 100%)',
+  green:    'linear-gradient(135deg, #32a862 0%, #2a9054 100%)',
+  brand:    'linear-gradient(135deg, #EC5B13 0%, #32a862 100%)',
   warm:     'linear-gradient(135deg, #EC5B13 0%, #f97316 100%)',
   soft:     'linear-gradient(135deg, #F7EEEA 0%, #FDDCCC 100%)',
-  hero:     'linear-gradient(135deg, #EC5B13 0%, #F07030 60%, #F5924A 100%)',
+  hero:     'linear-gradient(135deg, #EC5B13 0%, #f07030 50%, #32a862 100%)',
   success:  'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
   danger:   'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
   warning:  'linear-gradient(135deg, #d97706 0%, #b45309 100%)',
@@ -88,7 +95,7 @@ export const Card = ({ children, style = {}, noPad = false }) => (
 // ─── Section Label ───────────────────────────────────────────
 export const SectionLabel = ({ children, style = {} }) => (
   <p style={{
-    fontSize: T.fontSm, fontWeight: 700, color: T.primary,
+    fontSize: T.fontSm, fontWeight: 700, color: T.green,
     textTransform: 'uppercase', letterSpacing: '0.07em', margin: '0 0 14px', ...style
   }}>
     {children}
@@ -96,13 +103,13 @@ export const SectionLabel = ({ children, style = {} }) => (
 );
 
 // ─── Primary Button ──────────────────────────────────────────
-export const Btn = ({ children, onClick, color = T.primary, disabled, type = 'button', style = {}, size = 'md' }) => {
+export const Btn = ({ children, onClick, color = T.green, disabled, type = 'button', style = {}, size = 'md' }) => {
   const pad = size === 'sm' ? '7px 14px' : '10px 20px';
   const fs  = size === 'sm' ? T.fontBase : T.fontMd;
   return (
     <button type={type} onClick={onClick} disabled={disabled} style={{
       display: 'inline-flex', alignItems: 'center', gap: '6px',
-      padding: pad, backgroundColor: disabled ? '#d1c4bc' : color,
+      padding: pad, backgroundColor: disabled ? '#d1d5db' : color,
       color: 'white', border: 'none', borderRadius: T.radius,
       fontWeight: 600, fontSize: fs, cursor: disabled ? 'not-allowed' : 'pointer',
       transition: 'opacity 0.15s, transform 0.1s', whiteSpace: 'nowrap', ...style
@@ -119,12 +126,12 @@ export const Btn = ({ children, onClick, color = T.primary, disabled, type = 'bu
 export const GhostBtn = ({ children, onClick, type = 'button', style = {} }) => (
   <button type={type} onClick={onClick} style={{
     display: 'inline-flex', alignItems: 'center', gap: '6px',
-    padding: '10px 20px', backgroundColor: T.secondary, color: T.textMuted,
+    padding: '10px 20px', backgroundColor: '#f9fafb', color: T.textMuted,
     border: `1px solid ${T.border}`, borderRadius: T.radius,
     fontWeight: 600, fontSize: T.fontMd, cursor: 'pointer', ...style
   }}
-    onMouseEnter={e => e.currentTarget.style.backgroundColor = T.secondaryDark}
-    onMouseLeave={e => e.currentTarget.style.backgroundColor = T.secondary}
+    onMouseEnter={e => e.currentTarget.style.backgroundColor = '#f3f4f6'}
+    onMouseLeave={e => e.currentTarget.style.backgroundColor = '#f9fafb'}
   >
     {children}
   </button>
@@ -132,12 +139,13 @@ export const GhostBtn = ({ children, onClick, type = 'button', style = {} }) => 
 
 // ─── Badge ───────────────────────────────────────────────────
 const badgeMap = {
-  primary: { bg: T.primaryLight,  color: T.primaryDark },
-  success: { bg: '#dcfce7',       color: '#15803d'     },
-  danger:  { bg: '#fee2e2',       color: '#b91c1c'     },
-  warning: { bg: '#fef3c7',       color: '#92400e'     },
-  info:    { bg: '#e0f2fe',       color: '#075985'     },
-  neutral: { bg: T.secondary,     color: T.textMuted   },
+  primary: { bg: T.primaryLight, color: T.primaryDark },
+  green:   { bg: T.greenLight,   color: T.greenHover  },
+  success: { bg: '#dcfce7',      color: '#15803d'     },
+  danger:  { bg: '#fee2e2',      color: '#b91c1c'     },
+  warning: { bg: '#fef3c7',      color: '#92400e'     },
+  info:    { bg: '#e0f2fe',      color: '#075985'     },
+  neutral: { bg: '#f3f4f6',      color: T.textMuted   },
 };
 
 export const Badge = ({ children, variant = 'neutral' }) => {
@@ -165,11 +173,11 @@ export const DataTable = ({ headers, children, loading, empty }) => (
   <div style={{ overflowX: 'auto' }}>
     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
       <thead>
-        <tr style={{ backgroundColor: T.secondary }}>
+        <tr style={{ backgroundColor: T.greenLight }}>
           {headers.map((h, i) => (
             <th key={i} style={{
               padding: '12px 18px', textAlign: 'left', fontSize: '11px',
-              fontWeight: 700, color: T.primary, borderBottom: `1px solid ${T.border}`,
+              fontWeight: 700, color: T.green, borderBottom: `1px solid ${T.border}`,
               whiteSpace: 'nowrap', letterSpacing: '0.05em', textTransform: 'uppercase'
             }}>
               {h}
@@ -196,7 +204,7 @@ export const Td = ({ children, style = {} }) => (
 
 export const Tr = ({ children, onClick }) => (
   <tr onClick={onClick} style={{ transition: 'background 0.12s', cursor: onClick ? 'pointer' : 'default' }}
-    onMouseEnter={e => e.currentTarget.style.backgroundColor = T.secondary}
+    onMouseEnter={e => e.currentTarget.style.backgroundColor = T.greenLight}
     onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
   >
     {children}
@@ -205,12 +213,12 @@ export const Tr = ({ children, onClick }) => (
 
 // ─── Empty State ─────────────────────────────────────────────
 export const EmptyState = ({ title = 'No data found', subtitle = 'Try adjusting your filters or search criteria' }) => (
-  <div style={{ textAlign: 'center', padding: '64px 24px' }}>
+  <div style={{ textAlign: 'center', padding: '64px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
     <div style={{
-      width: '56px', height: '56px', borderRadius: '50%', backgroundColor: T.primaryLight,
-      display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px'
+      width: '56px', height: '56px', borderRadius: '50%', backgroundColor: T.greenLight,
+      display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px'
     }}>
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={T.primary} strokeWidth="2">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={T.green} strokeWidth="2">
         <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
       </svg>
     </div>
@@ -231,7 +239,7 @@ export const SearchBar = ({ value, onChange, placeholder = 'Search...', style = 
       borderRadius: T.radius, fontSize: T.fontMd, outline: 'none',
       backgroundColor: T.surface, color: T.text, boxSizing: 'border-box'
     }}
-      onFocus={e => { e.target.style.borderColor = T.primary; e.target.style.boxShadow = `0 0 0 3px ${T.primaryLight}`; }}
+      onFocus={e => { e.target.style.borderColor = T.green; e.target.style.boxShadow = `0 0 0 3px ${T.greenLight}`; }}
       onBlur={e => { e.target.style.borderColor = T.border; e.target.style.boxShadow = 'none'; }}
     />
   </div>
@@ -244,7 +252,7 @@ export const SelectInput = ({ value, onChange, children, style = {}, ...props })
     fontSize: T.fontMd, backgroundColor: T.surface, color: T.text,
     outline: 'none', cursor: 'pointer', ...style
   }}
-    onFocus={e => { e.target.style.borderColor = T.primary; e.target.style.boxShadow = `0 0 0 3px ${T.primaryLight}`; }}
+    onFocus={e => { e.target.style.borderColor = T.green; e.target.style.boxShadow = `0 0 0 3px ${T.greenLight}`; }}
     onBlur={e => { e.target.style.borderColor = T.border; e.target.style.boxShadow = 'none'; }}
   >
     {children}
@@ -273,7 +281,7 @@ export const InputField = ({ style = {}, ...props }) => (
     fontSize: T.fontMd, outline: 'none', backgroundColor: T.surface,
     color: T.text, width: '100%', boxSizing: 'border-box', ...style
   }}
-    onFocus={e => { e.target.style.borderColor = T.primary; e.target.style.boxShadow = `0 0 0 3px ${T.primaryLight}`; }}
+    onFocus={e => { e.target.style.borderColor = T.green; e.target.style.boxShadow = `0 0 0 3px ${T.greenLight}`; }}
     onBlur={e => { e.target.style.borderColor = T.border; e.target.style.boxShadow = 'none'; }}
   />
 );
@@ -285,7 +293,7 @@ export const SelectField = ({ children, style = {}, ...props }) => (
     fontSize: T.fontMd, backgroundColor: T.surface, color: T.text,
     outline: 'none', width: '100%', cursor: 'pointer', ...style
   }}
-    onFocus={e => { e.target.style.borderColor = T.primary; e.target.style.boxShadow = `0 0 0 3px ${T.primaryLight}`; }}
+    onFocus={e => { e.target.style.borderColor = T.green; e.target.style.boxShadow = `0 0 0 3px ${T.greenLight}`; }}
     onBlur={e => { e.target.style.borderColor = T.border; e.target.style.boxShadow = 'none'; }}
   >
     {children}
@@ -300,7 +308,7 @@ export const TextareaField = ({ style = {}, ...props }) => (
     color: T.text, width: '100%', boxSizing: 'border-box',
     resize: 'vertical', minHeight: '80px', ...style
   }}
-    onFocus={e => { e.target.style.borderColor = T.primary; e.target.style.boxShadow = `0 0 0 3px ${T.primaryLight}`; }}
+    onFocus={e => { e.target.style.borderColor = T.green; e.target.style.boxShadow = `0 0 0 3px ${T.greenLight}`; }}
     onBlur={e => { e.target.style.borderColor = T.border; e.target.style.boxShadow = 'none'; }}
   />
 );
@@ -313,7 +321,7 @@ export const Toggle = ({ checked, onChange, label }) => (
       <input type="checkbox" checked={checked} onChange={onChange} style={{ opacity: 0, width: 0, height: 0 }} />
       <span style={{
         position: 'absolute', inset: 0, borderRadius: '24px',
-        backgroundColor: checked ? T.primary : '#d1c4bc', transition: 'background 0.25s'
+        backgroundColor: checked ? T.green : '#d1d5db', transition: 'background 0.25s'
       }} />
       <span style={{
         position: 'absolute', top: '3px', left: checked ? '23px' : '3px',
@@ -330,24 +338,24 @@ export const Modal = ({ open, onClose, title, children, width = '560px' }) => {
   if (!open) return null;
   return (
     <div onClick={onClose} style={{
-      position: 'fixed', inset: 0, backgroundColor: 'rgba(26,15,10,0.5)',
+      position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       zIndex: 2000, backdropFilter: 'blur(2px)'
     }}>
       <div onClick={e => e.stopPropagation()} style={{
         backgroundColor: T.surface, borderRadius: T.radiusLg,
         width, maxWidth: '95vw', maxHeight: '90vh', overflowY: 'auto',
-        boxShadow: '0 20px 60px rgba(236,91,19,0.15)', border: `1px solid ${T.borderLight}`
+        boxShadow: '0 20px 60px rgba(0,0,0,0.15)', border: `1px solid ${T.borderLight}`
       }}>
         <div style={{
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           padding: '20px 24px', borderBottom: `1px solid ${T.borderLight}`,
           position: 'sticky', top: 0, backgroundColor: T.surface, zIndex: 1,
-          background: `linear-gradient(to right, ${T.surface}, ${T.secondary})`
+          background: `linear-gradient(to right, ${T.surface}, ${T.greenLight})`
         }}>
           <h2 style={{ margin: 0, fontSize: T.fontXl, fontWeight: 700, color: T.text }}>{title}</h2>
           <button onClick={onClose} style={{
-            background: T.secondary, border: `1px solid ${T.border}`, borderRadius: T.radiusSm,
+            background: '#f3f4f6', border: `1px solid ${T.border}`, borderRadius: T.radiusSm,
             width: '32px', height: '32px', display: 'flex', alignItems: 'center',
             justifyContent: 'center', cursor: 'pointer', color: T.textMuted
           }}>
@@ -367,18 +375,18 @@ export const ConfirmDialog = ({ open, onClose, onConfirm, title, message, confir
   if (!open) return null;
   return (
     <div onClick={onClose} style={{
-      position: 'fixed', inset: 0, backgroundColor: 'rgba(26,15,10,0.5)',
+      position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       zIndex: 2000, backdropFilter: 'blur(2px)'
     }}>
       <div onClick={e => e.stopPropagation()} style={{
         backgroundColor: T.surface, borderRadius: T.radiusLg, width: '400px',
-        maxWidth: '95vw', padding: '32px', boxShadow: '0 20px 60px rgba(236,91,19,0.15)',
+        maxWidth: '95vw', padding: '32px', boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
         textAlign: 'center'
       }}>
         <div style={{
           width: '52px', height: '52px', borderRadius: '50%',
-          backgroundColor: confirmColor === T.danger ? T.dangerLight : T.primaryLight,
+          backgroundColor: confirmColor === T.danger ? T.dangerLight : T.greenLight,
           display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px'
         }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={confirmColor} strokeWidth="2.5">
@@ -422,12 +430,12 @@ export const VerifyInput = ({ label, name, value, onChange, placeholder, onVerif
         borderRadius: `${T.radius} 0 0 ${T.radius}`, fontSize: T.fontMd,
         outline: 'none', borderRight: 'none', backgroundColor: T.surface, color: T.text
       }}
-        onFocus={e => { e.target.style.borderColor = T.primary; e.target.style.boxShadow = `0 0 0 3px ${T.primaryLight}`; }}
+        onFocus={e => { e.target.style.borderColor = T.green; e.target.style.boxShadow = `0 0 0 3px ${T.greenLight}`; }}
         onBlur={e => { e.target.style.borderColor = T.border; e.target.style.boxShadow = 'none'; }}
       />
       <button type="button" onClick={onVerify} style={{
         padding: '10px 20px',
-        backgroundColor: verified ? T.success : T.primary,
+        backgroundColor: verified ? T.success : T.green,
         color: 'white', border: 'none',
         borderRadius: `0 ${T.radius} ${T.radius} 0`,
         fontWeight: 600, fontSize: T.fontBase, cursor: 'pointer', whiteSpace: 'nowrap'
@@ -440,25 +448,31 @@ export const VerifyInput = ({ label, name, value, onChange, placeholder, onVerif
 
 // ─── Step Indicator ──────────────────────────────────────────
 export const StepIndicator = ({ steps, current }) => (
-  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '28px' }}>
+  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '28px', background: '#fff', borderRadius: '14px', padding: '20px 28px', border: '1px solid #e5e7eb', boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
     {steps.map((s, i) => (
       <div key={i} style={{ display: 'flex', alignItems: 'center', flex: i < steps.length - 1 ? 1 : 'none' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{
-            width: '30px', height: '30px', borderRadius: '50%', display: 'flex',
-            alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: T.fontBase,
-            backgroundColor: i + 1 < current ? T.success : i + 1 === current ? T.primary : T.secondary,
-            color: i + 1 <= current ? 'white' : T.textMuted, flexShrink: 0,
-            border: i + 1 === current ? `2px solid ${T.primaryDark}` : 'none'
+            width: '38px', height: '38px', borderRadius: '50%', display: 'flex', flexShrink: 0,
+            alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: T.fontMd,
+            backgroundColor: i + 1 < current ? T.green : i + 1 === current ? T.green : '#f3f4f6',
+            color: i + 1 <= current ? 'white' : '#9ca3af',
+            boxShadow: i + 1 === current ? `0 0 0 4px ${T.greenLight}` : 'none',
+            transition: 'all 0.3s'
           }}>
-            {i + 1 < current ? '✓' : i + 1}
+            {i + 1 < current
+              ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+              : i + 1}
           </div>
-          <span style={{ fontSize: T.fontBase, fontWeight: i + 1 === current ? 700 : 400, color: i + 1 === current ? T.primary : T.textMuted, whiteSpace: 'nowrap' }}>
-            {s}
-          </span>
+          <div>
+            <p style={{ margin: 0, fontSize: T.fontBase, fontWeight: i + 1 === current ? 700 : 500, color: i + 1 === current ? T.green : i + 1 < current ? T.text : '#9ca3af', lineHeight: 1.3 }}>{s}</p>
+            <p style={{ margin: 0, fontSize: '11px', color: i + 1 === current ? '#6ee7b7' : i + 1 < current ? T.green : '#d1d5db' }}>
+              {i + 1 < current ? 'Completed' : i + 1 === current ? 'In progress' : 'Pending'}
+            </p>
+          </div>
         </div>
         {i < steps.length - 1 && (
-          <div style={{ flex: 1, height: '2px', backgroundColor: i + 1 < current ? T.success : T.border, margin: '0 12px' }} />
+          <div style={{ flex: 1, height: '3px', margin: '0 20px', borderRadius: '3px', background: i + 1 < current ? `linear-gradient(90deg, ${T.green}, ${T.greenHover})` : '#e5e7eb', transition: 'background 0.4s' }} />
         )}
       </div>
     ))}
@@ -466,13 +480,13 @@ export const StepIndicator = ({ steps, current }) => (
 );
 
 // ─── Icon Button ─────────────────────────────────────────────
-export const IconBtn = ({ children, onClick, title, color = T.textMuted, hoverColor = T.primary }) => (
+export const IconBtn = ({ children, onClick, title, color = T.textMuted, hoverColor = T.green }) => (
   <button onClick={onClick} title={title} style={{
     background: 'none', border: 'none', cursor: 'pointer', color,
     padding: '6px', borderRadius: T.radiusSm, display: 'inline-flex',
     alignItems: 'center', justifyContent: 'center', transition: 'color 0.15s, background 0.15s'
   }}
-    onMouseEnter={e => { e.currentTarget.style.color = hoverColor; e.currentTarget.style.backgroundColor = T.primaryLight; }}
+    onMouseEnter={e => { e.currentTarget.style.color = hoverColor; e.currentTarget.style.backgroundColor = T.greenLight; }}
     onMouseLeave={e => { e.currentTarget.style.color = color; e.currentTarget.style.backgroundColor = 'transparent'; }}
   >
     {children}
