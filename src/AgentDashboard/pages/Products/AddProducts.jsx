@@ -1,814 +1,353 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2, Plus, X, Package, ImagePlus, Tag, DollarSign, Info } from 'lucide-react';
 import productService from '../../../services/productService';
 import lookupService from '../../../services/lookupService';
 
-const AddProducts = () => {
-  const [showPopup, setShowPopup] = useState(false);
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [editingProduct, setEditingProduct] = useState(null);
-  const [quantities, setQuantities] = useState([]);
-  const [subCategories, setSubCategories] = useState([]);
-  const [formData, setFormData] = useState({
-    name: '',
-    title: '',
-    description: '',
-    quantityId: '',
-    price: '',
-    discount: '',
-    finalPrice: '',
-    gst: '',
-    categoryId: '',
-    statusId: '',
-    images: []
-  });
-  const [imageInputs, setImageInputs] = useState([{ id: 1 }]);
+const P  = '#EC5B13';
+const PL = '#FEF0E9';
+const G  = '#32a862';
+const GL = '#e6f7ed';
 
-  useEffect(() => {
-    fetchProducts();
-    fetchQuantities();
-    fetchSubCategories();
-  }, []);
+const inp = {
+  width: '100%', padding: '10px 13px', border: '1px solid #e5e7eb',
+  borderRadius: '8px', fontSize: '13px', outline: 'none',
+  backgroundColor: '#fff', color: '#1c1917', boxSizing: 'border-box',
+  transition: 'border-color 0.15s, box-shadow 0.15s',
+};
+
+const focusStyle = (e) => { e.target.style.borderColor = P; e.target.style.boxShadow = `0 0 0 3px ${PL}`; };
+const blurStyle  = (e) => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; };
+
+const Field = ({ label, required, children, fullWidth }) => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', gridColumn: fullWidth ? '1 / -1' : undefined }}>
+    <label style={{ fontSize: '12px', fontWeight: 700, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+      {label}{required && <span style={{ color: P, marginLeft: '2px' }}>*</span>}
+    </label>
+    {children}
+  </div>
+);
+
+const SectionHead = ({ icon: Icon, title, color = P }) => (
+  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', paddingBottom: '10px', borderBottom: `1px solid #f0ede9` }}>
+    <div style={{ width: '28px', height: '28px', borderRadius: '7px', backgroundColor: PL, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Icon size={14} color={color} />
+    </div>
+    <span style={{ fontSize: '13px', fontWeight: 700, color: '#1c1917', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{title}</span>
+  </div>
+);
+
+const AddProducts = () => {
+  const [showPopup, setShowPopup]         = useState(false);
+  const [products, setProducts]           = useState([]);
+  const [loading, setLoading]             = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [quantities, setQuantities]       = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [imageInputs, setImageInputs]     = useState([{ id: 1 }]);
+  const [formData, setFormData] = useState({
+    name: '', title: '', description: '', quantityId: '', price: '',
+    discount: '', finalPrice: '', gst: '', categoryId: '', statusId: '', images: []
+  });
+
+  useEffect(() => { fetchProducts(); fetchQuantities(); fetchSubCategories(); }, []);
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await productService.getProducts();
-      if (response && response.status === 1 && response.result) {
-        setProducts(response.result);
-      }
-    } catch (error) {
-      console.error('Error fetching products:', error);
-    } finally {
-      setLoading(false);
-    }
+      const res = await productService.getProducts();
+      if (res?.status === 1 && res.result) setProducts(res.result);
+    } catch { console.error('Error fetching products'); }
+    finally { setLoading(false); }
   };
 
   const fetchQuantities = async () => {
     try {
-      const response = await lookupService.getProductQuantityTypes();
-      if (response.status === 1 && response.result) {
-        setQuantities(response.result);
-      }
-    } catch (error) {
-      console.error('Error fetching quantities:', error);
-    }
+      const res = await lookupService.getProductQuantityTypes();
+      if (res.status === 1 && res.result) setQuantities(res.result);
+    } catch {}
   };
 
   const fetchSubCategories = async () => {
     try {
-      const response = await productService.getAllProductCategories();
-      if (response && response.status === 1 && response.result) {
-        const subCats = response.result.filter(cat => cat.isParent === 0);
-        setSubCategories(subCats);
-      }
-    } catch (error) {
-      console.error('Error fetching sub-categories:', error);
-    }
+      const res = await productService.getAllProductCategories();
+      if (res?.status === 1 && res.result) setSubCategories(res.result.filter(c => c.isParent === 0));
+    } catch {}
   };
 
-  const handleInputChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => {
       const updated = { ...prev, [name]: value };
-      
-      // Auto-calculate final price when price or discount changes
       if (name === 'price' || name === 'discount') {
-        const price = parseFloat(name === 'price' ? value : updated.price) || 0;
+        const price    = parseFloat(name === 'price' ? value : updated.price) || 0;
         const discount = parseFloat(name === 'discount' ? value : updated.discount) || 0;
         updated.finalPrice = (price - (price * discount / 100)).toFixed(2);
       }
-      
       return updated;
     });
   };
 
   const handleFileChange = (e, inputId) => {
     const file = e.target.files[0];
-    if (file) {
-      setFormData(prev => {
-        const newImages = [...prev.images];
-        const existingIndex = newImages.findIndex(img => img.inputId === inputId);
-        if (existingIndex >= 0) {
-          newImages[existingIndex] = { file, inputId };
-        } else {
-          newImages.push({ file, inputId });
-        }
-        return { ...prev, images: newImages };
-      });
-    }
-  };
-
-  const addImageInput = () => {
-    const newId = imageInputs.length > 0 ? Math.max(...imageInputs.map(i => i.id)) + 1 : 1;
-    setImageInputs([...imageInputs, { id: newId }]);
-  };
-
-  const removeImageInput = (inputId) => {
-    if (imageInputs.length > 1) {
-      setImageInputs(imageInputs.filter(input => input.id !== inputId));
-      setFormData(prev => ({
-        ...prev,
-        images: prev.images.filter(img => img.inputId !== inputId)
-      }));
-    }
+    if (!file) return;
+    setFormData(prev => {
+      const imgs = [...prev.images];
+      const idx  = imgs.findIndex(i => i.inputId === inputId);
+      if (idx >= 0) imgs[idx] = { file, inputId };
+      else imgs.push({ file, inputId });
+      return { ...prev, images: imgs };
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
-      
       if (editingProduct) {
-        // Update product
-        const productData = {
+        const res = await productService.updateProduct({
           productId: editingProduct.productId,
-          productName: formData.name,
-          productTitle: formData.title,
-          productDescription: formData.description,
-          quantityId: parseInt(formData.quantityId),
-          price: parseFloat(formData.price),
-          discount: parseFloat(formData.discount) || 0,
-          finalPrice: parseFloat(formData.finalPrice),
-          productGst: parseFloat(formData.gst),
-          categoryId: parseInt(formData.categoryId),
-          statusId: parseInt(formData.statusId) || 1,
-          isActive: true
-        };
-        
-        const response = await productService.updateProduct(productData);
-        if (response && response.status === 1) {
-          await fetchProducts();
-          toast.success('Product updated successfully!');
-          resetForm();
-        } else {
-          toast.error('Failed to update product');
-        }
-      } else {
-        // Add new product
-        const apiFormData = new FormData();
-        apiFormData.append('productName', formData.name);
-        apiFormData.append('productTitle', formData.title);
-        apiFormData.append('productDescription', formData.description);
-        apiFormData.append('quantityId', formData.quantityId);
-        apiFormData.append('price', formData.price);
-        apiFormData.append('discount', formData.discount || 0);
-        apiFormData.append('finalPrice', formData.finalPrice);
-        apiFormData.append('productGst', formData.gst);
-        apiFormData.append('categoryId', formData.categoryId);
-        apiFormData.append('statusId', formData.statusId || 1);
-        apiFormData.append('isActive', true);
-        
-        // Add images
-        formData.images.forEach((imageObj) => {
-          apiFormData.append('productImages', imageObj.file);
+          productName: formData.name, productTitle: formData.title,
+          productDescription: formData.description, quantityId: parseInt(formData.quantityId),
+          price: parseFloat(formData.price), discount: parseFloat(formData.discount) || 0,
+          finalPrice: parseFloat(formData.finalPrice), productGst: parseFloat(formData.gst),
+          categoryId: parseInt(formData.categoryId), statusId: parseInt(formData.statusId) || 1, isActive: true
         });
-        
-        const response = await productService.onboardProduct(apiFormData);
-        if (response && response.status === 1) {
-          await fetchProducts();
-          toast.success('Product added successfully!');
-          resetForm();
-        } else {
-          toast.error('Failed to add product');
-        }
+        if (res?.status === 1) { toast.success('Product updated!'); await fetchProducts(); resetForm(); }
+        else toast.error('Failed to update product');
+      } else {
+        const fd = new FormData();
+        fd.append('productName', formData.name); fd.append('productTitle', formData.title);
+        fd.append('productDescription', formData.description); fd.append('quantityId', formData.quantityId);
+        fd.append('price', formData.price); fd.append('discount', formData.discount || 0);
+        fd.append('finalPrice', formData.finalPrice); fd.append('productGst', formData.gst);
+        fd.append('categoryId', formData.categoryId); fd.append('statusId', formData.statusId || 1);
+        fd.append('isActive', true);
+        formData.images.forEach(img => fd.append('productImages', img.file));
+        const res = await productService.onboardProduct(fd);
+        if (res?.status === 1) { toast.success('Product added!'); await fetchProducts(); resetForm(); }
+        else toast.error('Failed to add product');
       }
-    } catch (error) {
-      console.error('Error saving product:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Error saving product';
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { toast.error(err.response?.data?.message || err.message || 'Error saving product'); }
+    finally { setLoading(false); }
   };
 
   const resetForm = () => {
-    setFormData({
-      name: '', title: '', description: '', quantityId: '', price: '',
-      discount: '', finalPrice: '', gst: '', categoryId: '', statusId: '', images: []
-    });
-    setImageInputs([{ id: 1 }]);
-    setEditingProduct(null);
-    setShowPopup(false);
+    setFormData({ name: '', title: '', description: '', quantityId: '', price: '', discount: '', finalPrice: '', gst: '', categoryId: '', statusId: '', images: [] });
+    setImageInputs([{ id: 1 }]); setEditingProduct(null); setShowPopup(false);
   };
 
-  const handleEdit = (product) => {
-    setEditingProduct(product);
-    setFormData({
-      name: product.productName,
-      title: product.productTitle,
-      description: product.productDescription,
-      quantityId: product.quantityTypeId.toString(),
-      price: product.price,
-      discount: product.discount,
-      finalPrice: product.finalPrice,
-      gst: product.producGST,
-      categoryId: product.categoryId.toString(),
-      statusId: product.statusId.toString(),
-      images: []
-    });
+  const handleEdit = (p) => {
+    setEditingProduct(p);
+    setFormData({ name: p.productName, title: p.productTitle, description: p.productDescription, quantityId: p.quantityTypeId.toString(), price: p.price, discount: p.discount, finalPrice: p.finalPrice, gst: p.producGST, categoryId: p.categoryId.toString(), statusId: p.statusId.toString(), images: [] });
     setShowPopup(true);
   };
 
-  const handleDelete = (id) => {
-    setProducts(products.filter(product => product.id !== id));
-  };
-
   return (
-    <>
-      <style jsx>{`
-        .page-container {
-          padding: 24px;
-          background-color: #f7f9fc;
-          min-height: 100vh;
-          font-family: 'Segoe UI', sans-serif;
-        }
-
-        .page-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 24px;
-        }
-
-        .page-title {
-          font-size: 24px;
-          font-weight: 600;
-          color: #2d3748;
-          margin: 0;
-        }
-
-        .add-btn {
-          background-color: #10b981;
-          color: white;
-          border: none;
-          padding: 12px 24px;
-          border-radius: 8px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-
-        .add-btn:hover {
-          background-color: #059669;
-          transform: translateY(-1px);
-        }
-
-        .table-container {
-          background: white;
-          border-radius: 12px;
-          padding: 24px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-          overflow-x: auto;
-        }
-
-        .table {
-          width: 100%;
-          border-collapse: collapse;
-          min-width: 800px;
-        }
-
-        .table th,
-        .table td {
-          padding: 12px 16px;
-          text-align: left;
-          border-bottom: 1px solid #e2e8f0;
-        }
-
-        .table th {
-          background-color: #f8fafc;
-          font-weight: 600;
-          color: #4a5568;
-        }
-
-        .action-btn {
-          padding: 4px;
-          border: none;
-          border-radius: 6px;
-          font-size: 12px;
-          font-weight: 600;
-          cursor: pointer;
-          margin-right: 8px;
-          transition: all 0.2s;
-        }
-
-        // .edit-btn {
-        //   background-color: #3b82f6;
-        //   color: white;
-        // }
-
-        // .edit-btn:hover {
-        //   background-color: #2563eb;
-        // }
-
-        // .delete-btn {
-        //   background-color: #ef4444;
-        //   color: white;
-        // }
-
-        // .delete-btn:hover {
-        //   background-color: #dc2626;
-        // }
-
-.popup-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px;   /* reduced */
-  z-index: 9999;
-}
-
-.popup {
-  background: #ffffff;
-  width: 650px;                 /* reduced width */
-  max-width: 95%;
-  max-height: 85vh;
-  overflow-y: auto;
-  border-radius: 6px;           /* sharp corners */
-  padding: 24px;                /* reduced padding */
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-  animation: slideUp 0.2s ease-out;
-}
-.popup-title {
-  font-size: 20px;   /* smaller */
-  font-weight: 600;
-  margin-bottom: 18px;
-  text-align: left;  /* more professional */
-}
-
-        .form-section {
-          margin-bottom: 18px;
-        }
-
-        .section-title {
-          font-size: 18px;
-          font-weight: 600;
-          color: #4a5568;
-          margin: 0 0 20px 0;
-          padding-bottom: 8px;
-          border-bottom: 1px solid #e2e8f0;
-        }
-
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;  /* reduced */
-}
-
-        .form-grid-three {
-          display: grid;
-          grid-template-columns: 1fr 1fr 1fr;
-          gap: 14px;
-=        }
-
-        .form-group {
-          margin-bottom: 24px;
-        }
-
-        .form-group.full-width {
-          grid-column: 1 / -1;
-        }
-
-.form-group label {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 4px;   /* smaller */
-  color: #495057;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-  width: 100%;
-  padding: 8px 12px;            /* smaller padding */
-  border: 1px solid #ced4da;    /* bootstrap border */
-  border-radius: 4px;           /* sharp */
-  font-size: 14px;
-  box-sizing: border-box;
-  transition: all 0.2s ease;
-}
-
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: #0d6efd;  /* bootstrap blue */
-  box-shadow: 0 0 0 0.2rem rgba(13,110,253,.25);
-}
-
-        .form-group textarea {
-          height: 80px;
-          resize: vertical;
-        }
-
-        .file-input {
-          border: 2px dashed #cbd5e0;
-          border-radius: 12px;
-          padding: 32px 20px;
-          text-align: center;
-          cursor: pointer;
-          transition: all 0.3s;
-          background: #f8fafc;
-        }
-
-        .file-input:hover {
-          border-color: #10b981;
-          background-color: #f0fdf4;
-          transform: translateY(-2px);
-        }
-
-        .file-input input {
-          display: none;
-        }
-
-        .file-input-text {
-          color: #6b7280;
-          font-size: 16px;
-          margin: 0;
-        }
-
-        .file-count {
-          color: #10b981;
-          font-weight: 600;
-          margin-top: 8px;
-        }
-
-        .popup-actions {
-          display: flex;
-          gap: 16px;
-          justify-content: center;
-          margin-top: 40px;
-          padding-top: 24px;
-          border-top: 1px solid #e2e8f0;
-        }
-
-        .btn-cancel {
-          background-color: #f3f4f6;
-          color: #6b7280;
-          border: 2px solid #e5e7eb;
-          padding: 8px 18px;
-          border-radius: 4px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-
-        .btn-cancel:hover {
-          background-color: #e5e7eb;
-          transform: translateY(-1px);
-        }
-
-        .btn-submit {
-          background-color: #10b981;
-          color: white;
-          border: 2px solid #10b981;
-          padding: 8px 18px;
-          border-radius: 4px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-
-        .btn-submit:hover {
-          background-color: #059669;
-          border-color: #059669;
-          transform: translateY(-1px);
-        }
-
-        .btn-submit:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-          transform: none;
-        }
-
-        .price-display {
-          color: #059669;
-          font-weight: 600;
-        }
-
-        /* Form Validation Styles */
-        input:required:invalid:not(:placeholder-shown):not(:focus),
-        select:required:invalid:not(:focus),
-        textarea:required:invalid:not(:placeholder-shown):not(:focus) {
-          border-color: #ef4444;
-        }
-
-        input:valid:not(:placeholder-shown),
-        select:valid,
-        textarea:valid:not(:placeholder-shown) {
-          border-color: #10b981;
-        }
-
-        input:focus:invalid,
-        select:focus:invalid,
-        textarea:focus:invalid {
-          border-color: #ef4444;
-          box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
-        }
-
-        @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-      `}</style>
-
-      <div className="page-container">
-        <div className="page-header">
-          <h1 className="page-title">Products</h1>
-          <button className="add-btn" onClick={() => setShowPopup(true)}>
-            + Add Product
-          </button>
+    <div style={{ fontFamily: "'Inter','Segoe UI',sans-serif" }}>
+      {/* Page Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: `linear-gradient(135deg, ${P}, #F07030)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Package size={18} color="white" />
+          </div>
+          <div>
+            <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 800, color: '#1c1917' }}>Products</h1>
+            <p style={{ margin: 0, fontSize: '13px', color: '#9ca3af' }}>{products.length} products listed</p>
+          </div>
         </div>
+        <button onClick={() => setShowPopup(true)} style={{ display: 'flex', alignItems: 'center', gap: '7px', padding: '10px 20px', backgroundColor: P, color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '13px', cursor: 'pointer', boxShadow: `0 4px 14px rgba(236,91,19,0.3)`, transition: 'opacity 0.15s, transform 0.1s' }}
+          onMouseEnter={e => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+          onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)'; }}
+        >
+          <Plus size={15} /> Add Product
+        </button>
+      </div>
 
-        <div className="table-container">
-          <table className="table">
+      {/* Table */}
+      <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #f0ede9', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '800px' }}>
             <thead>
-              <tr>
-                <th>Product Name</th>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Price</th>
-                <th>Discount</th>
-                <th>Final Price</th>
-                <th>GST</th>
-                <th>Actions</th>
+              <tr style={{ backgroundColor: '#faf8f6' }}>
+                {['Product Name', 'Title', 'Category', 'Price', 'Discount', 'Final Price', 'GST', 'Actions'].map(h => (
+                  <th key={h} style={{ padding: '12px 18px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: P, borderBottom: '1px solid #f0ede9', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>{h}</th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr>
-                  <td colSpan="8" style={{ textAlign: 'center', padding: '20px' }}>Loading...</td>
-                </tr>
+                <tr><td colSpan={8} style={{ textAlign: 'center', padding: '48px', color: '#9ca3af' }}>Loading products...</td></tr>
               ) : products.length === 0 ? (
-                <tr>
-                  <td colSpan="8" style={{ textAlign: 'center', padding: '20px' }}>No products found</td>
+                <tr><td colSpan={8}>
+                  <div style={{ textAlign: 'center', padding: '64px 24px' }}>
+                    <div style={{ width: '56px', height: '56px', borderRadius: '50%', backgroundColor: PL, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
+                      <Package size={24} color={P} />
+                    </div>
+                    <p style={{ margin: '0 0 6px', fontSize: '16px', fontWeight: 600, color: '#1c1917' }}>No products yet</p>
+                    <p style={{ margin: 0, fontSize: '13px', color: '#9ca3af' }}>Click "Add Product" to list your first product</p>
+                  </div>
+                </td></tr>
+              ) : products.map((p, i) => (
+                <tr key={p.productId} style={{ borderBottom: i < products.length - 1 ? '1px solid #faf8f6' : 'none' }}
+                  onMouseEnter={e => e.currentTarget.style.backgroundColor = '#faf8f6'}
+                  onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  <td style={{ padding: '13px 18px', fontWeight: 600, color: '#1c1917', fontSize: '13px' }}>{p.productName}</td>
+                  <td style={{ padding: '13px 18px', color: '#6b7280', fontSize: '13px', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.productTitle}</td>
+                  <td style={{ padding: '13px 18px' }}><span style={{ padding: '3px 10px', backgroundColor: PL, color: P, borderRadius: '999px', fontSize: '11px', fontWeight: 600 }}>{p.categoryName}</span></td>
+                  <td style={{ padding: '13px 18px', fontSize: '13px', color: '#6b7280' }}>₹{p.price}</td>
+                  <td style={{ padding: '13px 18px', fontSize: '13px', color: '#6b7280' }}>{p.discount}%</td>
+                  <td style={{ padding: '13px 18px', fontSize: '14px', fontWeight: 700, color: G }}>₹{p.finalPrice}</td>
+                  <td style={{ padding: '13px 18px', fontSize: '13px', color: '#6b7280' }}>{p.producGST}%</td>
+                  <td style={{ padding: '13px 18px' }}>
+                    <div style={{ display: 'flex', gap: '4px' }}>
+                      <button onClick={() => handleEdit(p)} style={{ width: '30px', height: '30px', borderRadius: '7px', backgroundColor: '#eff6ff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.15s' }}
+                        onMouseEnter={e => e.currentTarget.style.backgroundColor = '#dbeafe'}
+                        onMouseLeave={e => e.currentTarget.style.backgroundColor = '#eff6ff'}
+                      ><Edit size={13} color="#1e40af" /></button>
+                      <button onClick={() => setProducts(products.filter(x => x.productId !== p.productId))} style={{ width: '30px', height: '30px', borderRadius: '7px', backgroundColor: '#fee2e2', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.15s' }}
+                        onMouseEnter={e => e.currentTarget.style.backgroundColor = '#fecaca'}
+                        onMouseLeave={e => e.currentTarget.style.backgroundColor = '#fee2e2'}
+                      ><Trash2 size={13} color="#dc2626" /></button>
+                    </div>
+                  </td>
                 </tr>
-              ) : (
-                products.map((product) => (
-                  <tr key={product.productId}>
-                    <td>{product.productName}</td>
-                    <td>{product.productTitle}</td>
-                    <td>{product.categoryName}</td>
-                    <td>₹{product.price}</td>
-                    <td>{product.discount}%</td>
-                    <td className="price-display">₹{product.finalPrice}</td>
-                    <td>{product.producGST}%</td>
-                    <td>
-                      <button className="action-btn edit-btn" onClick={() => handleEdit(product)}>
-                        <Edit size={18} />
-                      </button>
-                      <button className="action-btn delete-btn" onClick={() => handleDelete(product.productId)}>
-                        <Trash2 size={18} />
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
+              ))}
             </tbody>
           </table>
         </div>
-
-        {showPopup && (
-          <div className="popup-overlay" onClick={() => setShowPopup(false)}>
-            <div className="popup" onClick={(e) => e.stopPropagation()}>
-              <h2 className="popup-title">{editingProduct ? 'Edit Product' : 'Add Product'}</h2>
-              <form onSubmit={handleSubmit}>
-                {/* Basic Information Section */}
-                <div className="form-section">
-                  <h3 className="section-title">Basic Information</h3>
-                  <div className="form-grid">
-                    <div className="form-group">
-                      <label>Product Name *</label>
-                      <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        placeholder="Enter product name"
-                        required
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Product Title *</label>
-                      <input
-                        type="text"
-                        name="title"
-                        value={formData.title}
-                        onChange={handleInputChange}
-                        placeholder="Enter product title"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="form-group">
-                    <label>Product Description</label>
-                    <textarea
-                      name="description"
-                      value={formData.description}
-                      onChange={handleInputChange}
-                      placeholder="Enter detailed product description (optional)"
-                      rows="4"
-                    />
-                  </div>
-                </div>
-
-                {/* Category & Quantity Section */}
-                <div className="form-section">
-                  <h3 className="section-title">Category & Specifications</h3>
-                  <div className="form-grid">
-                    <div className="form-group">
-                      <label>Sub-Category *</label>
-                      <select
-                        name="categoryId"
-                        value={formData.categoryId}
-                        onChange={handleInputChange}
-                        required
-                      >
-                        <option value="">Select Sub-Category</option>
-                        {subCategories.map((cat) => (
-                          <option key={cat.categoryId} value={cat.categoryId}>
-                            {cat.categoryName}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="form-group">
-                      <label>Quantity Type *</label>
-                      <select
-                        name="quantityId"
-                        value={formData.quantityId}
-                        onChange={handleInputChange}
-                        required
-                      >
-                        <option value="">Select Quantity Type</option>
-                        {quantities.map((qty) => (
-                          <option key={qty.statusId} value={qty.statusId}>
-                            {qty.statusValue}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Pricing Section */}
-                <div className="form-section">
-                  <h3 className="section-title">Pricing Information</h3>
-                  <div className="form-grid-three">
-                    <div className="form-group">
-                      <label>Price (₹) *</label>
-                      <input
-                        type="number"
-                        name="price"
-                        value={formData.price}
-                        onChange={handleInputChange}
-                        placeholder="0.00"
-                        step="0.01"
-                        min="0"
-                        required
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Discount (%)</label>
-                      <input
-                        type="number"
-                        name="discount"
-                        value={formData.discount}
-                        onChange={handleInputChange}
-                        placeholder="0.00"
-                        step="0.01"
-                        min="0"
-                        max="100"
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>GST (%) *</label>
-                      <input
-                        type="number"
-                        name="gst"
-                        value={formData.gst}
-                        onChange={handleInputChange}
-                        placeholder="0.00"
-                        step="0.01"
-                        min="0"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="form-group">
-                    <label>Final Price (₹)</label>
-                    <input
-                      type="number"
-                      name="finalPrice"
-                      value={formData.finalPrice}
-                      readOnly
-                      style={{ backgroundColor: '#f8fafc', fontWeight: '600', color: '#059669' }}
-                    />
-                  </div>
-                </div>
-
-                {/* Images Section */}
-                <div className="form-section">
-                  <h3 className="section-title">Product Images *</h3>
-                  {imageInputs.map((input, index) => (
-                    <div key={input.id} className="form-group" style={{ marginBottom: '16px' }}>
-                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                        <div style={{ flex: 1 }}>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => handleFileChange(e, input.id)}
-                            style={{
-                              width: '100%',
-                              padding: '12px',
-                              border: '2px solid #e2e8f0',
-                              borderRadius: '8px'
-                            }}
-                            required={index === 0 && !editingProduct}
-                          />
-                        </div>
-                        {index === imageInputs.length - 1 ? (
-                          <button
-                            type="button"
-                            onClick={addImageInput}
-                            style={{
-                              width: '40px',
-                              height: '40px',
-                              borderRadius: '50%',
-                              border: 'none',
-                              background: '#10b981',
-                              color: 'white',
-                              fontSize: '20px',
-                              cursor: 'pointer',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center'
-                            }}
-                          >
-                            +
-                          </button>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => removeImageInput(input.id)}
-                            style={{
-                              width: '40px',
-                              height: '40px',
-                              borderRadius: '50%',
-                              border: 'none',
-                              background: '#ef4444',
-                              color: 'white',
-                              fontSize: '20px',
-                              cursor: 'pointer',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center'
-                            }}
-                          >
-                            −
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                  {formData.images.length > 0 && (
-                    <p style={{ color: '#10b981', fontWeight: '600', marginTop: '8px' }}>
-                      {formData.images.length} image(s) selected
-                    </p>
-                  )}
-                </div>
-
-                <div className="popup-actions">
-                  <button type="button" className="btn-cancel" onClick={resetForm}>
-                    Cancel
-                  </button>
-                  <button type="submit" className="btn-submit" disabled={loading}>
-                    {loading ? 'Saving...' : editingProduct ? 'Update Product' : 'Add Product'}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
       </div>
-    </>
+
+      {/* Modal */}
+      {showPopup && (
+        <div onClick={resetForm} style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(26,15,10,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000, backdropFilter: 'blur(2px)', padding: '16px' }}>
+          <div onClick={e => e.stopPropagation()} style={{ backgroundColor: '#fff', borderRadius: '16px', width: '680px', maxWidth: '95vw', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 20px 60px rgba(236,91,19,0.15)', border: '1px solid #f0ede9', animation: 'slideUp 0.2s ease-out' }}>
+            <style>{`@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}`}</style>
+
+            {/* Modal Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 24px', borderBottom: '1px solid #f0ede9', background: `linear-gradient(to right, ${PL}, #fff)`, position: 'sticky', top: 0, zIndex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: `linear-gradient(135deg, ${P}, #F07030)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Package size={15} color="white" />
+                </div>
+                <h2 style={{ margin: 0, fontSize: '17px', fontWeight: 700, color: '#1c1917' }}>{editingProduct ? 'Edit Product' : 'Add New Product'}</h2>
+              </div>
+              <button onClick={resetForm} style={{ width: '32px', height: '32px', borderRadius: '8px', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6b7280' }}>
+                <X size={14} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+
+              {/* Basic Info */}
+              <div>
+                <SectionHead icon={Tag} title="Basic Information" />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                  <Field label="Product Name" required>
+                    <input name="name" value={formData.name} onChange={handleChange} placeholder="e.g. Basmati Rice" style={inp} onFocus={focusStyle} onBlur={blurStyle} required />
+                  </Field>
+                  <Field label="Product Title" required>
+                    <input name="title" value={formData.title} onChange={handleChange} placeholder="e.g. Premium Basmati Rice 1121" style={inp} onFocus={focusStyle} onBlur={blurStyle} required />
+                  </Field>
+                  <Field label="Description" fullWidth>
+                    <textarea name="description" value={formData.description} onChange={handleChange} placeholder="Describe the product quality, origin, specifications..." rows={3} style={{ ...inp, resize: 'vertical', minHeight: '72px' }} onFocus={focusStyle} onBlur={blurStyle} />
+                  </Field>
+                </div>
+              </div>
+
+              {/* Category & Specs */}
+              <div>
+                <SectionHead icon={Tag} title="Category & Specifications" />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                  <Field label="Sub-Category" required>
+                    <select name="categoryId" value={formData.categoryId} onChange={handleChange} style={inp} onFocus={focusStyle} onBlur={blurStyle} required>
+                      <option value="">Select Sub-Category</option>
+                      {subCategories.map(c => <option key={c.categoryId} value={c.categoryId}>{c.categoryName}</option>)}
+                    </select>
+                  </Field>
+                  <Field label="Quantity Type" required>
+                    <select name="quantityId" value={formData.quantityId} onChange={handleChange} style={inp} onFocus={focusStyle} onBlur={blurStyle} required>
+                      <option value="">Select Quantity Type</option>
+                      {quantities.map(q => <option key={q.statusId} value={q.statusId}>{q.statusValue}</option>)}
+                    </select>
+                  </Field>
+                </div>
+              </div>
+
+              {/* Pricing */}
+              <div>
+                <SectionHead icon={DollarSign} title="Pricing Information" />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '14px', marginBottom: '14px' }}>
+                  <Field label="Price (₹)" required>
+                    <input type="number" name="price" value={formData.price} onChange={handleChange} placeholder="0.00" step="0.01" min="0" style={inp} onFocus={focusStyle} onBlur={blurStyle} required />
+                  </Field>
+                  <Field label="Discount (%)">
+                    <input type="number" name="discount" value={formData.discount} onChange={handleChange} placeholder="0" step="0.01" min="0" max="100" style={inp} onFocus={focusStyle} onBlur={blurStyle} />
+                  </Field>
+                  <Field label="GST (%)" required>
+                    <input type="number" name="gst" value={formData.gst} onChange={handleChange} placeholder="0" step="0.01" min="0" style={inp} onFocus={focusStyle} onBlur={blurStyle} required />
+                  </Field>
+                </div>
+                {/* Final Price display */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', backgroundColor: GL, borderRadius: '10px', border: `1px solid ${G}33` }}>
+                  <Info size={15} color={G} />
+                  <span style={{ fontSize: '13px', color: '#374151' }}>Final Price (auto-calculated):</span>
+                  <span style={{ fontSize: '18px', fontWeight: 800, color: G, marginLeft: 'auto' }}>₹{formData.finalPrice || '0.00'}</span>
+                </div>
+              </div>
+
+              {/* Images */}
+              {!editingProduct && (
+                <div>
+                  <SectionHead icon={ImagePlus} title="Product Images" />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {imageInputs.map((input, idx) => {
+                      const uploaded = formData.images.find(i => i.inputId === input.id);
+                      return (
+                        <div key={input.id} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <label style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', border: `1px dashed ${uploaded ? G : '#d1d5db'}`, borderRadius: '9px', backgroundColor: uploaded ? GL : '#faf8f6', cursor: 'pointer', transition: 'all 0.15s' }}
+                            onMouseEnter={e => { if (!uploaded) e.currentTarget.style.borderColor = P; }}
+                            onMouseLeave={e => { if (!uploaded) e.currentTarget.style.borderColor = '#d1d5db'; }}
+                          >
+                            <input type="file" accept="image/*" onChange={e => handleFileChange(e, input.id)} style={{ display: 'none' }} required={idx === 0} />
+                            <ImagePlus size={16} color={uploaded ? G : '#9ca3af'} />
+                            <span style={{ fontSize: '13px', color: uploaded ? G : '#9ca3af', fontWeight: uploaded ? 600 : 400 }}>
+                              {uploaded ? `✓ ${uploaded.file.name}` : `Image ${idx + 1} — click to upload`}
+                            </span>
+                          </label>
+                          {idx === imageInputs.length - 1 ? (
+                            <button type="button" onClick={() => setImageInputs(p => [...p, { id: Math.max(...p.map(i => i.id)) + 1 }])} style={{ width: '36px', height: '36px', borderRadius: '8px', backgroundColor: PL, border: `1px solid ${P}33`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: P, fontWeight: 700, fontSize: '18px', flexShrink: 0 }}>+</button>
+                          ) : (
+                            <button type="button" onClick={() => { setImageInputs(p => p.filter(i => i.id !== input.id)); setFormData(p => ({ ...p, images: p.images.filter(i => i.inputId !== input.id) })); }} style={{ width: '36px', height: '36px', borderRadius: '8px', backgroundColor: '#fee2e2', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                              <X size={14} color="#dc2626" />
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Actions */}
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', paddingTop: '16px', borderTop: '1px solid #f0ede9' }}>
+                <button type="button" onClick={resetForm} style={{ padding: '10px 22px', backgroundColor: '#f9fafb', color: '#374151', border: '1px solid #e5e7eb', borderRadius: '9px', fontWeight: 600, fontSize: '13px', cursor: 'pointer' }}
+                  onMouseEnter={e => e.currentTarget.style.backgroundColor = '#f3f4f6'}
+                  onMouseLeave={e => e.currentTarget.style.backgroundColor = '#f9fafb'}
+                >Cancel</button>
+                <button type="submit" disabled={loading} style={{ padding: '10px 22px', backgroundColor: loading ? '#d1d5db' : P, color: 'white', border: 'none', borderRadius: '9px', fontWeight: 700, fontSize: '13px', cursor: loading ? 'not-allowed' : 'pointer', boxShadow: loading ? 'none' : `0 4px 12px rgba(236,91,19,0.3)`, transition: 'opacity 0.15s' }}
+                  onMouseEnter={e => { if (!loading) e.currentTarget.style.opacity = '0.9'; }}
+                  onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
+                >
+                  {loading ? 'Saving...' : editingProduct ? 'Update Product' : 'Add Product'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

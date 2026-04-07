@@ -1,792 +1,396 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import "bootstrap/dist/css/bootstrap.min.css";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { Trash2, ShoppingCart, ArrowRight, Package, Shield, Truck, CheckCircle, CreditCard, Info, X } from 'lucide-react';
+import productService from '../../../services/productService';
 
-import Check from "../../../assets/cart/Check_img.png";
-import Delete from "../../../assets/cart/Delete_img.png";
-import Delivery from "../../../assets/cart/Delivery_img.png";
-import Security from "../../../assets/cart/Security_img.png";
-import productService from "../../../services/productService";
+const P  = '#EC5B13';
+const PL = '#FEF0E9';
+const G  = '#32a862';
+const GL = '#e6f7ed';
+
+const inp = {
+  width: '100%', padding: '10px 14px', border: '1px solid #e5e7eb',
+  borderRadius: '8px', fontSize: '14px', outline: 'none',
+  backgroundColor: '#fff', color: '#1c1917', boxSizing: 'border-box',
+};
 
 const AgentCart = () => {
   const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [cartItems, setCartItems]       = useState([]);
+  const [loading, setLoading]           = useState(false);
   const [deleteCartId, setDeleteCartId] = useState(null);
-  const [gateways, setGateways] = useState([]);
+  const [gateways, setGateways]         = useState([]);
   const [selectedGateway, setSelectedGateway] = useState('');
-  const [paymentDetails, setPaymentDetails] = useState([]);
-  const [selectedMethod, setSelectedMethod] = useState('');
-  const [selectedOption, setSelectedOption] = useState('');
-  const [loadingPayment, setLoadingPayment] = useState(false);
+  const [paymentDetails, setPaymentDetails]   = useState([]);
+  const [selectedMethod, setSelectedMethod]   = useState('');
+  const [selectedOption, setSelectedOption]   = useState('');
+  const [loadingPayment, setLoadingPayment]   = useState(false);
 
-  useEffect(() => {
-    fetchCartItems();
-    fetchGateways();
-  }, []);
+  useEffect(() => { fetchCartItems(); fetchGateways(); }, []);
 
   const fetchCartItems = async () => {
     try {
       setLoading(true);
-      const response = await productService.getCartItems();
-      if (response && response.status === 1 && response.result) {
-        setCartItems(response.result);
-      }
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || error.message || 'Failed to fetch cart';
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
+      const res = await productService.getCartItems();
+      if (res?.status === 1 && res.result) setCartItems(res.result);
+    } catch (e) { toast.error(e.response?.data?.message || 'Failed to fetch cart'); }
+    finally { setLoading(false); }
   };
 
-  const getImagePath = (imgPath) => {
-    if (!imgPath) return '';
-    if (imgPath.startsWith('http://') || imgPath.startsWith('https://')) return imgPath;
-    return `${import.meta.env.VITE_API_BASE_URL}/${imgPath.replace(/\\/g, '/')}`;
-  };
-
-  const handleDeleteClick = (cartId) => {
-    setDeleteCartId(cartId);
+  const getImagePath = (img) => {
+    if (!img) return null;
+    if (img.startsWith('http://') || img.startsWith('https://')) return img;
+    return `${import.meta.env.VITE_API_BASE_URL}/${img.replace(/\\/g, '/')}`;
   };
 
   const handleConfirmDelete = async () => {
     try {
-      const response = await productService.removeFromCart(deleteCartId);
-      if (response && response.status === 1) {
-        toast.success('Item removed from cart');
-        setDeleteCartId(null);
-        fetchCartItems();
-      }
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || error.message || 'Failed to remove item';
-      toast.error(errorMessage);
-    }
-  };
-
-  const handleCancelDelete = () => {
-    setDeleteCartId(null);
+      const res = await productService.removeFromCart(deleteCartId);
+      if (res?.status === 1) { toast.success('Item removed'); setDeleteCartId(null); fetchCartItems(); }
+    } catch (e) { toast.error(e.response?.data?.message || 'Failed to remove item'); }
   };
 
   const fetchGateways = async () => {
     try {
       const token = sessionStorage.getItem('token');
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/agents/getAgentGatewayCommission`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
-      if (data.status === 1 && data.result) {
-        setGateways(data.result);
-      }
-    } catch (error) {
-      console.error('Error fetching gateways:', error);
-    }
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/agents/getAgentGatewayCommission`, { headers: { Authorization: `Bearer ${token}` } });
+      const data = await res.json();
+      if (data.status === 1 && data.result) setGateways(data.result);
+    } catch {}
   };
 
   const fetchPaymentDetails = async (planConfigId) => {
     try {
       setLoadingPayment(true);
       const token = sessionStorage.getItem('token');
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/agents/getAgentPaymentCommissionDetails?configId=${planConfigId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
-      if (data.status === 1 && data.result) {
-        setPaymentDetails(data.result);
-        setSelectedMethod('');
-        setSelectedOption('');
-      }
-    } catch (error) {
-      console.error('Error fetching payment details:', error);
-      toast.error('Failed to fetch payment details');
-    } finally {
-      setLoadingPayment(false);
-    }
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/agents/getAgentPaymentCommissionDetails?configId=${planConfigId}`, { headers: { Authorization: `Bearer ${token}` } });
+      const data = await res.json();
+      if (data.status === 1 && data.result) { setPaymentDetails(data.result); setSelectedMethod(''); setSelectedOption(''); }
+    } catch { toast.error('Failed to fetch payment details'); }
+    finally { setLoadingPayment(false); }
   };
 
-  const handleGatewayChange = (e) => {
-    const gatewayId = e.target.value;
-    setSelectedGateway(gatewayId);
-    if (gatewayId) {
-      const gateway = gateways.find(g => g.gatewayId === parseInt(gatewayId));
-      if (gateway) {
-        fetchPaymentDetails(gateway.planConfigId);
-      }
-    } else {
-      setPaymentDetails([]);
-      setSelectedMethod('');
-      setSelectedOption('');
-    }
+  const handleGatewayChange = (val) => {
+    setSelectedGateway(val);
+    if (val) {
+      const gw = gateways.find(g => g.gatewayId === parseInt(val));
+      if (gw) fetchPaymentDetails(gw.planConfigId);
+    } else { setPaymentDetails([]); setSelectedMethod(''); setSelectedOption(''); }
   };
 
   const getUniqueMethods = () => {
-    const methods = {};
-    paymentDetails.forEach(detail => {
-      if (!methods[detail.methodId]) {
-        methods[detail.methodId] = detail.methodName;
-      }
-    });
-    return Object.entries(methods).map(([id, name]) => ({ id: parseInt(id), name }));
+    const m = {};
+    paymentDetails.forEach(d => { if (!m[d.methodId]) m[d.methodId] = d.methodName; });
+    return Object.entries(m).map(([id, name]) => ({ id: parseInt(id), name }));
   };
 
-  const getOptionsForMethod = (methodId) => {
-    return paymentDetails.filter(detail => detail.methodId === parseInt(methodId));
-  };
+  const getOptionsForMethod = (methodId) => paymentDetails.filter(d => d.methodId === parseInt(methodId));
 
-  const calculateTotals = () => {
-    const productsTotal = cartItems.reduce((sum, item) => sum + parseFloat(item.unitsTotalPrice), 0);
-    const gstTotal = cartItems.reduce((sum, item) => sum + parseFloat(item.gSTAmount), 0);
-    const subtotal = productsTotal + gstTotal;
-
-    let commissionRate = 0;
-    let commissionAmount = 0;
-    
+  const totals = () => {
+    const productsTotal = cartItems.reduce((s, i) => s + parseFloat(i.unitsTotalPrice), 0);
+    const gstTotal      = cartItems.reduce((s, i) => s + parseFloat(i.gSTAmount), 0);
+    const subtotal      = productsTotal + gstTotal;
+    let commissionRate = 0, commissionAmount = 0;
     if (selectedOption) {
-      const selectedDetail = paymentDetails.find(d => d.methodOptionId === parseInt(selectedOption));
-      if (selectedDetail) {
-        commissionRate = parseFloat(selectedDetail.planCommission);
-        commissionAmount = (subtotal * commissionRate) / 100;
-      }
+      const d = paymentDetails.find(d => d.methodOptionId === parseInt(selectedOption));
+      if (d) { commissionRate = parseFloat(d.planCommission); commissionAmount = (subtotal * commissionRate) / 100; }
     }
-    
-    const total = subtotal + commissionAmount;
-
-    return { productsTotal, gstTotal, subtotal, commissionRate, commissionAmount, total };
+    return { productsTotal, gstTotal, subtotal, commissionRate, commissionAmount, total: subtotal + commissionAmount };
   };
 
-  const { productsTotal, gstTotal, subtotal, commissionRate, commissionAmount, total } = calculateTotals();
+  const { productsTotal, gstTotal, subtotal, commissionRate, commissionAmount, total } = totals();
 
   const handleProceedToCheckout = () => {
-    const cartIds = cartItems.map(item => item.cartId).join(',');
-    const checkoutData = {
-      gatewayId: parseInt(selectedGateway),
-      methodId: parseInt(selectedMethod),
-      methodOptionId: parseInt(selectedOption),
-      cartIds,
-      productsTotal,
-      gstTotal,
-      subtotal,
-      commissionRate,
-      commissionAmount,
-      total
-    };
-    navigate('/agent/checkout', { state: checkoutData });
+    navigate('/agent/checkout', {
+      state: {
+        gatewayId: parseInt(selectedGateway), methodId: parseInt(selectedMethod),
+        methodOptionId: parseInt(selectedOption), cartIds: cartItems.map(i => i.cartId).join(','),
+        productsTotal, gstTotal, subtotal, commissionRate, commissionAmount, total,
+      }
+    });
   };
 
+  const canCheckout = selectedGateway && selectedMethod && selectedOption && cartItems.length > 0;
+
   return (
-    <>
-      <style>{`
-        .agent-cart-container {
-          background: #f8f9fa;
-          min-height: 100vh;
-          padding: 2rem 0;
-        }
-
-        .cart-header {
-          margin-bottom: 2rem;
-        }
-
-        .cart-title {
-          font-size: 1.75rem;
-          font-weight: 700;
-          color: #1a1a1a;
-          margin: 0;
-        }
-
-        .elegant-card {
-          background: #ffffff;
-          border: 1px solid #e5e7eb;
-          border-radius: 12px;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-          overflow: hidden;
-        }
-
-        .cart-table {
-          margin: 0;
-        }
-
-        .cart-table thead th {
-          background: #f9fafb;
-          border-bottom: 2px solid #e5e7eb;
-          color: #6b7280;
-          font-size: 0.875rem;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          padding: 1rem;
-        }
-
-        .cart-table tbody td {
-          padding: 1.25rem 1rem;
-          vertical-align: middle;
-          border-bottom: 1px solid #f3f4f6;
-          color: #374151;
-        }
-
-        .cart-table tbody tr:last-child td {
-          border-bottom: none;
-        }
-
-        .product-img {
-          width: 56px;
-          height: 56px;
-          border-radius: 8px;
-          object-fit: cover;
-          border: 1px solid #e5e7eb;
-        }
-
-        .product-name {
-          font-weight: 500;
-          color: #111827;
-          font-size: 0.9375rem;
-        }
-
-        .delete-btn {
-          background: #fee2e2;
-          border: none;
-          border-radius: 6px;
-          padding: 0.5rem;
-          cursor: pointer;
-          transition: background 0.2s;
-        }
-
-        .delete-btn:hover {
-          background: #fecaca;
-        }
-
-        .payment-card {
-          background: #ffffff;
-          border: 1px solid #e5e7eb;
-          border-radius: 12px;
-          padding: 1.75rem;
-          margin-top: 1.5rem;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
-
-        .payment-title {
-          font-size: 1.125rem;
-          font-weight: 600;
-          color: #111827;
-          margin-bottom: 1.5rem;
-        }
-
-        .form-label-custom {
-          font-size: 0.875rem;
-          font-weight: 600;
-          color: #374151;
-          margin-bottom: 0.5rem;
-          display: block;
-        }
-
-        .form-select-custom {
-          width: 100%;
-          padding: 0.75rem 1rem;
-          border: 1px solid #d1d5db;
-          border-radius: 8px;
-          font-size: 0.9375rem;
-          color: #111827;
-          background: #ffffff;
-          transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .form-select-custom:focus {
-          outline: none;
-          border-color: #10b981;
-          box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-        }
-
-        .commission-table-card {
-          background: #ffffff;
-          border: 1px solid #e5e7eb;
-          border-radius: 12px;
-          padding: 1.75rem;
-          margin-top: 1.5rem;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
-
-        .commission-table {
-          margin: 0;
-        }
-
-        .commission-table thead th {
-          background: #f9fafb;
-          border-bottom: 2px solid #e5e7eb;
-          color: #6b7280;
-          font-size: 0.8125rem;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          padding: 0.875rem 1rem;
-        }
-
-        .commission-table tbody td {
-          padding: 1rem;
-          border-bottom: 1px solid #f3f4f6;
-          color: #374151;
-        }
-
-        .commission-table tbody tr:last-child td {
-          border-bottom: none;
-        }
-
-        .commission-table tbody tr.selected-row {
-          background: #d1fae5;
-        }
-
-        .method-badge {
-          background: #dbeafe;
-          color: #1e40af;
-          padding: 0.375rem 0.75rem;
-          border-radius: 6px;
-          font-size: 0.8125rem;
-          font-weight: 600;
-        }
-
-        .commission-rate {
-          // color: #059669;
-          font-weight: 600;
-        }
-
-        .info-alert {
-          background: #eff6ff;
-          border: 1px solid #bfdbfe;
-          border-radius: 8px;
-          padding: 0.875rem 1rem;
-          margin-top: 1rem;
-          margin-bottom: 0;
-        }
-
-        .info-alert-text {
-          color: #1e40af;
-          font-size: 0.8125rem;
-          margin: 0;
-        }
-
-        .summary-card {
-          background: #ffffff;
-          border: 1px solid #e5e7eb;
-          border-radius: 12px;
-          padding: 1.75rem;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-          position: sticky;
-          top: 20px;
-        }
-
-        .summary-title {
-          font-size: 1.25rem;
-          font-weight: 700;
-          color: #111827;
-          margin-bottom: 1.5rem;
-        }
-
-        .summary-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 0.625rem 0;
-          color: #6b7280;
-          font-size: 0.9375rem;
-        }
-
-        .summary-row-subtotal {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 0.75rem 0;
-          border-bottom: 2px solid #e5e7eb;
-          font-weight: 600;
-          color: #374151;
-        }
-
-        .summary-divider {
-          border: none;
-          border-top: 1px solid #e5e7eb;
-          margin: 0.75rem 0;
-        }
-
-        .summary-total {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 0.875rem 0;
-          font-size: 1.125rem;
-          font-weight: 700;
-          color: #111827;
-        }
-
-        .summary-note {
-          color: #9ca3af;
-          font-size: 0.8125rem;
-          margin: 0.75rem 0 1.5rem 0;
-        }
-
-        .checkout-btn {
-          width: 100%;
-          padding: 0.875rem;
-          background: #10b981;
-          color: #ffffff;
-          border: none;
-          border-radius: 8px;
-          font-size: 1rem;
-          font-weight: 600;
-          cursor: pointer;
-          transition: background 0.2s;
-          margin-bottom: 0.75rem;
-        }
-
-        .checkout-btn:hover:not(:disabled) {
-          background: #059669;
-        }
-
-        .checkout-btn:disabled {
-          background: #d1d5db;
-          cursor: not-allowed;
-        }
-
-        .quote-btn {
-          width: 100%;
-          padding: 0.875rem;
-          background: #ffffff;
-          color: #374151;
-          border: 1px solid #d1d5db;
-          border-radius: 8px;
-          font-size: 1rem;
-          font-weight: 600;
-          cursor: pointer;
-          transition: background 0.2s, border-color 0.2s;
-          margin-bottom: 1.5rem;
-        }
-
-        .quote-btn:hover {
-          background: #f9fafb;
-          border-color: #9ca3af;
-        }
-
-        .features-list {
-          list-style: none;
-          padding: 0;
-          margin: 0;
-        }
-
-        .feature-item {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          padding: 0.625rem 0;
-          color: #6b7280;
-          font-size: 0.9375rem;
-        }
-
-        .feature-icon {
-          width: 24px;
-          height: 24px;
-        }
-      `}</style>
-
-      <div className="agent-cart-container">
-        <div className="container">
-          <div className="cart-header">
-            <h1 className="cart-title">Shopping Cart</h1>
-          </div>
-
-          <div className="row g-4">
-            <div className="col-lg-8">
-              {loading ? (
-                <div className="text-center py-5">
-                  <div className="spinner-border text-success" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
-                </div>
-              ) : cartItems.length === 0 ? (
-                <div className="elegant-card p-5 text-center">
-                  <p className="text-muted mb-3">Your cart is empty</p>
-                  <button 
-                    className="btn btn-success"
-                    onClick={() => navigate('/agent/buy-from-farmers')}
-                  >
-                    Continue Shopping
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <div className="elegant-card">
-                    <table className="table cart-table">
-                      <thead>
-                        <tr>
-                          <th>Product</th>
-                          <th>Category</th>
-                          <th>Quantity</th>
-                          <th>Unit Price</th>
-                          <th>GST</th>
-                          <th>Total</th>
-                          <th></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {cartItems.map((item) => (
-                          <tr key={item.cartId}>
-                            <td>
-                              <div className="d-flex align-items-center gap-3">
-                                <img
-                                  src={getImagePath(item.productImages)}
-                                  alt={item.productName}
-                                  className="product-img"
-                                />
-                                <span className="product-name">{item.productName}</span>
-                              </div>
-                            </td>
-                            <td>{item.categoryName}</td>
-                            <td>{item.noOfQuantity}</td>
-                            <td>₹{parseFloat(item.unitPrice).toFixed(2)}</td>
-                            <td>₹{parseFloat(item.gSTAmount).toFixed(2)}</td>
-                            <td className="fw-semibold">₹{parseFloat(item.lineItemTotal).toFixed(2)}</td>
-                            <td>
-                              <button 
-                                className="delete-btn"
-                                onClick={() => handleDeleteClick(item.cartId)}
-                              >
-                                <img src={Delete} alt="Delete" width="18" />
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  {cartItems.length > 0 && (
-                    <div className="payment-card">
-                      <h5 className="payment-title">Payment Options</h5>
-
-                      <div className="mb-3">
-                        <label className="form-label-custom">Gateway</label>
-                        <select 
-                          className="form-select-custom" 
-                          value={selectedGateway}
-                          onChange={handleGatewayChange}
-                        >
-                          <option value="">Select Gateway</option>
-                          {gateways.map(gateway => (
-                            <option key={gateway.gatewayId} value={gateway.gatewayId}>
-                              {gateway.gatewayName}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      {loadingPayment && (
-                        <div className="text-center py-3">
-                          <div className="spinner-border spinner-border-sm text-success" role="status">
-                            <span className="visually-hidden">Loading...</span>
-                          </div>
-                        </div>
-                      )}
-
-                      {!loadingPayment && paymentDetails.length > 0 && (
-                        <>
-                          <div className="mb-3">
-                            <label className="form-label-custom">Payment Method</label>
-                            <select 
-                              className="form-select-custom" 
-                              value={selectedMethod}
-                              onChange={(e) => {
-                                setSelectedMethod(e.target.value);
-                                setSelectedOption('');
-                              }}
-                            >
-                              <option value="">Select Method</option>
-                              {getUniqueMethods().map(method => (
-                                <option key={method.id} value={method.id}>
-                                  {method.name}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-
-                          {selectedMethod && (
-                            <div className="mb-0">
-                              <label className="form-label-custom">Payment Option</label>
-                              <select 
-                                className="form-select-custom" 
-                                value={selectedOption}
-                                onChange={(e) => setSelectedOption(e.target.value)}
-                              >
-                                <option value="">Select Option</option>
-                                {getOptionsForMethod(selectedMethod).map(option => (
-                                  <option key={option.planCommissionsId} value={option.methodOptionId}>
-                                    {option.optionName} 
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-                          )}
-                        </>
-                      )}
-                    </div>
-                  )}
-
-                  {selectedGateway && paymentDetails.length > 0 && (
-                    <div className="commission-table-card">
-                      <h5 className="payment-title">Platform Fee Details</h5>
-                      <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '1rem' }}>
-                        Review the Platform Fee (%) for different payment options
-                      </p>
-                      <div className="table-responsive">
-                        <table className="table commission-table">
-                          <thead>
-                            <tr>
-                              <th>Payment Method</th>
-                              <th>Option</th>
-                              <th className="text-end">Platform Fee (%)</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {paymentDetails.map((detail) => (
-                              <tr 
-                                key={detail.planCommissionsId}
-                                className={selectedOption == detail.methodOptionId ? 'selected-row' : ''}
-                              >
-                                <td>
-                                  <span className="method-badge">{detail.methodName}</span>
-                                </td>
-                                <td>{detail.optionName}</td>
-                                <td className="text-end">
-                                  <span className="commission-rate">{detail.planCommission}%</span>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                      <div className="info-alert">
-                        <p className="info-alert-text">
-                          <strong>Note:</strong> Platform fee will be calculated based on the selected payment method and applied to the subtotal amount. 
-                          Select your preferred payment option above to proceed.
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-            
-            <div className="col-lg-4">
-              <div className="summary-card">
-                <h5 className="summary-title">Order Summary</h5>
-
-                <div className="summary-row">
-                  <span>Products Total</span>
-                  <span>₹ {productsTotal.toFixed(2)}</span>
-                </div>
-
-                <div className="summary-row">
-                  <span>GST</span>
-                  <span>₹ {gstTotal.toFixed(2)}</span>
-                </div>
-
-                <div className="summary-row-subtotal">
-                  <span>Subtotal</span>
-                  <span>₹ {subtotal.toFixed(2)}</span>
-                </div>
-
-                {selectedOption && commissionRate > 0 && (
-                  <div className="summary-row">
-                    <span>Platform Fee</span>
-                    <span>₹ {commissionAmount.toFixed(2)}</span>
-                  </div>
-                )}
-
-                <hr className="summary-divider" />
-                
-                <div className="summary-total">
-                  <span>Total</span>
-                  <span>₹ {total.toFixed(2)}</span>
-                </div>
-
-                <p className="summary-note">
-                  Includes all taxes
-                </p>
-
-                <button
-                  className="checkout-btn"
-                  onClick={handleProceedToCheckout}
-                  disabled={!selectedGateway || !selectedMethod || !selectedOption || cartItems.length === 0}
-                >
-                  → Proceed to Checkout
-                </button>
-
-                <button className="quote-btn">
-                  Request Quotation
-                </button>
-
-                <ul className="features-list">
-                  <li className="feature-item">
-                    <img src={Security} alt="Secure Payment" className="feature-icon" />
-                    <span>Secure Payment</span>
-                  </li>
-                  <li className="feature-item">
-                    <img src={Delivery} alt="Fast Delivery" className="feature-icon" />
-                    <span>Fast Delivery</span>
-                  </li>
-                  <li className="feature-item">
-                    <img src={Check} alt="Quality Check" className="feature-icon" />
-                    <span>Quality Check</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
+    <div style={{ fontFamily: "'Inter','Segoe UI',sans-serif" }}>
+      {/* Page Header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+        <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: `linear-gradient(135deg, ${P}, #F07030)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <ShoppingCart size={18} color="white" />
+        </div>
+        <div>
+          <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 800, color: '#1c1917' }}>Shopping Cart</h1>
+          <p style={{ margin: 0, fontSize: '13px', color: '#9ca3af' }}>{cartItems.length} item{cartItems.length !== 1 ? 's' : ''} in your cart</p>
         </div>
       </div>
 
-      {deleteCartId && (
-        <div 
-          className="modal show d-block" 
-          style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
-          onClick={handleCancelDelete}
-        >
-          <div 
-            className="modal-dialog modal-dialog-centered"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Confirm Delete</h5>
-                <button 
-                  type="button" 
-                  className="btn-close" 
-                  onClick={handleCancelDelete}
-                ></button>
+      {loading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '80px' }}>
+          <div style={{ width: '40px', height: '40px', border: `3px solid ${PL}`, borderTopColor: P, borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+          <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
+        </div>
+      ) : cartItems.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '80px 24px', backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #f0ede9' }}>
+          <div style={{ width: '72px', height: '72px', borderRadius: '50%', backgroundColor: PL, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+            <ShoppingCart size={32} color={P} />
+          </div>
+          <h3 style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: '#1c1917' }}>Your cart is empty</h3>
+          <p style={{ margin: '0 0 24px', color: '#9ca3af' }}>Add products from the marketplace to get started</p>
+          <button onClick={() => navigate('/agent/buy-from-farmers')} style={{ padding: '12px 28px', backgroundColor: P, color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '14px', cursor: 'pointer' }}>
+            Browse Products
+          </button>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '24px', alignItems: 'start' }}>
+
+          {/* Left Column */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+            {/* Cart Items Table */}
+            <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #f0ede9', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+              <div style={{ padding: '18px 24px', borderBottom: '1px solid #f0ede9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#1c1917' }}>Cart Items</h3>
+                <span style={{ fontSize: '12px', color: '#9ca3af' }}>{cartItems.length} products</span>
               </div>
-              <div className="modal-body">
-                <p>Are you sure you want to remove this item from your cart?</p>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ backgroundColor: '#faf8f6' }}>
+                      {['Product', 'Category', 'Qty', 'Unit Price', 'GST', 'Total', ''].map(h => (
+                        <th key={h} style={{ padding: '12px 18px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: P, borderBottom: '1px solid #f0ede9', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {cartItems.map((item, i) => (
+                      <tr key={item.cartId} style={{ borderBottom: i < cartItems.length - 1 ? '1px solid #faf8f6' : 'none' }}
+                        onMouseEnter={e => e.currentTarget.style.backgroundColor = '#faf8f6'}
+                        onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
+                        <td style={{ padding: '14px 18px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <div style={{ width: '52px', height: '52px', borderRadius: '10px', overflow: 'hidden', backgroundColor: PL, flexShrink: 0 }}>
+                              {getImagePath(item.productImages)
+                                ? <img src={getImagePath(item.productImages)} alt={item.productName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Package size={20} color={P} /></div>
+                              }
+                            </div>
+                            <span style={{ fontSize: '14px', fontWeight: 600, color: '#1c1917' }}>{item.productName}</span>
+                          </div>
+                        </td>
+                        <td style={{ padding: '14px 18px', fontSize: '13px', color: '#6b7280' }}>{item.categoryName}</td>
+                        <td style={{ padding: '14px 18px' }}>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: '32px', height: '28px', padding: '0 10px', backgroundColor: PL, color: P, borderRadius: '6px', fontSize: '13px', fontWeight: 700 }}>
+                            {item.noOfQuantity}
+                          </span>
+                        </td>
+                        <td style={{ padding: '14px 18px', fontSize: '14px', fontWeight: 600, color: '#1c1917' }}>₹{parseFloat(item.unitPrice).toFixed(2)}</td>
+                        <td style={{ padding: '14px 18px', fontSize: '13px', color: '#6b7280' }}>₹{parseFloat(item.gSTAmount).toFixed(2)}</td>
+                        <td style={{ padding: '14px 18px', fontSize: '14px', fontWeight: 700, color: P }}>₹{parseFloat(item.lineItemTotal).toFixed(2)}</td>
+                        <td style={{ padding: '14px 18px' }}>
+                          <button onClick={() => setDeleteCartId(item.cartId)} style={{ width: '32px', height: '32px', borderRadius: '8px', backgroundColor: '#fee2e2', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.15s' }}
+                            onMouseEnter={e => e.currentTarget.style.backgroundColor = '#fecaca'}
+                            onMouseLeave={e => e.currentTarget.style.backgroundColor = '#fee2e2'}
+                          >
+                            <Trash2 size={14} color="#dc2626" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-              <div className="modal-footer">
-                <button 
-                  type="button" 
-                  className="btn btn-secondary" 
-                  onClick={handleCancelDelete}
+            </div>
+
+            {/* Payment Options */}
+            <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #f0ede9', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', padding: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '8px', backgroundColor: PL, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <CreditCard size={15} color={P} />
+                </div>
+                <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#1c1917' }}>Payment Options</h3>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+                {/* Gateway */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Gateway</label>
+                  <select value={selectedGateway} onChange={e => handleGatewayChange(e.target.value)} style={{ ...inp }}
+                    onFocus={e => { e.target.style.borderColor = P; e.target.style.boxShadow = `0 0 0 3px ${PL}`; }}
+                    onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
+                  >
+                    <option value="">Select Gateway</option>
+                    {gateways.map(gw => <option key={gw.gatewayId} value={gw.gatewayId}>{gw.gatewayName}</option>)}
+                  </select>
+                </div>
+
+                {/* Method */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Method</label>
+                  <select value={selectedMethod} onChange={e => { setSelectedMethod(e.target.value); setSelectedOption(''); }} disabled={!paymentDetails.length} style={{ ...inp, opacity: !paymentDetails.length ? 0.5 : 1 }}
+                    onFocus={e => { e.target.style.borderColor = P; e.target.style.boxShadow = `0 0 0 3px ${PL}`; }}
+                    onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
+                  >
+                    <option value="">Select Method</option>
+                    {getUniqueMethods().map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+                  </select>
+                </div>
+
+                {/* Option */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Option</label>
+                  <select value={selectedOption} onChange={e => setSelectedOption(e.target.value)} disabled={!selectedMethod} style={{ ...inp, opacity: !selectedMethod ? 0.5 : 1 }}
+                    onFocus={e => { e.target.style.borderColor = P; e.target.style.boxShadow = `0 0 0 3px ${PL}`; }}
+                    onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
+                  >
+                    <option value="">Select Option</option>
+                    {getOptionsForMethod(selectedMethod).map(o => <option key={o.planCommissionsId} value={o.methodOptionId}>{o.optionName}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              {/* Platform Fee Table */}
+              {selectedGateway && paymentDetails.length > 0 && (
+                <div style={{ marginTop: '20px', borderRadius: '10px', border: '1px solid #f0ede9', overflow: 'hidden' }}>
+                  <div style={{ padding: '12px 16px', backgroundColor: '#faf8f6', borderBottom: '1px solid #f0ede9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#1c1917' }}>Platform Fee Details</span>
+                    <span style={{ fontSize: '11px', color: '#9ca3af' }}>Select an option above to apply</span>
+                  </div>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ backgroundColor: '#faf8f6' }}>
+                        {['Method', 'Option', 'Fee %'].map(h => (
+                          <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: '#9ca3af', borderBottom: '1px solid #f0ede9', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {paymentDetails.map(d => {
+                        const isSelected = selectedOption == d.methodOptionId;
+                        return (
+                          <tr key={d.planCommissionsId} style={{ backgroundColor: isSelected ? GL : 'transparent', borderBottom: '1px solid #faf8f6', transition: 'background 0.12s' }}>
+                            <td style={{ padding: '10px 16px' }}>
+                              <span style={{ padding: '3px 10px', backgroundColor: '#dbeafe', color: '#1e40af', borderRadius: '6px', fontSize: '12px', fontWeight: 600 }}>{d.methodName}</span>
+                            </td>
+                            <td style={{ padding: '10px 16px', fontSize: '13px', color: '#374151' }}>{d.optionName}</td>
+                            <td style={{ padding: '10px 16px' }}>
+                              <span style={{ fontSize: '13px', fontWeight: 700, color: isSelected ? G : '#374151' }}>{d.planCommission}%</span>
+                              {isSelected && <span style={{ marginLeft: '6px', fontSize: '10px', color: G, fontWeight: 600 }}>✓ Selected</span>}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                  <div style={{ padding: '12px 16px', backgroundColor: '#eff6ff', borderTop: '1px solid #bfdbfe', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+                    <Info size={14} color="#1e40af" style={{ flexShrink: 0, marginTop: '1px' }} />
+                    <p style={{ margin: 0, fontSize: '12px', color: '#1e40af', lineHeight: 1.5 }}>
+                      Platform fee is calculated on the subtotal and added to your total. Select your preferred payment option above.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right: Order Summary */}
+          <div style={{ position: 'sticky', top: '20px' }}>
+            <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #f0ede9', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', overflow: 'hidden' }}>
+              {/* Header */}
+              <div style={{ padding: '18px 24px', background: `linear-gradient(135deg, ${PL}, #fff)`, borderBottom: '1px solid #f0ede9' }}>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#1c1917' }}>Order Summary</h3>
+              </div>
+
+              <div style={{ padding: '20px 24px' }}>
+                {/* Line items */}
+                {[
+                  { label: 'Products Total', value: `₹${productsTotal.toFixed(2)}` },
+                  { label: 'GST', value: `₹${gstTotal.toFixed(2)}` },
+                ].map(row => (
+                  <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', fontSize: '14px', color: '#6b7280' }}>
+                    <span>{row.label}</span><span>{row.value}</span>
+                  </div>
+                ))}
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', fontSize: '14px', fontWeight: 700, color: '#1c1917', borderTop: '1px solid #f0ede9', borderBottom: '1px solid #f0ede9', margin: '4px 0' }}>
+                  <span>Subtotal</span><span>₹{subtotal.toFixed(2)}</span>
+                </div>
+
+                {selectedOption && commissionRate > 0 && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', fontSize: '14px', color: '#6b7280' }}>
+                    <span>Platform Fee ({commissionRate}%)</span>
+                    <span>₹{commissionAmount.toFixed(2)}</span>
+                  </div>
+                )}
+
+                {/* Total */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px', backgroundColor: PL, borderRadius: '10px', margin: '12px 0' }}>
+                  <span style={{ fontSize: '15px', fontWeight: 700, color: '#1c1917' }}>Total</span>
+                  <span style={{ fontSize: '22px', fontWeight: 800, color: P }}>₹{total.toFixed(2)}</span>
+                </div>
+
+                <p style={{ margin: '0 0 16px', fontSize: '11px', color: '#9ca3af', textAlign: 'center' }}>Includes all applicable taxes</p>
+
+                {/* CTA */}
+                <button
+                  onClick={handleProceedToCheckout}
+                  disabled={!canCheckout}
+                  style={{ width: '100%', padding: '13px', backgroundColor: canCheckout ? P : '#d1d5db', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '14px', cursor: canCheckout ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: canCheckout ? `0 4px 14px rgba(236,91,19,0.3)` : 'none', transition: 'all 0.15s', marginBottom: '10px' }}
+                  onMouseEnter={e => { if (canCheckout) e.currentTarget.style.opacity = '0.9'; }}
+                  onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
                 >
-                  No
+                  Proceed to Checkout <ArrowRight size={16} />
                 </button>
-                <button 
-                  type="button" 
-                  className="btn btn-danger" 
-                  onClick={handleConfirmDelete}
-                >
-                  Yes, Remove
-                </button>
+
+                {!canCheckout && (
+                  <p style={{ margin: '0 0 14px', fontSize: '11px', color: '#f59e0b', textAlign: 'center', fontWeight: 500 }}>
+                    Select gateway, method & option to continue
+                  </p>
+                )}
+
+                {/* Trust badges */}
+                <div style={{ borderTop: '1px solid #f0ede9', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {[
+                    { icon: Shield,       label: 'Secure Payment',  sub: 'SSL encrypted checkout' },
+                    { icon: Truck,        label: 'Fast Delivery',   sub: 'Direct from farm' },
+                    { icon: CheckCircle,  label: 'Quality Assured', sub: 'Verified produce' },
+                  ].map(({ icon: Icon, label, sub }) => (
+                    <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div style={{ width: '32px', height: '32px', borderRadius: '8px', backgroundColor: GL, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <Icon size={14} color={G} />
+                      </div>
+                      <div>
+                        <p style={{ margin: 0, fontSize: '12px', fontWeight: 600, color: '#1c1917' }}>{label}</p>
+                        <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>{sub}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         </div>
       )}
-    </>
+
+      {/* Delete Confirm Modal */}
+      {deleteCartId && (
+        <div onClick={() => setDeleteCartId(null)} style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000, backdropFilter: 'blur(2px)' }}>
+          <div onClick={e => e.stopPropagation()} style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '32px', width: '380px', maxWidth: '90vw', textAlign: 'center', boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }}>
+            <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: '#fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+              <Trash2 size={22} color="#dc2626" />
+            </div>
+            <h3 style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: 700, color: '#1c1917' }}>Remove Item</h3>
+            <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#6b7280' }}>Are you sure you want to remove this item from your cart?</p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+              <button onClick={() => setDeleteCartId(null)} style={{ padding: '10px 24px', backgroundColor: '#f9fafb', color: '#374151', border: '1px solid #e5e7eb', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+              <button onClick={handleConfirmDelete} style={{ padding: '10px 24px', backgroundColor: '#dc2626', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>Remove</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

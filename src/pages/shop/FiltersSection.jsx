@@ -1,350 +1,177 @@
-// src/shop/FiltersSection.jsx
-
 import { useState, useMemo } from 'react';
-import icon from '../../assets/shop/Icon.png';
+import { Search, RotateCcw, SlidersHorizontal, Tag, X } from 'lucide-react';
+
+const P = '#EC5B13';
+const PL = '#FEF0E9';
+const G = '#32a862';
+const GL = '#e6f7ed';
 
 const FiltersSection = ({ filters = { searchQuery: '', selectedCategories: [], minPrice: '', maxPrice: '' }, setFilters, products = [], onApplyFilters }) => {
   const [sliderVal, setSliderVal] = useState(10000);
-
   const sliderMin = 0;
   const sliderMax = 100000;
   const sliderStep = 1000;
+  const sliderPct = ((sliderVal - sliderMin) / (sliderMax - sliderMin)) * 100;
 
-  // Extract unique categories from products
   const availableCategories = useMemo(() => {
-    if (!products || products.length === 0) return [];
-    const categoryMap = new Map();
-    products.forEach(p => {
-      if (p.categoryId && p.categoryName) {
-        categoryMap.set(p.categoryId, { id: p.categoryId, name: p.categoryName });
-      }
-    });
-    return Array.from(categoryMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+    const map = new Map();
+    products.forEach(p => { if (p.categoryId && p.categoryName) map.set(p.categoryId, { id: p.categoryId, name: p.categoryName }); });
+    return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
   }, [products]);
-
-  console.log('Available Categories:', availableCategories);
-  console.log('Products:', products);
 
   const handleSliderChange = (value) => {
     setSliderVal(Number(value));
-    setFilters(prev => ({
-      ...prev,
-      minPrice: Number(value),
-      maxPrice: prev.maxPrice || Number(value) + sliderStep * 5
-    }));
-  };
-
-  const handleCategoryChange = (categoryName) => {
-    setFilters(prev => ({
-      ...prev,
-      selectedCategories: prev.selectedCategories.includes(categoryName)
-        ? prev.selectedCategories.filter(c => c !== categoryName)
-        : [...prev.selectedCategories, categoryName]
-    }));
-  };
-
-  const handleSearchChange = (value) => {
-    setFilters(prev => ({ ...prev, searchQuery: value }));
-  };
-
-  const handleMinPriceChange = (value) => {
-    setFilters(prev => ({ ...prev, minPrice: value }));
-  };
-
-  const handleMaxPriceChange = (value) => {
-    setFilters(prev => ({ ...prev, maxPrice: value }));
+    setFilters(prev => ({ ...prev, minPrice: Number(value), maxPrice: prev.maxPrice || Number(value) + sliderStep * 5 }));
   };
 
   const handleReset = () => {
-    const resetFilters = {
-      searchQuery: '',
-      selectedCategories: [],
-      minPrice: '',
-      maxPrice: ''
-    };
-    setFilters(resetFilters);
+    setFilters({ searchQuery: '', selectedCategories: [], minPrice: '', maxPrice: '' });
     setSliderVal(10000);
-    // Trigger immediate apply on reset
     setTimeout(() => onApplyFilters(), 0);
   };
 
+  const activeFilterCount = (filters.selectedCategories?.length || 0) + (filters.minPrice ? 1 : 0) + (filters.maxPrice ? 1 : 0);
+
   return (
-    <div
-      className="filters-section bg-white"
-      style={{ width: '25%', padding: '1rem 0.5rem 2rem 2.5rem' }}
-    >
-      {/* Search Bar */}
-      <div className="mb-4">
+    <div style={{ width: '280px', minWidth: '280px', padding: '0 20px 24px 0', flexShrink: 0 }}>
+
+      {/* Search */}
+      <div style={{ position: 'relative', marginBottom: '20px' }}>
+        <Search size={15} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af', pointerEvents: 'none' }} />
         <input
           type="text"
-          className="form-control search-input"
-          placeholder="Search for products......"
+          placeholder="Search products..."
           value={filters.searchQuery}
-          onChange={(e) => handleSearchChange(e.target.value)}
+          onChange={e => setFilters(prev => ({ ...prev, searchQuery: e.target.value }))}
+          style={{
+            width: '100%', padding: '11px 36px 11px 36px',
+            border: '1px solid #e5e7eb', borderRadius: '10px',
+            fontSize: '13px', outline: 'none', backgroundColor: '#fff',
+            color: '#1c1917', boxSizing: 'border-box', transition: 'border-color 0.15s',
+          }}
+          onFocus={e => { e.target.style.borderColor = P; e.target.style.boxShadow = `0 0 0 3px ${PL}`; }}
+          onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
         />
+        {filters.searchQuery && (
+          <button onClick={() => setFilters(prev => ({ ...prev, searchQuery: '' }))} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', display: 'flex', alignItems: 'center' }}>
+            <X size={14} />
+          </button>
+        )}
       </div>
 
       {/* Filter Header */}
-      <div className="d-flex justify-content-between align-items-center mb-2">
-        <h5 className="text-dark mb-0">Filters</h5>
-        <button className="btn reset-btn" onClick={handleReset}>
-          Reset All
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <SlidersHorizontal size={15} color={P} />
+          <span style={{ fontSize: '14px', fontWeight: 700, color: '#1c1917' }}>Filters</span>
+          {activeFilterCount > 0 && (
+            <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '18px', height: '18px', borderRadius: '50%', backgroundColor: P, color: 'white', fontSize: '10px', fontWeight: 700 }}>
+              {activeFilterCount}
+            </span>
+          )}
+        </div>
+        <button onClick={handleReset} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px', color: P, fontWeight: 600, padding: '4px 8px', borderRadius: '6px', transition: 'background 0.15s' }}
+          onMouseEnter={e => e.currentTarget.style.backgroundColor = PL}
+          onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+        >
+          <RotateCcw size={12} /> Reset
         </button>
       </div>
 
-      {/* Filter Results Dropdown */}
-      <div className="mb-4">
-        <div className="filter-results d-flex align-items-center">
-          <img src={icon} alt="Filter" className="me-2" style={{ width: '20px' }} />
-          <span>Filter results..</span>
-        </div>
-      </div>
-
-      {/* Product Categories */}
+      {/* Categories */}
       {availableCategories.length > 0 && (
-        <div className="filter-group mb-4">
-          <p className="text-dark">Product Category</p>
-          {availableCategories.map(category => (
-            <div className="form-check mb-2 d-flex align-items-center" key={category.id}>
-              <input
-                className="form-check-input custom-radio"
-                type="checkbox"
-                id={`category-${category.id}`}
-                checked={filters.selectedCategories.includes(category.name)}
-                onChange={() => handleCategoryChange(category.name)}
-              />
-              <label className="filter-option" htmlFor={`category-${category.id}`}>
-                {category.name}
-              </label>
-            </div>
-          ))}
+        <div style={{ backgroundColor: '#fff', border: '1px solid #f0ede9', borderRadius: '12px', padding: '16px', marginBottom: '14px', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '12px' }}>
+            <Tag size={13} color={P} />
+            <span style={{ fontSize: '12px', fontWeight: 700, color: '#1c1917', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Category</span>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {availableCategories.map(cat => {
+              const checked = filters.selectedCategories.includes(cat.name);
+              return (
+                <label key={cat.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '6px 8px', borderRadius: '8px', transition: 'background 0.12s', backgroundColor: checked ? PL : 'transparent' }}
+                  onMouseEnter={e => { if (!checked) e.currentTarget.style.backgroundColor = '#faf8f6'; }}
+                  onMouseLeave={e => { if (!checked) e.currentTarget.style.backgroundColor = 'transparent'; }}
+                >
+                  <div
+                    onClick={() => setFilters(prev => ({ ...prev, selectedCategories: prev.selectedCategories.includes(cat.name) ? prev.selectedCategories.filter(c => c !== cat.name) : [...prev.selectedCategories, cat.name] }))}
+                    style={{
+                      width: '18px', height: '18px', borderRadius: '5px', flexShrink: 0,
+                      border: `2px solid ${checked ? P : '#d1d5db'}`,
+                      backgroundColor: checked ? P : 'white',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      transition: 'all 0.15s', cursor: 'pointer',
+                    }}
+                  >
+                    {checked && <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>}
+                  </div>
+                  <span style={{ fontSize: '13px', color: checked ? P : '#374151', fontWeight: checked ? 600 : 400 }}>{cat.name}</span>
+                </label>
+              );
+            })}
+          </div>
         </div>
       )}
 
       {/* Price Range */}
-      <div className="filter-group mb-4">
-        <div className="d-flex justify-content-between align-items-center mb-2">
-          <p className="text-dark mb-0">Price Range</p>
+      <div style={{ backgroundColor: '#fff', border: '1px solid #f0ede9', borderRadius: '12px', padding: '16px', marginBottom: '16px', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '14px' }}>
+          <span style={{ fontSize: '12px', fontWeight: 700, color: '#1c1917', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Price Range</span>
         </div>
 
-        <div className="d-flex align-items-center gap-2 mb-3">
-          <div className="currency-input-wrapper">
-            <span className="currency-prefix">₹</span>
-            <input
-              type="number"
-              className="form-control currency-input"
-              placeholder="Min"
-              value={filters.minPrice}
-              onChange={(e) => handleMinPriceChange(e.target.value)}
-            />
-          </div>
-
-          <span>-</span>
-
-          <div className="currency-input-wrapper">
-            <span className="currency-prefix">₹</span>
-            <input
-              type="number"
-              className="form-control currency-input"
-              placeholder="Max"
-              value={filters.maxPrice}
-              onChange={(e) => handleMaxPriceChange(e.target.value)}
-            />
-          </div>
+        {/* Min / Max inputs */}
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
+          {[
+            { label: 'Min', key: 'minPrice' },
+            { label: 'Max', key: 'maxPrice' },
+          ].map(({ label, key }) => (
+            <div key={key} style={{ flex: 1, position: 'relative' }}>
+              <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', fontSize: '12px', color: '#9ca3af', pointerEvents: 'none' }}>₹</span>
+              <input
+                type="number"
+                placeholder={label}
+                value={filters[key]}
+                onChange={e => setFilters(prev => ({ ...prev, [key]: e.target.value }))}
+                style={{ width: '100%', padding: '8px 8px 8px 22px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '12px', outline: 'none', boxSizing: 'border-box', color: '#1c1917' }}
+                onFocus={e => { e.target.style.borderColor = P; e.target.style.boxShadow = `0 0 0 2px ${PL}`; }}
+                onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
+              />
+            </div>
+          ))}
         </div>
 
-        <div className="range-slider-container position-relative mb-2">
+        {/* Slider */}
+        <div style={{ position: 'relative', paddingBottom: '4px' }}>
+          <div style={{ position: 'relative', height: '6px', backgroundColor: '#e5e7eb', borderRadius: '999px', marginBottom: '8px' }}>
+            <div style={{ position: 'absolute', left: 0, width: `${sliderPct}%`, height: '100%', backgroundColor: P, borderRadius: '999px' }} />
+          </div>
           <input
-            type="range"
-            className="form-range"
-            min={sliderMin}
-            max={sliderMax}
-            step={sliderStep}
-            value={sliderVal}
-            onChange={(e) => handleSliderChange(e.target.value)}
+            type="range" min={sliderMin} max={sliderMax} step={sliderStep} value={sliderVal}
+            onChange={e => handleSliderChange(e.target.value)}
+            style={{ position: 'absolute', top: '-4px', left: 0, width: '100%', opacity: 0, cursor: 'pointer', height: '20px' }}
           />
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#9ca3af' }}>
+            <span>₹0</span>
+            <span style={{ color: P, fontWeight: 600 }}>₹{sliderVal.toLocaleString()}</span>
+            <span>₹1L</span>
+          </div>
         </div>
       </div>
 
-      {/* Apply Filters Button */}
-      <button 
-        className="btn apply-filters-btn w-100"
+      {/* Apply Button */}
+      <button
         onClick={onApplyFilters}
         style={{
-          background: '#EC5B13',
-          color: 'white',
-          fontWeight: '600',
-          fontSize: '18px',
-          borderRadius: '8px',
-          padding: '0.75rem',
-          border: 'none'
+          width: '100%', padding: '12px', backgroundColor: P, color: 'white',
+          border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '14px',
+          cursor: 'pointer', transition: 'opacity 0.15s, transform 0.1s',
+          boxShadow: `0 4px 14px rgba(236,91,19,0.3)`,
         }}
+        onMouseEnter={e => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+        onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)'; }}
       >
         Apply Filters
       </button>
-
-      {/* Internal CSS for non-Bootstrap styles */}
-      <style jsx>{`
-        .search-input {
-          width: 20rem;
-          max-width: 100%;
-          height: 4rem;
-          border-radius: 0.7rem;
-          border: 0.5px solid #B4B4B4;
-          background: #FFFFFF;
-          padding: 0 1.5rem;
-          font-family: 'Inter', sans-serif;
-          font-weight: 300;
-          font-size: 22px;
-          line-height: 30px;
-          color: #565656;
-        }
-
-        .search-input::placeholder {
-          color: #565656;
-          opacity: 0.8;
-        }
-
-        .reset-btn {
-          font-family: 'Manrope', sans-serif;
-          font-weight: 500;
-          font-size: 20px;
-          color: #EC5B13;
-          background: none;
-          border: none;
-          padding: 0;
-        }
-
-        .filter-results {
-          width: 476px;
-          max-width: 100%;
-          height: 55px;
-          background: #FCFCFA;
-          border: 0.4px solid #717171;
-          border-radius: 8px;
-          padding: 0 1rem;
-          font-family: 'Manrope', sans-serif;
-          font-weight: 400;
-          font-size: 18px;
-          color: #EC5B13;
-        }
-
-        .filter-group {
-          width: 476px;
-          max-width: 100%;
-          background: #FCFCFA;
-          border: 0.4px solid #717171;
-          border-radius: 8px;
-          padding: 1rem;
-        }
-
-        .custom-radio {
-          width: 16.67px;
-          height: 16.67px;
-          border: 2px solid #EC5B13;
-          border-radius: 50%;
-          appearance: none;
-          cursor: pointer;
-          flex-shrink: 0;
-        }
-
-        .custom-radio:checked {
-          background-color: #EC5B13;
-          border-color: #EC5B13;
-        }
-
-        .filter-option {
-          font-family: 'Manrope', sans-serif;
-          font-weight: 500;
-          font-size: 18px;
-          color: #565656;
-          margin-left: 0.75rem;
-          margin-bottom: 0;
-          cursor: pointer;
-        }
-
-        .form-control {
-          height: 2.5rem;
-          font-size: 14px;
-          border-radius: 0.5rem;
-          border: 0.2px solid #000000;
-        }
-
-        .currency-input-wrapper { 
-          position: relative; 
-          flex: 1;
-        }
-        .currency-prefix {
-          position: absolute;
-          left: 0.75rem;
-          top: 50%;
-          transform: translateY(-50%);
-          font-family: 'Inter', sans-serif;
-          font-weight: 500;
-          color: #565656;
-          pointer-events: none;
-          z-index: 2;
-        }
-        .currency-input { 
-          padding-left: 2rem;
-          width: 100%;
-        }
-
-        .range-slider-container {
-          padding: 0.25rem 0;
-          background: transparent;
-        }
-
-        .form-range {
-          width: 100%;
-          height: 0.5rem;
-          background: transparent;
-          position: relative;
-        }
-
-        .form-range::-webkit-slider-runnable-track {
-          height: 0.5rem;
-          background: linear-gradient(to right, #EC5B13 0%, #EC5B13 ${(sliderVal - sliderMin) / (sliderMax - sliderMin) * 100}%, #E5E5E5 ${(sliderVal - sliderMin) / (sliderMax - sliderMin) * 100}%, #E5E5E5 100%);
-          border-radius: 0.25rem;
-        }
-        .form-range::-moz-range-track {
-          height: 0.5rem;
-          background: linear-gradient(to right, #EC5B13 0%, #EC5B13 ${(sliderVal - sliderMin) / (sliderMax - sliderMin) * 100}%, #E5E5E5 ${(sliderVal - sliderMin) / (sliderMax - sliderMin) * 100}%, #E5E5E5 100%);
-          border-radius: 0.25rem;
-        }
-
-        .form-range::-webkit-slider-thumb {
-          background: #EC5B13;
-          border: 2px solid #EC5B13;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          margin-top: -6px;
-        }
-        .form-range::-moz-range-thumb {
-          background: #EC5B13;
-          border: 2px solid #EC5B13;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-        }
-
-        .apply-filters-btn:hover {
-          background: #EC5B13 !important;
-        }
-
-        @media (max-width: 992px) {
-          .filters-section { width: 100% !important; padding-left: 1rem !important; padding-right: 1rem !important; }
-          .filter-group, .filter-results { width: 100% !important; }
-          .search-input { width: 100% !important; }
-        }
-
-        @media (max-width: 576px) {
-          .filter-group { padding: 0.75rem !important; }
-        }
-      `}</style>
     </div>
   );
 };

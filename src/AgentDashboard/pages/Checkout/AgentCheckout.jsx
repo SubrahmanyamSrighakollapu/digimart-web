@@ -1,199 +1,214 @@
-import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { toast } from "react-toastify";
-import "bootstrap/dist/css/bootstrap.min.css";
+import { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { MapPin, User, Phone, Hash, FileText, ArrowLeft, Lock, CheckCircle, Truck, Shield } from 'lucide-react';
+
+const P  = '#EC5B13';
+const PL = '#FEF0E9';
+const G  = '#32a862';
+const GL = '#e6f7ed';
+
+const inp = {
+  width: '100%', padding: '11px 14px', border: '1px solid #e5e7eb',
+  borderRadius: '9px', fontSize: '14px', outline: 'none',
+  backgroundColor: '#fff', color: '#1c1917', boxSizing: 'border-box',
+  transition: 'border-color 0.15s, box-shadow 0.15s',
+};
+
+const Field = ({ label, icon: Icon, required, children }) => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+    <label style={{ fontSize: '12px', fontWeight: 700, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'flex', alignItems: 'center', gap: '5px' }}>
+      {Icon && <Icon size={12} color={P} />}
+      {label}{required && <span style={{ color: P }}>*</span>}
+    </label>
+    {children}
+  </div>
+);
 
 const AgentCheckout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const checkoutData = location.state || {};
-  
-  const [formData, setFormData] = useState({
-    userGSTNo: '',
-    deliveryPersonName: '',
-    deliveryPersonNo: '',
-    deliveryAddress: '',
-    deliveryStatePin: ''
-  });
+
+  const [formData, setFormData] = useState({ userGSTNo: '', deliveryPersonName: '', deliveryPersonNo: '', deliveryAddress: '', deliveryStatePin: '' });
   const [loading, setLoading] = useState(false);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+  const handleChange = (e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
   const handlePlaceOrder = async () => {
-    if (!formData.userGSTNo || !formData.deliveryPersonName || !formData.deliveryPersonNo || 
-        !formData.deliveryAddress || !formData.deliveryStatePin) {
+    const { userGSTNo, deliveryPersonName, deliveryPersonNo, deliveryAddress, deliveryStatePin } = formData;
+    if (!userGSTNo || !deliveryPersonName || !deliveryPersonNo || !deliveryAddress || !deliveryStatePin) {
       toast.error('Please fill all required fields');
       return;
     }
-
     try {
       setLoading(true);
       const token = sessionStorage.getItem('token');
-      
-      const payload = {
-        gatewayId: checkoutData.gatewayId,
-        methodId: checkoutData.methodId,
-        methodOptionId: checkoutData.methodOptionId,
-        cartIds: checkoutData.cartIds,
-        userGSTNo: formData.userGSTNo,
-        deliveryPersonName: formData.deliveryPersonName,
-        deliveryPersonNo: formData.deliveryPersonNo,
-        deliveryAddress: formData.deliveryAddress,
-        deliveryStatePin: formData.deliveryStatePin
-      };
-
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/payment/initiateProductPurchaseOrder`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/payment/initiateProductPurchaseOrder`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...checkoutData, ...formData }),
       });
-
-      const data = await response.json();
-      
+      const data = await res.json();
       if (data.status === 1) {
-        toast.success('Order initiated successfully!');
-        navigate('/agent/payment-fallback', { 
-          state: { 
-            orderId: data.result.orderId,
-            orderCode: data.result.orderCode,
-            paymentProcessId: data.result.paymentProcessId
-          } 
-        });
+        toast.success('Order placed successfully!');
+        navigate('/agent/payment-fallback', { state: { orderId: data.result.orderId, orderCode: data.result.orderCode, paymentProcessId: data.result.paymentProcessId } });
       } else {
         toast.error(data.message || 'Failed to place order');
       }
-    } catch (error) {
-      console.error('Error placing order:', error);
+    } catch {
       toast.error('Failed to place order');
     } finally {
       setLoading(false);
     }
   };
-  
+
+  const summaryRows = [
+    { label: 'Products Total', value: `₹${checkoutData.productsTotal?.toFixed(2) || '0.00'}` },
+    { label: 'GST',            value: `₹${checkoutData.gstTotal?.toFixed(2) || '0.00'}` },
+    { label: 'Subtotal',       value: `₹${checkoutData.subtotal?.toFixed(2) || '0.00'}`, bold: true },
+    ...(checkoutData.commissionRate > 0 ? [{ label: `Platform Fee (${checkoutData.commissionRate}%)`, value: `₹${checkoutData.commissionAmount?.toFixed(2) || '0.00'}` }] : []),
+  ];
+
+  const allFilled = Object.values(formData).every(v => v.trim());
+
   return (
-    <div className="container my-5">
-      <div className="row g-4">
-        <div className="col-lg-8">
-          {/* <h4 className="fw-bold mb-4">Secure CheckOut</h4> */}
+    <div style={{ fontFamily: "'Inter','Segoe UI',sans-serif" }}>
+      {/* Back */}
+      <button onClick={() => navigate('/agent/cart')} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', marginBottom: '20px', padding: '8px 16px', backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px', fontWeight: 600, color: '#374151', cursor: 'pointer', transition: 'all 0.15s' }}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = P; e.currentTarget.style.color = P; }}
+        onMouseLeave={e => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.color = '#374151'; }}
+      >
+        <ArrowLeft size={15} /> Back to Cart
+      </button>
 
-          <div className="card p-4 mb-4">
-            <h6 className="fw-bold mb-3">Delivery Details</h6>
+      {/* Page title */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+        <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: `linear-gradient(135deg, ${P}, #F07030)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Lock size={18} color="white" />
+        </div>
+        <div>
+          <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 800, color: '#1c1917' }}>Secure Checkout</h1>
+          <p style={{ margin: 0, fontSize: '13px', color: '#9ca3af' }}>Complete your delivery details to place the order</p>
+        </div>
+      </div>
 
-            <div className="row g-3">
-              <div className="col-md-6">
-                <label className="form-label">GST Number *</label>
-                <input 
-                  className="form-control" 
-                  name="userGSTNo"
-                  value={formData.userGSTNo}
-                  onChange={handleInputChange}
-                  placeholder="Enter GST Number" 
-                  required
-                />
-              </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '24px', alignItems: 'start' }}>
 
-              <div className="col-md-6">
-                <label className="form-label">Delivery Person Name *</label>
-                <input 
-                  className="form-control" 
-                  name="deliveryPersonName"
-                  value={formData.deliveryPersonName}
-                  onChange={handleInputChange}
-                  placeholder="Enter Delivery Person Name" 
-                  required
-                />
-              </div>
-
-              <div className="col-md-6">
-                <label className="form-label">Delivery Person Phone *</label>
-                <input 
-                  className="form-control" 
-                  name="deliveryPersonNo"
-                  value={formData.deliveryPersonNo}
-                  onChange={handleInputChange}
-                  placeholder="Enter Phone Number" 
-                  required
-                />
-              </div>
-
-              <div className="col-md-6">
-                <label className="form-label">State PIN Code *</label>
-                <input 
-                  className="form-control" 
-                  name="deliveryStatePin"
-                  value={formData.deliveryStatePin}
-                  onChange={handleInputChange}
-                  placeholder="Enter PIN Code" 
-                  required
-                />
-              </div>
-
-              <div className="col-12">
-                <label className="form-label">Delivery Address *</label>
-                <textarea 
-                  className="form-control" 
-                  name="deliveryAddress"
-                  value={formData.deliveryAddress}
-                  onChange={handleInputChange}
-                  placeholder="Enter Full Delivery Address" 
-                  rows="3"
-                  required
-                />
-              </div>
+        {/* Delivery Form */}
+        <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #f0ede9', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+          <div style={{ padding: '18px 24px', background: `linear-gradient(135deg, ${PL}, #fff)`, borderBottom: '1px solid #f0ede9', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', backgroundColor: PL, border: `1px solid ${P}33`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <MapPin size={15} color={P} />
             </div>
+            <div>
+              <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#1c1917' }}>Delivery Details</h3>
+              <p style={{ margin: 0, fontSize: '12px', color: '#9ca3af' }}>All fields are required</p>
+            </div>
+          </div>
+
+          <div style={{ padding: '24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px' }}>
+            <Field label="GST Number" icon={Hash} required>
+              <input name="userGSTNo" value={formData.userGSTNo} onChange={handleChange} placeholder="e.g. 22AAAAA0000A1Z5" style={inp}
+                onFocus={e => { e.target.style.borderColor = P; e.target.style.boxShadow = `0 0 0 3px ${PL}`; }}
+                onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
+              />
+            </Field>
+
+            <Field label="Delivery Person Name" icon={User} required>
+              <input name="deliveryPersonName" value={formData.deliveryPersonName} onChange={handleChange} placeholder="Enter full name" style={inp}
+                onFocus={e => { e.target.style.borderColor = P; e.target.style.boxShadow = `0 0 0 3px ${PL}`; }}
+                onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
+              />
+            </Field>
+
+            <Field label="Delivery Person Phone" icon={Phone} required>
+              <input name="deliveryPersonNo" value={formData.deliveryPersonNo} onChange={handleChange} placeholder="10-digit mobile number" style={inp}
+                onFocus={e => { e.target.style.borderColor = P; e.target.style.boxShadow = `0 0 0 3px ${PL}`; }}
+                onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
+              />
+            </Field>
+
+            <Field label="State PIN Code" icon={Hash} required>
+              <input name="deliveryStatePin" value={formData.deliveryStatePin} onChange={handleChange} placeholder="6-digit PIN code" maxLength={6} style={inp}
+                onFocus={e => { e.target.style.borderColor = P; e.target.style.boxShadow = `0 0 0 3px ${PL}`; }}
+                onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
+              />
+            </Field>
+
+            <div style={{ gridColumn: '1 / -1' }}>
+              <Field label="Delivery Address" icon={MapPin} required>
+                <textarea name="deliveryAddress" value={formData.deliveryAddress} onChange={handleChange} placeholder="Enter complete delivery address including street, city, state" rows={3}
+                  style={{ ...inp, resize: 'vertical', minHeight: '80px' }}
+                  onFocus={e => { e.target.style.borderColor = P; e.target.style.boxShadow = `0 0 0 3px ${PL}`; }}
+                  onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
+                />
+              </Field>
+            </div>
+          </div>
+
+          {/* Progress indicator */}
+          <div style={{ padding: '16px 24px', borderTop: '1px solid #f0ede9', backgroundColor: '#faf8f6', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ flex: 1, height: '4px', backgroundColor: '#e5e7eb', borderRadius: '999px', overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: `${(Object.values(formData).filter(v => v.trim()).length / 5) * 100}%`, backgroundColor: P, borderRadius: '999px', transition: 'width 0.3s' }} />
+            </div>
+            <span style={{ fontSize: '12px', color: '#9ca3af', whiteSpace: 'nowrap' }}>
+              {Object.values(formData).filter(v => v.trim()).length}/5 fields filled
+            </span>
           </div>
         </div>
 
-        <div className="col-lg-4">
-          <div className="card p-4">
-            <h5 className="fw-bold mb-4">Order Summary</h5>
-
-            <div className="d-flex justify-content-between mb-2">
-              <span>Products Total</span>
-              <span>₹ {checkoutData.productsTotal?.toFixed(2) || '0.00'}</span>
+        {/* Order Summary */}
+        <div style={{ position: 'sticky', top: '20px' }}>
+          <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #f0ede9', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', overflow: 'hidden' }}>
+            <div style={{ padding: '18px 24px', background: `linear-gradient(135deg, ${PL}, #fff)`, borderBottom: '1px solid #f0ede9' }}>
+              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#1c1917' }}>Order Summary</h3>
             </div>
 
-            <div className="d-flex justify-content-between mb-2">
-              <span>GST</span>
-              <span>₹ {checkoutData.gstTotal?.toFixed(2) || '0.00'}</span>
-            </div>
+            <div style={{ padding: '20px 24px' }}>
+              {summaryRows.map(row => (
+                <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', fontSize: '14px', fontWeight: row.bold ? 700 : 400, color: row.bold ? '#1c1917' : '#6b7280', borderBottom: row.bold ? '1px solid #f0ede9' : 'none', marginBottom: row.bold ? '4px' : 0 }}>
+                  <span>{row.label}</span><span>{row.value}</span>
+                </div>
+              ))}
 
-            <div className="d-flex justify-content-between mb-2 pb-2 border-bottom">
-              <span className="fw-semibold">Subtotal</span>
-              <span className="fw-semibold">₹ {checkoutData.subtotal?.toFixed(2) || '0.00'}</span>
-            </div>
-
-            {checkoutData.commissionRate > 0 && (
-              <div className="d-flex justify-content-between mb-2">
-                <span>Commission ({checkoutData.commissionRate}%)</span>
-                <span>₹ {checkoutData.commissionAmount?.toFixed(2) || '0.00'}</span>
+              {/* Total */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px', backgroundColor: PL, borderRadius: '10px', margin: '12px 0' }}>
+                <span style={{ fontSize: '15px', fontWeight: 700, color: '#1c1917' }}>Total</span>
+                <span style={{ fontSize: '22px', fontWeight: 800, color: P }}>₹{checkoutData.total?.toFixed(2) || '0.00'}</span>
               </div>
-            )}
 
-            <hr />
+              <p style={{ margin: '0 0 16px', fontSize: '11px', color: '#9ca3af', textAlign: 'center' }}>Includes all applicable taxes</p>
 
-            <div className="d-flex justify-content-between fw-bold mb-3">
-              <span>Total</span>
-              <span>₹ {checkoutData.total?.toFixed(2) || '0.00'}</span>
+              <button
+                onClick={handlePlaceOrder}
+                disabled={loading || !allFilled}
+                style={{ width: '100%', padding: '13px', backgroundColor: allFilled && !loading ? P : '#d1d5db', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '14px', cursor: allFilled && !loading ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: allFilled ? `0 4px 14px rgba(236,91,19,0.3)` : 'none', transition: 'all 0.15s', marginBottom: '16px' }}
+                onMouseEnter={e => { if (allFilled && !loading) e.currentTarget.style.opacity = '0.9'; }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
+              >
+                {loading ? 'Placing Order...' : <><Lock size={15} /> Place Order</>}
+              </button>
+
+              {/* Trust */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', borderTop: '1px solid #f0ede9', paddingTop: '16px' }}>
+                {[
+                  { icon: Shield,      label: 'Secure Checkout',  sub: 'SSL encrypted & safe' },
+                  { icon: Truck,       label: 'Tracked Delivery', sub: 'Real-time updates' },
+                  { icon: CheckCircle, label: 'Quality Assured',  sub: 'Verified produce' },
+                ].map(({ icon: Icon, label, sub }) => (
+                  <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '8px', backgroundColor: GL, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <Icon size={14} color={G} />
+                    </div>
+                    <div>
+                      <p style={{ margin: 0, fontSize: '12px', fontWeight: 600, color: '#1c1917' }}>{label}</p>
+                      <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>{sub}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-
-            <small className="text-muted d-block mb-3">
-              Includes all taxes
-            </small>
-
-            <button
-              className="btn btn-success w-100"
-              onClick={handlePlaceOrder}
-              disabled={loading}
-            >
-              {loading ? 'Placing Order...' : 'Place Order'}
-            </button>
           </div>
         </div>
       </div>

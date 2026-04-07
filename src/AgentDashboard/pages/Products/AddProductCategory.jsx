@@ -1,772 +1,311 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2, Plus, X, FolderOpen, FolderPlus, Tag } from 'lucide-react';
 import productService from '../../../services/productService';
 
-const AddProductCategory = () => {
-  const [showPopup, setShowPopup] = useState(false);
-  const [showSubCategoryPopup, setShowSubCategoryPopup] = useState(false);
-  const [showDeletePopup, setShowDeletePopup] = useState(false);
-  const [deleteId, setDeleteId] = useState(null);
-  const [categories, setCategories] = useState([]);
-  const [subCategories, setSubCategories] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [editingCategory, setEditingCategory] = useState(null);
-  const [editingSubCategory, setEditingSubCategory] = useState(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    status: true
-  });
-  const [subCategoryFormData, setSubCategoryFormData] = useState({
-    categoryId: '',
-    name: '',
-    description: '',
-    status: true
-  });
+const P  = '#EC5B13';
+const PL = '#FEF0E9';
+const G  = '#32a862';
+const GL = '#e6f7ed';
 
-  useEffect(() => {
-    fetchCategories();
-    fetchSubCategories();
-  }, []);
+const inp = {
+  width: '100%', padding: '10px 13px', border: '1px solid #e5e7eb',
+  borderRadius: '8px', fontSize: '13px', outline: 'none',
+  backgroundColor: '#fff', color: '#1c1917', boxSizing: 'border-box',
+  transition: 'border-color 0.15s, box-shadow 0.15s',
+};
+const focusStyle = (e) => { e.target.style.borderColor = P; e.target.style.boxShadow = `0 0 0 3px ${PL}`; };
+const blurStyle  = (e) => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; };
+
+const Field = ({ label, required, children }) => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+    <label style={{ fontSize: '12px', fontWeight: 700, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+      {label}{required && <span style={{ color: P, marginLeft: '2px' }}>*</span>}
+    </label>
+    {children}
+  </div>
+);
+
+const Toggle = ({ checked, onChange, label }) => (
+  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+    <span style={{ fontSize: '13px', fontWeight: 500, color: '#374151' }}>{label}</span>
+    <label style={{ position: 'relative', display: 'inline-block', width: '42px', height: '22px', cursor: 'pointer', flexShrink: 0 }}>
+      <input type="checkbox" checked={checked} onChange={onChange} style={{ opacity: 0, width: 0, height: 0 }} />
+      <span style={{ position: 'absolute', inset: 0, borderRadius: '22px', backgroundColor: checked ? P : '#d1d5db', transition: 'background 0.25s' }} />
+      <span style={{ position: 'absolute', top: '2px', left: checked ? '22px' : '2px', width: '18px', height: '18px', borderRadius: '50%', backgroundColor: 'white', transition: 'left 0.25s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+    </label>
+    <span style={{ fontSize: '12px', fontWeight: 600, color: checked ? G : '#9ca3af' }}>{checked ? 'Active' : 'Inactive'}</span>
+  </div>
+);
+
+// Shared modal shell
+const Modal = ({ open, onClose, title, icon: Icon, children }) => {
+  if (!open) return null;
+  return (
+    <div onClick={onClose} style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(26,15,10,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000, backdropFilter: 'blur(2px)', padding: '16px' }}>
+      <div onClick={e => e.stopPropagation()} style={{ backgroundColor: '#fff', borderRadius: '16px', width: '520px', maxWidth: '95vw', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 20px 60px rgba(236,91,19,0.15)', border: '1px solid #f0ede9', animation: 'slideUp 0.2s ease-out' }}>
+        <style>{`@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}`}</style>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '18px 22px', borderBottom: '1px solid #f0ede9', background: `linear-gradient(to right, ${PL}, #fff)`, position: 'sticky', top: 0, zIndex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: `linear-gradient(135deg, ${P}, #F07030)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Icon size={14} color="white" />
+            </div>
+            <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#1c1917' }}>{title}</h2>
+          </div>
+          <button onClick={onClose} style={{ width: '30px', height: '30px', borderRadius: '7px', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6b7280' }}>
+            <X size={13} />
+          </button>
+        </div>
+        <div style={{ padding: '22px' }}>{children}</div>
+      </div>
+    </div>
+  );
+};
+
+// Shared table
+const DataTable = ({ headers, children, loading, empty }) => (
+  <div style={{ overflowX: 'auto' }}>
+    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <thead>
+        <tr style={{ backgroundColor: '#faf8f6' }}>
+          {headers.map(h => (
+            <th key={h} style={{ padding: '11px 18px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: P, borderBottom: '1px solid #f0ede9', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>{h}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {loading ? (
+          <tr><td colSpan={headers.length} style={{ textAlign: 'center', padding: '40px', color: '#9ca3af' }}>Loading...</td></tr>
+        ) : empty ? (
+          <tr><td colSpan={headers.length}>
+            <div style={{ textAlign: 'center', padding: '48px 24px' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: PL, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                <FolderOpen size={22} color={P} />
+              </div>
+              <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#1c1917' }}>No items found</p>
+            </div>
+          </td></tr>
+        ) : children}
+      </tbody>
+    </table>
+  </div>
+);
+
+const ActionBtns = ({ onEdit, onDelete }) => (
+  <div style={{ display: 'flex', gap: '4px' }}>
+    <button onClick={onEdit} style={{ width: '30px', height: '30px', borderRadius: '7px', backgroundColor: '#eff6ff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.15s' }}
+      onMouseEnter={e => e.currentTarget.style.backgroundColor = '#dbeafe'}
+      onMouseLeave={e => e.currentTarget.style.backgroundColor = '#eff6ff'}
+    ><Edit size={13} color="#1e40af" /></button>
+    <button onClick={onDelete} style={{ width: '30px', height: '30px', borderRadius: '7px', backgroundColor: '#fee2e2', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.15s' }}
+      onMouseEnter={e => e.currentTarget.style.backgroundColor = '#fecaca'}
+      onMouseLeave={e => e.currentTarget.style.backgroundColor = '#fee2e2'}
+    ><Trash2 size={13} color="#dc2626" /></button>
+  </div>
+);
+
+const StatusBadge = ({ active }) => (
+  <span style={{ padding: '3px 10px', borderRadius: '999px', fontSize: '11px', fontWeight: 600, backgroundColor: active ? GL : '#fee2e2', color: active ? G : '#dc2626' }}>
+    {active ? 'Active' : 'Inactive'}
+  </span>
+);
+
+const AddProductCategory = () => {
+  const [showPopup, setShowPopup]               = useState(false);
+  const [showSubPopup, setShowSubPopup]         = useState(false);
+  const [showDeletePopup, setShowDeletePopup]   = useState(false);
+  const [deleteId, setDeleteId]                 = useState(null);
+  const [categories, setCategories]             = useState([]);
+  const [subCategories, setSubCategories]       = useState([]);
+  const [loading, setLoading]                   = useState(false);
+  const [editingCategory, setEditingCategory]   = useState(null);
+  const [editingSubCategory, setEditingSubCategory] = useState(null);
+  const [formData, setFormData]                 = useState({ name: '', description: '', status: true });
+  const [subForm, setSubForm]                   = useState({ categoryId: '', name: '', description: '', status: true });
+
+  useEffect(() => { fetchCategories(); fetchSubCategories(); }, []);
 
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      const response = await productService.getAllProductCategories();
-      if (response && response.status === 1 && response.result) {
-        const parentCategories = response.result.filter(cat => cat.isParent === 1);
-        setCategories(parentCategories);
-      }
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-    } finally {
-      setLoading(false);
-    }
+      const res = await productService.getAllProductCategories();
+      if (res?.status === 1 && res.result) setCategories(res.result.filter(c => c.isParent === 1));
+    } catch {} finally { setLoading(false); }
   };
 
   const fetchSubCategories = async () => {
     try {
-      const response = await productService.getAllProductCategories();
-      if (response && response.status === 1 && response.result) {
-        const subCats = response.result.filter(cat => cat.isParent === 0);
-        setSubCategories(subCats);
-      }
-    } catch (error) {
-      console.error('Error fetching sub-categories:', error);
-    }
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+      const res = await productService.getAllProductCategories();
+      if (res?.status === 1 && res.result) setSubCategories(res.result.filter(c => c.isParent === 0));
+    } catch {}
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
-      
-      const categoryData = {
-        categoryId: editingCategory ? editingCategory.categoryId : 0,
-        parentId: 0,
-        categoryName: formData.name,
-        categoryDescription: formData.description,
-        isParent: true,
-        isActive: formData.status
-      };
-      
-      const response = await productService.manageProductCategory(categoryData);
-      
-      if (response && response.status === 1) {
-        await fetchCategories();
-        toast.success(editingCategory ? 'Category updated successfully!' : 'Category added successfully!');
-        setFormData({ name: '', description: '', status: true });
-        setEditingCategory(null);
-        setShowPopup(false);
-      } else {
-        toast.error(response.message || 'Failed to save category');
-      }
-    } catch (error) {
-      console.error('Error saving category:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Error saving category';
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
+      const res = await productService.manageProductCategory({ categoryId: editingCategory?.categoryId || 0, parentId: 0, categoryName: formData.name, categoryDescription: formData.description, isParent: true, isActive: formData.status });
+      if (res?.status === 1) { toast.success(editingCategory ? 'Category updated!' : 'Category added!'); await fetchCategories(); closePopup(); }
+      else toast.error(res.message || 'Failed to save category');
+    } catch (err) { toast.error(err.response?.data?.message || 'Error saving category'); }
+    finally { setLoading(false); }
   };
 
-  const handleSubCategorySubmit = async (e) => {
+  const handleSubSubmit = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
-      
-      const subCategoryData = {
-        categoryId: editingSubCategory ? editingSubCategory.categoryId : 0,
-        parentId: parseInt(subCategoryFormData.categoryId),
-        categoryName: subCategoryFormData.name,
-        categoryDescription: subCategoryFormData.description,
-        isParent: false,
-        isActive: subCategoryFormData.status
-      };
-      
-      const response = await productService.manageProductCategory(subCategoryData);
-      
-      if (response && response.status === 1) {
-        await fetchSubCategories();
-        toast.success(editingSubCategory ? 'Sub-category updated successfully!' : 'Sub-category added successfully!');
-        setSubCategoryFormData({ categoryId: '', name: '', description: '', status: true });
-        setEditingSubCategory(null);
-        setShowSubCategoryPopup(false);
-      } else {
-        toast.error(response.message || 'Failed to save sub-category');
-      }
-    } catch (error) {
-      console.error('Error saving sub-category:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Error saving sub-category';
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleEdit = (category) => {
-    setEditingCategory(category);
-    setFormData({
-      name: category.categoryName,
-      description: category.categoryDescription,
-      status: category.isActive === 1
-    });
-    setShowPopup(true);
-  };
-
-  const handleEditSubCategory = (subCategory) => {
-    setEditingSubCategory(subCategory);
-    setSubCategoryFormData({
-      categoryId: subCategory.parentId.toString(),
-      name: subCategory.categoryName,
-      description: subCategory.categoryDescription,
-      status: subCategory.isActive === 1
-    });
-    setShowSubCategoryPopup(true);
-  };
-
-  const handleDelete = (categoryId) => {
-    setDeleteId(categoryId);
-    setShowDeletePopup(true);
+      const res = await productService.manageProductCategory({ categoryId: editingSubCategory?.categoryId || 0, parentId: parseInt(subForm.categoryId), categoryName: subForm.name, categoryDescription: subForm.description, isParent: false, isActive: subForm.status });
+      if (res?.status === 1) { toast.success(editingSubCategory ? 'Sub-category updated!' : 'Sub-category added!'); await fetchSubCategories(); closeSubPopup(); }
+      else toast.error(res.message || 'Failed to save sub-category');
+    } catch (err) { toast.error(err.response?.data?.message || 'Error saving sub-category'); }
+    finally { setLoading(false); }
   };
 
   const confirmDelete = async () => {
     try {
       setLoading(true);
-      const response = await productService.deleteProductCategory(deleteId);
-      if (response && response.status === 1) {
-        await fetchCategories();
-        await fetchSubCategories();
-        toast.success('Category deleted successfully!');
-      } else {
-        toast.error(response.message || 'Failed to delete category');
-      }
-    } catch (error) {
-      console.error('Error deleting category:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Error deleting category';
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-      setShowDeletePopup(false);
-      setDeleteId(null);
-    }
+      const res = await productService.deleteProductCategory(deleteId);
+      if (res?.status === 1) { toast.success('Deleted!'); await fetchCategories(); await fetchSubCategories(); }
+      else toast.error(res.message || 'Failed to delete');
+    } catch (err) { toast.error(err.response?.data?.message || 'Error deleting'); }
+    finally { setLoading(false); setShowDeletePopup(false); setDeleteId(null); }
   };
 
-  const handleClosePopup = () => {
-    setShowPopup(false);
-    setEditingCategory(null);
-    setFormData({ name: '', description: '', status: true });
-  };
+  const closePopup    = () => { setShowPopup(false); setEditingCategory(null); setFormData({ name: '', description: '', status: true }); };
+  const closeSubPopup = () => { setShowSubPopup(false); setEditingSubCategory(null); setSubForm({ categoryId: '', name: '', description: '', status: true }); };
 
-  const handleCloseSubCategoryPopup = () => {
-    setShowSubCategoryPopup(false);
-    setEditingSubCategory(null);
-    setSubCategoryFormData({ categoryId: '', name: '', description: '', status: true });
-  };
+  const handleEdit = (cat) => { setEditingCategory(cat); setFormData({ name: cat.categoryName, description: cat.categoryDescription, status: cat.isActive === 1 }); setShowPopup(true); };
+  const handleEditSub = (sub) => { setEditingSubCategory(sub); setSubForm({ categoryId: sub.parentId.toString(), name: sub.categoryName, description: sub.categoryDescription, status: sub.isActive === 1 }); setShowSubPopup(true); };
+  const getCategoryName = (parentId) => categories.find(c => c.categoryId === parentId)?.categoryName || 'N/A';
 
-  const getCategoryName = (parentId) => {
-    const category = categories.find(cat => cat.categoryId === parentId);
-    return category ? category.categoryName : 'N/A';
-  };
+  const SectionHeader = ({ title, count, onAdd, btnLabel, icon: Icon }) => (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ width: '36px', height: '36px', borderRadius: '9px', background: `linear-gradient(135deg, ${P}, #F07030)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Icon size={16} color="white" />
+        </div>
+        <div>
+          <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: '#1c1917' }}>{title}</h2>
+          <p style={{ margin: 0, fontSize: '12px', color: '#9ca3af' }}>{count} items</p>
+        </div>
+      </div>
+      <button onClick={onAdd} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 18px', backgroundColor: P, color: 'white', border: 'none', borderRadius: '9px', fontWeight: 700, fontSize: '13px', cursor: 'pointer', boxShadow: `0 4px 12px rgba(236,91,19,0.28)`, transition: 'opacity 0.15s, transform 0.1s' }}
+        onMouseEnter={e => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+        onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)'; }}
+      >
+        <Plus size={14} /> {btnLabel}
+      </button>
+    </div>
+  );
 
   return (
-    <>
-      <style jsx="true">{`
-        .page-container {
-          padding: 24px;
-          background-color: #f7f9fc;
-          min-height: 100vh;
-          font-family: 'Segoe UI', sans-serif;
-        }
-        .page-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 24px;
-        }
-        .page-title {
-          font-size: 24px;
-          font-weight: 600;
-          color: #2d3748;
-          margin: 0;
-        }
-        .add-btn {
-          background-color: #10b981;
-          color: white;
-          border: none;
-          padding: 12px 24px;
-          border-radius: 8px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-        .add-btn:hover {
-          background-color: #059669;
-          transform: translateY(-1px);
-        }
-        .table-container {
-          background: white;
-          border-radius: 12px;
-          padding: 24px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-        .table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-        .table th,
-        .table td {
-          padding: 12px 16px;
-          text-align: left;
-          border-bottom: 1px solid #e2e8f0;
-        }
-        .table th {
-          background-color: #f8fafc;
-          font-weight: 600;
-          color: #4a5568;
-        }
-        .status-badge {
-          padding: 4px 12px;
-          border-radius: 20px;
-          font-size: 12px;
-          font-weight: 600;
-        }
-        .status-active {
-          background-color: #d1fae5;
-          color: #065f46;
-        }
-        .status-inactive {
-          background-color: #fee2e2;
-          color: #991b1b;
-        }
-        .action-btn {
-          padding: 4px;
-          border: none;
-          border-radius: 6px;
-          font-size: 12px;
-          font-weight: 600;
-          cursor: pointer;
-          margin-right: 8px;
-          transition: all 0.2s;
-        }
-        // .edit-btn {
-        //   background-color: #3b82f6;
-        //   color: white;
-        // }
-        // .edit-btn:hover {
-        //   background-color: #2563eb;
-        // }
-        // .delete-btn {
-        //   background-color: #ef4444;
-        //   color: white;
-        // }
-        // .delete-btn:hover {
-        //   background-color: #dc2626;
-        // }
-.popup-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px;
-  z-index: 9999;
-}
+    <div style={{ fontFamily: "'Inter','Segoe UI',sans-serif", display: 'flex', flexDirection: 'column', gap: '28px' }}>
 
-.popup {
-  background: #ffffff;
-  width: 650px;
-  max-width: 95%;
-  max-height: 85vh;
-  overflow-y: auto;
-  border-radius: 6px;
-  padding: 24px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-  animation: slideUp 0.2s ease-out;
-}
-
-.popup-title {
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 18px;
-  text-align: left;
-}
-        .form-group {
-          margin-bottom: 20px;
-        }
-
-.form-group label {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 4px;
-  color: #495057;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-  font-size: 14px;
-  box-sizing: border-box;
-  transition: all 0.2s ease;
-}
-
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: #0d6efd;
-  box-shadow: 0 0 0 0.2rem rgba(13,110,253,.25);
-}
-        .form-group textarea {
-          height: 80px;
-          resize: vertical;
-        }
-        .toggle-group {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-        .toggle-switch {
-          position: relative;
-          width: 48px;
-          height: 24px;
-        }
-        .toggle-switch input {
-          opacity: 0;
-          width: 0;
-          height: 0;
-        }
-        .slider {
-          position: absolute;
-          cursor: pointer;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background-color: #cbd5e0;
-          transition: .3s;
-          border-radius: 24px;
-        }
-        .slider:before {
-          position: absolute;
-          content: "";
-          height: 18px;
-          width: 18px;
-          left: 3px;
-          bottom: 3px;
-          background-color: white;
-          transition: .3s;
-          border-radius: 50%;
-        }
-        input:checked + .slider {
-          background-color: #10b981;
-        }
-        input:checked + .slider:before {
-          transform: translateX(24px);
-        }
-        .popup-actions {
-          display: flex;
-          gap: 16px;
-          justify-content: center;
-          margin-top: 40px;
-          padding-top: 24px;
-          border-top: 1px solid #e2e8f0;
-        }
-
-        .btn-cancel {
-          background-color: #f3f4f6;
-          color: #6b7280;
-          border: 2px solid #e5e7eb;
-          padding: 8px 18px;
-          border-radius: 4px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-
-        .btn-cancel:hover {
-          background-color: #e5e7eb;
-          transform: translateY(-1px);
-        }
-
-        .btn-submit {
-          background-color: #10b981;
-          color: white;
-          border: 2px solid #10b981;
-          padding: 8px 18px;
-          border-radius: 4px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-
-        .btn-submit:hover {
-          background-color: #059669;
-          border-color: #059669;
-          transform: translateY(-1px);
-        }
-
-        .btn-submit:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-          transform: none;
-        }
-        .delete-popup {
-          background: white;
-          border-radius: 12px;
-          padding: 24px;
-          width: 400px;
-          max-width: 90vw;
-          text-align: center;
-        }
-        .delete-popup h3 {
-          margin: 0 0 16px 0;
-          color: #2d3748;
-          font-size: 18px;
-        }
-        .delete-popup p {
-          margin: 0 0 24px 0;
-          color: #4a5568;
-        }
-        .btn-no {
-          background-color: #e2e8f0;
-          color: #4a5568;
-          border: none;
-          padding: 10px 20px;
-          border-radius: 8px;
-          font-weight: 600;
-          cursor: pointer;
-          margin-right: 12px;
-        }
-        .btn-yes {
-          background-color: #ef4444;
-          color: white;
-          border: none;
-          padding: 10px 20px;
-          border-radius: 8px;
-          font-weight: 600;
-          cursor: pointer;
-        }
-
-        /* Form Validation Styles */
-        input:required:invalid:not(:placeholder-shown):not(:focus),
-        select:required:invalid:not(:focus),
-        textarea:required:invalid:not(:placeholder-shown):not(:focus) {
-          border-color: #ef4444;
-        }
-
-        input:valid:not(:placeholder-shown),
-        select:valid,
-        textarea:valid:not(:placeholder-shown) {
-          border-color: #10b981;
-        }
-
-        input:focus:invalid,
-        select:focus:invalid,
-        textarea:focus:invalid {
-          border-color: #ef4444;
-          box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
-        }
-
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-
-        @keyframes slideUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px) scale(0.98);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
-        }
-      `}</style>
-
-      <div className="page-container">
-        <div className="page-header">
-          <h1 className="page-title">Product Categories</h1>
-          <button className="add-btn" onClick={() => setShowPopup(true)}>
-            + Add Product Category
-          </button>
-        </div>
-
-        <div className="table-container">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Category Name</th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>Actions</th>
+      {/* Categories */}
+      <div>
+        <SectionHeader title="Product Categories" count={categories.length} onAdd={() => setShowPopup(true)} btnLabel="Add Category" icon={FolderPlus} />
+        <div style={{ backgroundColor: '#fff', borderRadius: '14px', border: '1px solid #f0ede9', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+          <DataTable headers={['Category Name', 'Description', 'Status', 'Actions']} loading={loading} empty={categories.length === 0}>
+            {categories.map((cat, i) => (
+              <tr key={cat.categoryId} style={{ borderBottom: i < categories.length - 1 ? '1px solid #faf8f6' : 'none' }}
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = '#faf8f6'}
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+              >
+                <td style={{ padding: '13px 18px', fontWeight: 700, color: '#1c1917', fontSize: '13px' }}>{cat.categoryName || '—'}</td>
+                <td style={{ padding: '13px 18px', color: '#6b7280', fontSize: '13px', maxWidth: '240px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cat.categoryDescription || '—'}</td>
+                <td style={{ padding: '13px 18px' }}><StatusBadge active={cat.isActive === 1} /></td>
+                <td style={{ padding: '13px 18px' }}><ActionBtns onEdit={() => handleEdit(cat)} onDelete={() => { setDeleteId(cat.categoryId); setShowDeletePopup(true); }} /></td>
               </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan="4" style={{ textAlign: 'center', padding: '20px' }}>Loading...</td>
-                </tr>
-              ) : categories.length === 0 ? (
-                <tr>
-                  <td colSpan="4" style={{ textAlign: 'center', padding: '20px' }}>No categories found</td>
-                </tr>
-              ) : (
-                categories.map((category) => (
-                  <tr key={category.categoryId}>
-                    <td>{category.categoryName || 'Unnamed Category'}</td>
-                    <td>{category.categoryDescription || 'No description'}</td>
-                    <td>
-                      <span className={`status-badge ${category.isActive === 1 ? 'status-active' : 'status-inactive'}`}>
-                        {category.isActive === 1 ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
-                    <td>
-                      <button className="action-btn edit-btn" onClick={() => handleEdit(category)}>
-                        <Edit size={18} />
-                      </button>
-                      <button className="action-btn delete-btn" onClick={() => handleDelete(category.categoryId)}>
-                        <Trash2 size={18} />
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+            ))}
+          </DataTable>
         </div>
-
-        <div className="page-header" style={{ marginTop: '40px' }}>
-          <h1 className="page-title">Product Sub-Categories</h1>
-          <button className="add-btn" onClick={() => setShowSubCategoryPopup(true)}>
-            + Add Sub-Category
-          </button>
-        </div>
-
-        <div className="table-container">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Sub-Category Name</th>
-                <th>Parent Category</th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>Loading...</td>
-                </tr>
-              ) : subCategories.length === 0 ? (
-                <tr>
-                  <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>No sub-categories found</td>
-                </tr>
-              ) : (
-                subCategories.map((subCategory) => (
-                  <tr key={subCategory.categoryId}>
-                    <td>{subCategory.categoryName || 'Unnamed Sub-Category'}</td>
-                    <td>{getCategoryName(subCategory.parentId)}</td>
-                    <td>{subCategory.categoryDescription || 'No description'}</td>
-                    <td>
-                      <span className={`status-badge ${subCategory.isActive === 1 ? 'status-active' : 'status-inactive'}`}>
-                        {subCategory.isActive === 1 ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
-                    <td>
-                      <button className="action-btn edit-btn" onClick={() => handleEditSubCategory(subCategory)}>
-                        <Edit size={18} />
-                      </button>
-                      <button className="action-btn delete-btn" onClick={() => handleDelete(subCategory.categoryId)}>
-                        <Trash2 size={18} />
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {showPopup && (
-          <div className="popup-overlay" onClick={handleClosePopup}>
-            <div className="popup" onClick={(e) => e.stopPropagation()}>
-              <h2 className="popup-title">{editingCategory ? 'Edit Product Category' : 'Add Product Category'}</h2>
-              <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                  <label>Category Name *</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    placeholder="Enter category name"
-                    required
-                    minLength="2"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Category Description</label>
-                  <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    placeholder="Enter category description (optional)"
-                  />
-                </div>
-                <div className="form-group">
-                  <div className="toggle-group">
-                    <label>Status</label>
-                    <label className="toggle-switch">
-                      <input
-                        type="checkbox"
-                        checked={formData.status}
-                        onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.checked }))}
-                      />
-                      <span className="slider"></span>
-                    </label>
-                    <span>{formData.status ? 'Active' : 'Inactive'}</span>
-                  </div>
-                </div>
-                <div className="popup-actions">
-                  <button type="button" className="btn-cancel" onClick={handleClosePopup}>
-                    Cancel
-                  </button>
-                  <button type="submit" className="btn-submit" disabled={loading}>
-                    {loading ? 'Saving...' : editingCategory ? 'Update Category' : 'Add Category'}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-
-        {showDeletePopup && (
-          <div className="popup-overlay" onClick={() => setShowDeletePopup(false)}>
-            <div className="delete-popup" onClick={(e) => e.stopPropagation()}>
-              <h3>Delete Category</h3>
-              <p>Are you sure you want to delete this category?</p>
-              <div>
-                <button className="btn-no" onClick={() => setShowDeletePopup(false)}>
-                  No
-                </button>
-                <button className="btn-yes" onClick={confirmDelete} disabled={loading}>
-                  {loading ? 'Deleting...' : 'Yes'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {showSubCategoryPopup && (
-          <div className="popup-overlay" onClick={handleCloseSubCategoryPopup}>
-            <div className="popup" onClick={(e) => e.stopPropagation()}>
-              <h2 className="popup-title">{editingSubCategory ? 'Edit Sub-Category' : 'Add Sub-Category'}</h2>
-              <form onSubmit={handleSubCategorySubmit}>
-                <div className="form-group">
-                  <label>Parent Category *</label>
-                  <select
-                    value={subCategoryFormData.categoryId}
-                    onChange={(e) => setSubCategoryFormData(prev => ({ ...prev, categoryId: e.target.value }))}
-                    required
-                    style={{
-                      width: '100%',
-                      padding: '12px 16px',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '8px',
-                      fontSize: '15px',
-                      boxSizing: 'border-box'
-                    }}
-                  >
-                    <option value="">Select Category</option>
-                    {categories.map(cat => (
-                      <option key={cat.categoryId} value={cat.categoryId}>
-                        {cat.categoryName}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="form-group">
-                  <label>Sub-Category Name *</label>
-                  <input
-                    type="text"
-                    value={subCategoryFormData.name}
-                    onChange={(e) => setSubCategoryFormData(prev => ({ ...prev, name: e.target.value }))}
-                    placeholder="Enter sub-category name"
-                    required
-                    minLength="2"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Description</label>
-                  <textarea
-                    value={subCategoryFormData.description}
-                    onChange={(e) => setSubCategoryFormData(prev => ({ ...prev, description: e.target.value }))}
-                    placeholder="Enter description (optional)"
-                  />
-                </div>
-                <div className="form-group">
-                  <div className="toggle-group">
-                    <label>Status</label>
-                    <label className="toggle-switch">
-                      <input
-                        type="checkbox"
-                        checked={subCategoryFormData.status}
-                        onChange={(e) => setSubCategoryFormData(prev => ({ ...prev, status: e.target.checked }))}
-                      />
-                      <span className="slider"></span>
-                    </label>
-                    <span>{subCategoryFormData.status ? 'Active' : 'Inactive'}</span>
-                  </div>
-                </div>
-                <div className="popup-actions">
-                  <button type="button" className="btn-cancel" onClick={handleCloseSubCategoryPopup}>
-                    Cancel
-                  </button>
-                  <button type="submit" className="btn-submit" disabled={loading}>
-                    {loading ? 'Saving...' : editingSubCategory ? 'Update Sub-Category' : 'Add Sub-Category'}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
       </div>
-    </>
+
+      {/* Sub-Categories */}
+      <div>
+        <SectionHeader title="Product Sub-Categories" count={subCategories.length} onAdd={() => setShowSubPopup(true)} btnLabel="Add Sub-Category" icon={Tag} />
+        <div style={{ backgroundColor: '#fff', borderRadius: '14px', border: '1px solid #f0ede9', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+          <DataTable headers={['Sub-Category Name', 'Parent Category', 'Description', 'Status', 'Actions']} loading={loading} empty={subCategories.length === 0}>
+            {subCategories.map((sub, i) => (
+              <tr key={sub.categoryId} style={{ borderBottom: i < subCategories.length - 1 ? '1px solid #faf8f6' : 'none' }}
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = '#faf8f6'}
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+              >
+                <td style={{ padding: '13px 18px', fontWeight: 700, color: '#1c1917', fontSize: '13px' }}>{sub.categoryName || '—'}</td>
+                <td style={{ padding: '13px 18px' }}><span style={{ padding: '3px 10px', backgroundColor: PL, color: P, borderRadius: '999px', fontSize: '11px', fontWeight: 600 }}>{getCategoryName(sub.parentId)}</span></td>
+                <td style={{ padding: '13px 18px', color: '#6b7280', fontSize: '13px', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sub.categoryDescription || '—'}</td>
+                <td style={{ padding: '13px 18px' }}><StatusBadge active={sub.isActive === 1} /></td>
+                <td style={{ padding: '13px 18px' }}><ActionBtns onEdit={() => handleEditSub(sub)} onDelete={() => { setDeleteId(sub.categoryId); setShowDeletePopup(true); }} /></td>
+              </tr>
+            ))}
+          </DataTable>
+        </div>
+      </div>
+
+      {/* Category Modal */}
+      <Modal open={showPopup} onClose={closePopup} title={editingCategory ? 'Edit Category' : 'Add Category'} icon={FolderPlus}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <Field label="Category Name" required>
+            <input name="name" value={formData.name} onChange={e => setFormData(p => ({ ...p, name: e.target.value }))} placeholder="e.g. Grains & Cereals" style={inp} onFocus={focusStyle} onBlur={blurStyle} required minLength={2} />
+          </Field>
+          <Field label="Description">
+            <textarea name="description" value={formData.description} onChange={e => setFormData(p => ({ ...p, description: e.target.value }))} placeholder="Describe this category (optional)" rows={3} style={{ ...inp, resize: 'vertical', minHeight: '72px' }} onFocus={focusStyle} onBlur={blurStyle} />
+          </Field>
+          <Toggle checked={formData.status} onChange={e => setFormData(p => ({ ...p, status: e.target.checked }))} label="Status" />
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', paddingTop: '14px', borderTop: '1px solid #f0ede9' }}>
+            <button type="button" onClick={closePopup} style={{ padding: '9px 20px', backgroundColor: '#f9fafb', color: '#374151', border: '1px solid #e5e7eb', borderRadius: '8px', fontWeight: 600, fontSize: '13px', cursor: 'pointer' }}>Cancel</button>
+            <button type="submit" disabled={loading} style={{ padding: '9px 20px', backgroundColor: loading ? '#d1d5db' : P, color: 'white', border: 'none', borderRadius: '8px', fontWeight: 700, fontSize: '13px', cursor: loading ? 'not-allowed' : 'pointer', boxShadow: loading ? 'none' : `0 4px 12px rgba(236,91,19,0.28)` }}>
+              {loading ? 'Saving...' : editingCategory ? 'Update' : 'Add Category'}
+            </button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Sub-Category Modal */}
+      <Modal open={showSubPopup} onClose={closeSubPopup} title={editingSubCategory ? 'Edit Sub-Category' : 'Add Sub-Category'} icon={Tag}>
+        <form onSubmit={handleSubSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <Field label="Parent Category" required>
+            <select value={subForm.categoryId} onChange={e => setSubForm(p => ({ ...p, categoryId: e.target.value }))} style={inp} onFocus={focusStyle} onBlur={blurStyle} required>
+              <option value="">Select Parent Category</option>
+              {categories.map(c => <option key={c.categoryId} value={c.categoryId}>{c.categoryName}</option>)}
+            </select>
+          </Field>
+          <Field label="Sub-Category Name" required>
+            <input value={subForm.name} onChange={e => setSubForm(p => ({ ...p, name: e.target.value }))} placeholder="e.g. Basmati Rice" style={inp} onFocus={focusStyle} onBlur={blurStyle} required minLength={2} />
+          </Field>
+          <Field label="Description">
+            <textarea value={subForm.description} onChange={e => setSubForm(p => ({ ...p, description: e.target.value }))} placeholder="Describe this sub-category (optional)" rows={3} style={{ ...inp, resize: 'vertical', minHeight: '72px' }} onFocus={focusStyle} onBlur={blurStyle} />
+          </Field>
+          <Toggle checked={subForm.status} onChange={e => setSubForm(p => ({ ...p, status: e.target.checked }))} label="Status" />
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', paddingTop: '14px', borderTop: '1px solid #f0ede9' }}>
+            <button type="button" onClick={closeSubPopup} style={{ padding: '9px 20px', backgroundColor: '#f9fafb', color: '#374151', border: '1px solid #e5e7eb', borderRadius: '8px', fontWeight: 600, fontSize: '13px', cursor: 'pointer' }}>Cancel</button>
+            <button type="submit" disabled={loading} style={{ padding: '9px 20px', backgroundColor: loading ? '#d1d5db' : P, color: 'white', border: 'none', borderRadius: '8px', fontWeight: 700, fontSize: '13px', cursor: loading ? 'not-allowed' : 'pointer', boxShadow: loading ? 'none' : `0 4px 12px rgba(236,91,19,0.28)` }}>
+              {loading ? 'Saving...' : editingSubCategory ? 'Update' : 'Add Sub-Category'}
+            </button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Delete Confirm */}
+      {showDeletePopup && (
+        <div onClick={() => setShowDeletePopup(false)} style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(26,15,10,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000, backdropFilter: 'blur(2px)' }}>
+          <div onClick={e => e.stopPropagation()} style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '32px', width: '380px', maxWidth: '90vw', textAlign: 'center', boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }}>
+            <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: '#fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+              <Trash2 size={22} color="#dc2626" />
+            </div>
+            <h3 style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: 700, color: '#1c1917' }}>Delete Category</h3>
+            <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#6b7280', lineHeight: 1.5 }}>Are you sure you want to delete this category? This action cannot be undone.</p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+              <button onClick={() => setShowDeletePopup(false)} style={{ padding: '10px 24px', backgroundColor: '#f9fafb', color: '#374151', border: '1px solid #e5e7eb', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+              <button onClick={confirmDelete} disabled={loading} style={{ padding: '10px 24px', backgroundColor: '#dc2626', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer' }}>
+                {loading ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
