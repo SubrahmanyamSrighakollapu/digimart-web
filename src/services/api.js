@@ -1,5 +1,5 @@
 // API Configuration and Base Setup
-const API_BASE_URL = 'https://api.totalneeds.in/api';
+const API_BASE_URL = 'https://api.mdigimart.com/api';
 
 // Get dynamic token from session storage
 const getAuthToken = () => {

@@ -50,7 +50,7 @@ const AgentsList = () => {
   const fetchPlans = async () => {
     try {
       const token = sessionStorage.getItem('token');
-      const res = await fetch('https://api.totalneeds.in/api/plan/getAllPlans/0/true', { headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch('https://api.mdigimart.com/api/plan/getAllPlans/0/true', { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       if (data.status === 1 && data.result) setPlans(data.result);
     } catch { toast.error('Failed to fetch plans'); }
@@ -96,7 +96,7 @@ const AgentsList = () => {
       setLoading(true);
       const token = sessionStorage.getItem('token');
       const selectedPlan = plans.find(p => p.planId === parseInt(planFormData.planId));
-      const res = await fetch('https://api.totalneeds.in/api/plan/user-plan-mapping', {
+      const res = await fetch('https://api.mdigimart.com/api/plan/user-plan-mapping', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ userPlanId: 0, userId: selectedAgent.userId, planId: parseInt(planFormData.planId), planPrice: parseFloat(selectedPlan.planPrice), planStartDate: planFormData.planStartDate, planEndDate: planFormData.planEndDate, isActive: true })
