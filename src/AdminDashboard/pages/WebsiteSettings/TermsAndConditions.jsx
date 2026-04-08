@@ -6,7 +6,7 @@ const termsData = [
     number: "01",
     title: "General",
     content: [
-      "These Terms govern your use of our Website, mobile application, and all related services provided by TotalneedsMarketing, an Indian company with its registered office at [Insert Address].",
+      "These Terms govern your use of our Website, mobile application, and all related services provided by Mdigimart marketing, an Indian company with its registered office at [Insert Address].",
       "We reserve the right to update or modify these Terms at any time without prior notice. Your continued use of the Website implies acceptance of the updated Terms."
     ]
   },
