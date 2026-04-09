@@ -1,32 +1,36 @@
 {
   "banner": {
-    "title": "Refund Policy",
-    "lastUpdated": "01 Dec 2025"
+    "title": "Return, Replacement & Refund Policy",
+    "lastUpdated": "April 2026",
+    "subtitle": "Effective for all wholesale transactions"
   },
   "sections": [
     {
       "id": "01",
-      "title": "Eligibility for Return / Replacement",
+      "title": "Eligibility for Return or Replacement",
       "content": [
         {
-          "type": "points",
-          "items": [
-            "Due to the nature of wholesale transactions, returns are only accepted under the following conditions:"
-          ]
+          "type": "paragraph",
+          "text": "Due to the nature of wholesale transactions, returns are accepted only under the following conditions:"
         },
         {
-          "type": "subpoints_bold",
-          "items": [
-            "Damaged or Defective Products:|If you receive goods that are damaged, defective, or not as per your purchase order.",
-            "Incorrect Items Received:|If the product specifications (model, size, quantity, or variant) differ from what was ordered.",
-            "Manufacturing Defect:|Valid only with photographic or video proof."
-          ]
+          "type": "subsection",
+          "subtitle": "Damaged or Defective Products",
+          "text": "Goods received in a physically damaged or non-functional condition."
         },
         {
-          "type": "points",
-          "items": [
-            "Returns will NOT be accepted for buyer's remorse, unsold inventory, or minor packaging damage that does not affect product usability."
-          ]
+          "type": "subsection",
+          "subtitle": "Incorrect Items Received",
+          "text": "Product specifications (model, size, quantity, or variant) do not match the confirmed purchase order."
+        },
+        {
+          "type": "subsection",
+          "subtitle": "Manufacturing Defect",
+          "text": "A production-level fault is present, substantiated by clear photographic or video evidence."
+        },
+        {
+          "type": "note",
+          "text": "Returns will NOT be accepted for buyer's remorse, unsold or slow-moving inventory, or minor cosmetic packaging damage that does not affect the product's functionality or usability."
         }
       ]
     },
@@ -35,67 +39,64 @@
       "title": "Return Request Process",
       "content": [
         {
-          "type": "points",
-          "items": [
-            "To request a return or replacement:"
-          ]
+          "type": "paragraph",
+          "text": "To initiate a return or replacement request, follow these steps within 48 hours of delivery:"
         },
         {
-          "type": "paragraph",
-          "text": "A. Contact our support team at info@mdigimart.com/+91 9652283222 within 48 hours of delivery."
+          "type": "step",
+          "label": "A.",
+          "text": "Contact our support team at info@mdigimart.com or call +91 96522 83222 within 48 hours of receiving the shipment."
         },
         {
-          "type": "paragraph",
-          "text": "B. Provide:"
+          "type": "step",
+          "label": "B.",
+          "text": "Submit the following supporting documents:"
         },
         {
           "type": "subpoints",
           "items": [
-            "Order ID / Invoice Number",
-            "Photos or videos clearly showing the issue",
-            "Number of affected units"
+            "Order ID or Invoice Number",
+            "Clear photographs or video evidence of the issue",
+            "Total number of affected units"
           ]
         },
         {
-          "type": "paragraph",
-          "text": "C. After verification, we will confirm approval or rejection of your request."
+          "type": "step",
+          "label": "C.",
+          "text": "Our team will review your request and communicate approval or rejection within 2–3 business days."
         },
         {
-          "type": "subtitle",
-          "items": [
-            "No returns will be accepted without prior authorization."
-          ]
+          "type": "note",
+          "text": "No returns will be processed without prior written authorisation from mdigimart. Requests submitted after the 48-hour window will not be entertained."
         }
       ]
     },
     {
       "id": "03",
-      "title": "Pickup / Return Shipping",
+      "title": "Pickup & Return Shipping",
       "content": [
         {
           "type": "points",
           "items": [
-            "If the return is approved due to our fault (wrong, defective, or damaged items), we will arrange pickup or reimburse return shipping.",
-            "If the return is requested for other reasons and accepted as per mutual agreement, the buyer will bear return logistics costs."
+            "If the return is approved due to our error (wrong, defective, or damaged goods dispatched), mdigimart will arrange a pickup or fully reimburse verified return shipping costs.",
+            "If a return is requested for reasons other than our error and is accepted through mutual agreement, all return logistics costs will be borne by the buyer."
           ]
         }
       ]
     },
     {
       "id": "04",
-      "title": "Refund / Replacement Terms",
+      "title": "Refund & Replacement Terms",
       "content": [
+        {
+          "type": "paragraph",
+          "text": "Once returned goods are received, inspected, and verified by our quality team:"
+        },
         {
           "type": "points",
           "items": [
-            "Once the returned goods are received and inspected:"
-          ]
-        },
-        {
-          "type": "subpoints",
-          "items": [
-            "Refunds (if applicable) will be processed within 7-10 business days via the original payment method or store credit.",
-            "Replacements will be dispatched based on stock availability."
+            "Refunds, where applicable, will be processed within 7–10 business days to the original payment method or as store credit, at mdigimart's discretion.",
+            "Replacements will be dispatched subject to stock availability. Lead times will be communicated at the time of approval."
           ]
         }
       ]
@@ -107,28 +108,26 @@
         {
           "type": "points",
           "items": [
-            "Wholesale orders cannot be cancelled once processed or dispatched.",
-            "For prepaid custom or bulk manufacturing orders, advance payments are non-refundable."
+            "Wholesale orders cannot be cancelled once they have been processed, packed, or dispatched.",
+            "For prepaid, custom-branded, or bulk manufacturing orders, advance payments are strictly non-refundable once production has commenced."
           ]
         }
       ]
     },
     {
       "id": "06",
-      "title": "Exceptions",
+      "title": "Non-Returnable Product Categories",
       "content": [
+        {
+          "type": "paragraph",
+          "text": "The following categories are not eligible for returns or refunds under any circumstances:"
+        },
         {
           "type": "points",
           "items": [
-            "The following products are not eligible for returns/refunds:"
-          ]
-        },
-        {
-          "type": "subpoints",
-          "items": [
             "Perishable, consumable, or hygiene-sensitive goods",
             "Customised, logo-printed, or made-to-order items",
-            "Clearance, promotion, or special deal stock"
+            "Clearance, promotional, or special-deal stock"
           ]
         }
       ]
@@ -138,16 +137,15 @@
       "title": "Contact Information",
       "content": [
         {
-          "type": "points",
-          "items": [
-            "For return or refund-related queries, please reach us at:"
-          ]
+          "type": "paragraph",
+          "text": "For return, replacement, or refund-related queries, please reach our support team:"
         },
         {
           "type": "contact",
           "details": {
             "email": "info@mdigimart.com",
-            "phone": "+91 9652283222"
+            "phone": "+91 96522 83222",
+            "hours": "Monday – Saturday, 10:00 AM – 6:00 PM IST"
           }
         }
       ]

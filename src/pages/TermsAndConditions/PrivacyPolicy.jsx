@@ -1,7 +1,7 @@
 import privacyData from '../../data/privacyPolicy.json';
 
 const PrivacyPolicy = () => {
-  const { banner, sections } = privacyData;
+  const { banner, intro, sections } = privacyData;
 
   const renderContent = (content) => {
     return content.map((item, index) => {
@@ -53,7 +53,7 @@ const PrivacyPolicy = () => {
 
         case 'contact':
           return (
-            <div key={index} className="mb-3 p-3 rounded" style={{ background: '#F8F9FA', borderLeft: '4px solid #EC5B13' }}>
+            <div key={index} className="mb-3 p-3 rounded" style={{ background: '#F8F9FA', borderLeft: '4px solid #32a862' }}>
               {item.details.company && (
                 <p className="terms-content-text mb-1">
                   <strong className="text-dark">{item.details.company}</strong>
@@ -95,6 +95,11 @@ const PrivacyPolicy = () => {
           </div>
         </div>
       </div>
+
+      {/* Intro paragraph */}
+      {intro && (
+        <p className="terms-content-text mb-5" style={{ lineHeight: 1.8 }}>{intro}</p>
+      )}
 
       {/* Privacy Sections */}
       <div className="terms-content">

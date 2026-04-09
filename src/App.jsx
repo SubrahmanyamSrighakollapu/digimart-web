@@ -78,12 +78,14 @@ import AddProductCategory from './AgentDashboard/pages/Products/AddProductCatego
 import WalletRequest from './AgentDashboard/pages/WalletRequest';
 import PlanCommissionConfiguration from './AdminDashboard/pages/AdminSettings/PlanComissionConfiguration';
 import Partners from './pages/partners/Partners';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
     <Router>
       <CartProvider>
         <RouteGuard>
+          <ScrollToTop />
           <Routes>
           {/* Public/auth routes without any Layout (no navbar) */}
           <Route path="/login" element={<Login />} />

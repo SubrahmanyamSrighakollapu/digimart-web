@@ -1,7 +1,7 @@
 {
   "banner": {
     "title": "Terms & Conditions",
-    "lastUpdated": "01 Dec 2025"
+    "lastUpdated": "01 Apr 2025"
   },
   "sections": [
     {
@@ -11,7 +11,7 @@
         {
           "type": "points",
           "items": [
-            "These Terms govern your use of our Website, mobile application, and all related services provided by DigimartMarketing, an Indian company with its registered office at Door No: 12-8-42, 2nd Floor, Savithri Mallaiah Arcade, Lallaguda, Secunderabad, Hyderabad, Telangana - 500017.",
+            "These Terms govern your use of our Website, mobile application, and all related services provided by DigimartMarketing, an Indian company with its registered office at Door No: 12-8-42, 2nd Floor, Savithri Mallaiah Arcade, Lallaguda, Secunderabad, Hyderabad, Telangana – 500017.",
             "We reserve the right to update or modify these Terms at any time without prior notice. Your continued use of the Website implies acceptance of the updated Terms."
           ]
          
@@ -26,7 +26,9 @@
         {
           "type": "points",
           "items": [
-            "You must be at least 18 years old to use this Website. By using this Website, you represent that you are legally competent to enter into a binding contract under applicable laws."
+            "You must be at least 18 years of age to register, access, or use this Website and its services. By using this Website, you confirm and represent that you are 18 years of age or older.",
+            "Users must have prior experience in, or a demonstrated background related to, the wholesale business. This platform is designed exclusively for wholesale trade participants, including manufacturers, distributors, bulk buyers, and authorised resellers. Registration by individuals without wholesale business experience or affiliation may be rejected or revoked at our sole discretion.",
+            "You must be legally competent to enter into a binding contract under the applicable laws of India. If you do not meet all the eligibility criteria stated herein, you must not use or attempt to access this Website."
           ]
         }
       ]
@@ -38,9 +40,9 @@
         {
           "type": "points",
           "items": [
-            "You may need to create an account to access certain features.",
-            "You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.",
-            "We are not liable for any loss or damage resulting from your failure to safeguard your account."
+            "You may need to create an account to access certain features of the Website",
+            "You are solely responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.",
+            "We are not liable for any loss or damage resulting from your failure to adequately safeguard your account information."
           ]
         }
       ]
@@ -53,8 +55,8 @@
           "type": "points",
           "items": [
             "We strive to ensure that product descriptions, prices, and availability are accurate. However, we do not warrant that all information is error-free or current.",
-            "Prices are subject to change without notice.",
-            "All products and services are subject to availability, and we reserve the right to limit or refuse any order."
+            "Prices are subject to change without prior notice.",
+            "All products and services are subject to availability, and we reserve the right to limit or refuse any order at our discretion."
           ]
         }
       ]
@@ -67,8 +69,8 @@
           "type": "points",
           "items": [
             "By placing an order, you agree to pay the full amount due, including any applicable taxes and shipping charges.",
-            "We accept payments through trusted third-party gateways. We do not store your credit/debit card details.",
-            "Order confirmation is subject to successful payment and verification."
+            "We accept payments through trusted third-party payment gateways. We do not store your credit/debit card details on our servers.",
+            "Order confirmation is subject to successful payment processing and verification."
           ]
         }
       ]
@@ -80,9 +82,9 @@
         {
           "type": "points",
           "items": [
-            "Delivery times are estimates and may vary due to external factors beyond our control.",
-            "We are not liable for delays caused by third-party courier services.",
-            "Risk of loss and title for purchased items pass to you upon delivery to the carrier."
+            "Delivery timelines are estimates only and may vary due to external factors beyond our control.",
+            "We are not liable for delays caused by third-party courier or logistics services.",
+            "Risk of loss and title for purchased items pass to you upon delivery to the designated carrier."
           ]
         }
       ]
@@ -94,9 +96,9 @@
         {
           "type": "points",
           "items": [
-            "Please refer to our separate Return & Refund Policy for detailed information.",
-            "Cancellation requests can be made before the order is shipped.",
-            "Refunds will be processed using the original payment method, subject to verification."
+            "Please refer to our separate Return & Refund Policy for detailed information on returns and refunds.",
+            "Cancellation requests must be submitted before the order is dispatched or shipped.",
+            "Approved refunds will be processed via the original payment method, subject to verification and applicable processing timelines."
           ]
         }
       ]
@@ -112,10 +114,10 @@
         {
           "type": "points",
           "items": [
-            "Use the Website for any unlawful purpose",
-            "Post or transmit any harmful or offensive content",
-            "Interfere with or disrupt the Website's functionality",
-            "Attempt to gain unauthorized access to any part of the Website"
+            "Use the Website for any unlawful or prohibited purpose.",
+            "Post, upload, or transmit any harmful, offensive, or misleading content.",
+            "Interfere with or disrupt the Website's functionality, security, or integrity.",
+            "Attempt to gain unauthorised access to any part of the Website or its underlying systems."
           ]
         }
       ]
@@ -127,8 +129,8 @@
         {
           "type": "points",
           "items": [
-            "All content on the Website, including text, graphics, logos, and images, is the property of DigimartMarketing or its content suppliers.",
-            "You may not reproduce, distribute, or use any content without our written consent."
+            "All content on the Website, including but not limited to text, graphics, logos, and images, is the exclusive property of DigimartMarketing or its content suppliers and is protected under applicable intellectual property laws.",
+            "You may not reproduce, distribute, modify, or use any content from this Website without our prior written consent."
           ]
         }
       ]
@@ -140,8 +142,8 @@
         {
           "type": "points",
           "items": [
-            "The Website and all its services are provided on an \"as is\" and \"as available\" basis.",
-            "We do not guarantee that the Website will be error-free, uninterrupted, or free from viruses."
+            "The Website and all its services are provided on an \"as is\" and \"as available\" basis, without warranties of any kind, either express or implied. ",
+            "We do not guarantee that the Website will be error-free, uninterrupted, secure, or free from viruses or other harmful components."
           ]
         }
       ]
@@ -152,14 +154,14 @@
       "content": [
         {
           "type": "paragraph",
-          "text": "To the fullest extent permitted by law, we are not liable for:"
+          "text": "To the fullest extent permitted by applicable law, we shall not be liable for:"
         },
         {
           "type": "subpoints",
           "items": [
-            "Any indirect, incidental, or consequential damages",
-            "Loss of profits, data, or goodwill",
-            "Any damage resulting from your use of the Website or products purchased through it"
+            "Any indirect, incidental, special, or consequential damages.",
+            "Loss of profits, revenue, data, or goodwill.",
+            "Any damage arising from your use of the Website or products purchased through it."
           ]
         }
       ]
@@ -171,7 +173,7 @@
         {
           "type": "points",
           "items": [
-            "You agree to indemnify, defend, and hold harmless DigimartMarketing, its directors, officers, employees, and affiliates from and against any claims, losses, damages, liabilities, and expenses arising out of your use of the Website or violation of these Terms."
+            "You agree to indemnify, defend, and hold harmless DigimartMarketing, its directors, officers, employees, and affiliates from and against any and all claims, losses, damages, liabilities, and expenses (including legal fees) arising out of or related to your use of the Website or any violation of these Terms."
           ]
         }
       ]
@@ -183,7 +185,7 @@
         {
           "type": "points",
           "items": [
-            "These Terms shall be governed by the laws of India. Any disputes arising out of or related to these Terms or the Website shall be subject to the exclusive jurisdiction of the courts located in Hyderabad, Telangana, India."
+            "These Terms shall be governed by and construed in accordance with the laws of India. Any disputes arising out of or in connection with these Terms or the Website shall be subject to the exclusive jurisdiction of the courts located in Hyderabad, Telangana, India."
           ]
         }
       ]
@@ -195,7 +197,7 @@
         {
           "type": "points",
           "items": [
-            "In accordance with the Information Technology Act, 2000 and the Consumer Protection (E-Commerce) Rules, 2020, the name and contact details of the Grievance Officer are as follows:"
+            "In accordance with the Information Technology Act, 2000 and the Consumer Protection (E-Commerce) Rules, 2020, the details of our designated Grievance Officer are as follows: "
           ]
         },
         {
@@ -222,7 +224,7 @@
           "details": {
             "company": "DigimartMarketing",
             "email": "info@mdigimart.com",
-            "phone": "+91 9652283222",
+            "phone": "+91-9652283222",
             "address": "BRIGHT SPARK INNOVATIONS PVT. LTD. Door No: 12-8-42, 2nd Floor, Savithri Mallaiah Arcade, Lallaguda, Secunderabad, Hyderabad, Telangana-500017"
           }
         }
