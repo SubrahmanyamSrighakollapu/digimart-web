@@ -16,8 +16,8 @@ const CustomerOrdersCards = ({ data }) => {
     },
     {
       id: 2,
-      title: "Pending Farmer Purchase",
-      headers: ["Farmer", "Product", "Price", "Status", "Action"],
+      title: "Pending Wholeseller Purchase",
+      headers: ["Wholeseller", "Product", "Price", "Status", "Action"],
       dataKeys: ["farmer", "product", "price", "status", "action"],
       orders: data.pendingFarmerPurchases.map(purchase => ({
         farmer: purchase.farmer,

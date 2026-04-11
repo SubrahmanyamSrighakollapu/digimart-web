@@ -22,13 +22,13 @@ const COLLAPSED_W = 64;
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard',       path: '/agent' },
-  { icon: ShoppingBasket,  label: 'Buy From Farmers', path: '/agent/buy-from-farmers' },
-  { icon: ClipboardList,   label: 'Place Orders',     path: '/agent/place-orders' },
+  { icon: ShoppingBasket,  label: 'Place Orders', path: '/agent/buy-from-farmers' },
+  // { icon: ClipboardList,   label: 'Place Orders',     path: '/agent/place-orders' },
   { icon: Package, label: 'Products', children: [
     { icon: FolderPlus, label: 'Add Category', path: '/agent/products/add-category' },
     { icon: PlusSquare, label: 'Add Product',  path: '/agent/products/add-product' },
   ]},
-  { icon: CreditCard,  label: 'Vendor Payments', path: '/agent/vendor-payments' },
+  // { icon: CreditCard,  label: 'Vendor Payments', path: '/agent/vendor-payments' },
   { icon: Wallet,      label: 'Settlements',     path: '/agent/settlements' },
   { icon: BarChart2,   label: 'Reports',         path: '/agent/reports' },
 ];

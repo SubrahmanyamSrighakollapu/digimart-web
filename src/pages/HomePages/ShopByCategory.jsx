@@ -127,7 +127,7 @@ const ShopByCategory = () => {
                   </div>
 
                   <Link
-                    // to={cat.link}
+                    to="/ shop"
                     className="btn btn-sm text-white"
                     style={{
                       background: "#EC5609",

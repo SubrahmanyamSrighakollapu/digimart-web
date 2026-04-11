@@ -204,8 +204,116 @@ const AgentCart = () => {
               </div>
             </div>
 
-            {/* Payment Options */}
-            <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #f0ede9', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', padding: '24px' }}>
+            {/* ── Create Customer Order Card ─────────────────── */}
+            <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #f0ede9', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+              {/* Card Header */}
+              <div style={{ padding: '16px 22px', background: `linear-gradient(135deg, ${P} 0%, #F07030 100%)`, display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.2)', border: '2px solid rgba(255,255,255,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '18px', flexShrink: 0 }}>+</div>
+                <div>
+                  <p style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'white' }}>Customer Details</p>
+                  <p style={{ margin: 0, fontSize: '11px', color: 'rgba(255,255,255,0.75)' }}>Please enter customer details</p>
+                </div>
+              </div>
+
+              <div style={{ padding: '20px 22px' }}>
+                {/* Customer Details */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '12px', paddingBottom: '8px', borderBottom: '1px solid #f0ede9' }}>
+                  <div style={{ width: '24px', height: '24px', borderRadius: '6px', backgroundColor: PL, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={P} strokeWidth="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  </div>
+                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Customer Details</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '4px' }}>
+                  <input placeholder="Customer name" style={{ ...inp, fontSize: '13px' }}
+                    onFocus={e => { e.target.style.borderColor = P; e.target.style.boxShadow = `0 0 0 3px ${PL}`; }}
+                    onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
+                  />
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                    <input placeholder="Contact No." style={{ ...inp, fontSize: '13px' }}
+                      onFocus={e => { e.target.style.borderColor = P; e.target.style.boxShadow = `0 0 0 3px ${PL}`; }}
+                      onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
+                    />
+                    <input placeholder="Zip Code" style={{ ...inp, fontSize: '13px' }}
+                      onFocus={e => { e.target.style.borderColor = P; e.target.style.boxShadow = `0 0 0 3px ${PL}`; }}
+                      onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
+                    />
+                  </div>
+                </div>
+
+                {/* Product Details */}
+                {/* <div style={{ display: 'flex', alignItems: 'center', gap: '7px', margin: '16px 0 12px', paddingBottom: '8px', borderBottom: '1px solid #f0ede9' }}>
+                  <div style={{ width: '24px', height: '24px', borderRadius: '6px', backgroundColor: PL, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={P} strokeWidth="2.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                  </div>
+                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Product Details</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '4px' }}>
+                  <input placeholder="Enter Crop Type" style={{ ...inp, fontSize: '13px' }}
+                    onFocus={e => { e.target.style.borderColor = P; e.target.style.boxShadow = `0 0 0 3px ${PL}`; }}
+                    onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
+                  />
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                    <input placeholder="Qty (e.g. 2 Tons)" style={{ ...inp, fontSize: '13px' }}
+                      onFocus={e => { e.target.style.borderColor = P; e.target.style.boxShadow = `0 0 0 3px ${PL}`; }}
+                      onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
+                    />
+                    <input placeholder="Grade Type" style={{ ...inp, fontSize: '13px' }}
+                      onFocus={e => { e.target.style.borderColor = P; e.target.style.boxShadow = `0 0 0 3px ${PL}`; }}
+                      onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
+                    />
+                  </div>
+                  <input type="date" style={{ ...inp, fontSize: '13px', color: '#6b7280' }}
+                    onFocus={e => { e.target.style.borderColor = P; e.target.style.boxShadow = `0 0 0 3px ${PL}`; }}
+                    onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
+                  />
+                </div> */}
+
+                {/* Pricing */}
+                {/* <div style={{ display: 'flex', alignItems: 'center', gap: '7px', margin: '16px 0 12px', paddingBottom: '8px', borderBottom: '1px solid #f0ede9' }}>
+                  <div style={{ width: '24px', height: '24px', borderRadius: '6px', backgroundColor: PL, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={P} strokeWidth="2.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                  </div>
+                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Pricing</span>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '18px' }}>
+                  <input placeholder="Selling price (₹)" style={{ ...inp, fontSize: '13px' }}
+                    onFocus={e => { e.target.style.borderColor = P; e.target.style.boxShadow = `0 0 0 3px ${PL}`; }}
+                    onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
+                  />
+                  <input placeholder="Est. Margin (%)" style={{ ...inp, fontSize: '13px' }}
+                    onFocus={e => { e.target.style.borderColor = P; e.target.style.boxShadow = `0 0 0 3px ${PL}`; }}
+                    onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
+                  />
+                </div> */}
+
+                {/* <button style={{ width: '100%', padding: '11px', backgroundColor: P, color: 'white', border: 'none', borderRadius: '9px', fontWeight: 700, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '7px', boxShadow: `0 4px 12px rgba(236,91,19,0.28)`, transition: 'opacity 0.15s, transform 0.1s' }}
+                  onMouseEnter={e => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                >
+                  → Submit Order
+                </button> */}
+              </div>
+            </div>
+
+            {/* Payment Options — blurred until gateway selected */}
+            <div style={{ position: 'relative', borderRadius: '16px' }}>
+              {!selectedGateway && (
+                <div style={{
+                  position: 'absolute', inset: 0, zIndex: 10,
+                  backdropFilter: 'blur(5px)', WebkitBackdropFilter: 'blur(5px)',
+                  backgroundColor: 'rgba(255,255,255,0.6)',
+                  borderRadius: '16px', border: '1.5px dashed #f0ede9',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px',
+                  pointerEvents: 'none',
+                }}>
+                  <div style={{ width: '46px', height: '46px', borderRadius: '50%', backgroundColor: PL, border: `2px solid ${P}33`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={P} strokeWidth="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  </div>
+                  <p style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: '#1c1917' }}>Waiting for Gateway</p>
+                  {/* <p style={{ margin: 0, fontSize: '12px', color: '#9ca3af', textAlign: 'center', maxWidth: '220px', lineHeight: 1.5 }}>Please select a payment gateway to unlock payment options</p> */}
+                </div>
+              )}
+              <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #f0ede9', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', padding: '24px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
                 <div style={{ width: '32px', height: '32px', borderRadius: '8px', backgroundColor: PL, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <CreditCard size={15} color={P} />
@@ -292,11 +400,29 @@ const AgentCart = () => {
                   </div>
                 </div>
               )}
-            </div>
-          </div>
+              </div>
+            </div>{/* end payment blur wrapper */}
+          </div>{/* end left column */}
 
-          {/* Right: Order Summary */}
+          {/* Right: Order Summary — blurred until gateway selected */}
           <div style={{ position: 'sticky', top: '20px' }}>
+            <div style={{ position: 'relative', borderRadius: '16px' }}>
+              {!selectedGateway && (
+                <div style={{
+                  position: 'absolute', inset: 0, zIndex: 10,
+                  backdropFilter: 'blur(5px)', WebkitBackdropFilter: 'blur(5px)',
+                  backgroundColor: 'rgba(255,255,255,0.62)',
+                  borderRadius: '16px', border: '1.5px dashed #f0ede9',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px',
+                  pointerEvents: 'none',
+                }}>
+                  <div style={{ width: '46px', height: '46px', borderRadius: '50%', backgroundColor: PL, border: `2px solid ${P}33`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={P} strokeWidth="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  </div>
+                  <p style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: '#1c1917' }}>Awaiting Gateway</p>
+                  {/* <p style={{ margin: 0, fontSize: '12px', color: '#9ca3af', textAlign: 'center', maxWidth: '200px', lineHeight: 1.5 }}>Select a payment gateway to see your order total and proceed to checkout</p> */}
+                </div>
+              )}
             <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #f0ede9', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', overflow: 'hidden' }}>
               {/* Header */}
               <div style={{ padding: '18px 24px', background: `linear-gradient(135deg, ${PL}, #fff)`, borderBottom: '1px solid #f0ede9' }}>
@@ -372,6 +498,7 @@ const AgentCart = () => {
             </div>
           </div>
         </div>
+         </div>
       )}
 
       {/* Delete Confirm Modal */}

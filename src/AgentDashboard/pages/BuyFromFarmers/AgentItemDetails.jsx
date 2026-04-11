@@ -58,8 +58,32 @@ const AgentItemDetails = () => {
   const handleAddToCart = async () => {
     try {
       const res = await productService.addToCart(product.productId, quantity);
-      if (res?.status === 1) { toast.success('Added to cart!'); navigate('/agent/cart'); }
-    } catch (err) { toast.error(err.response?.data?.message || 'Failed to add to cart'); }
+      if (res?.status === 1) {
+        toast.success('Added to cart successfully!');
+        navigate('/agent/cart');
+      } else {
+        // Check for the specific approval error
+        const msg = res?.message || '';
+        if (
+          msg.toLowerCase().includes('invalid productid') ||
+          msg.toLowerCase().includes('does not belong')
+        ) {
+          toast.error('This product has not been approved by the admin yet. Please wait for approval before adding to cart.');
+        } else {
+          toast.error(msg || 'Failed to add to cart');
+        }
+      }
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message || '';
+      if (
+        msg.toLowerCase().includes('invalid productid') ||
+        msg.toLowerCase().includes('does not belong')
+      ) {
+        toast.error('This product has not been approved by the admin yet. Please wait for approval before adding to cart.');
+      } else {
+        toast.error(msg || 'Failed to add to cart');
+      }
+    }
   };
 
   const handleWishlist = async () => {
@@ -260,7 +284,7 @@ const AgentItemDetails = () => {
 
               {/* Trust badges */}
               <div style={{ display: 'flex', gap: '8px', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #f0ede9' }}>
-                {['Verified Farmer', 'Bulk Pricing', 'Quality Assured'].map(badge => (
+                {['Verified Wholeseller', 'Bulk Pricing', 'Quality Assured'].map(badge => (
                   <div key={badge} style={{ flex: 1, textAlign: 'center', padding: '6px 4px', backgroundColor: '#faf8f6', borderRadius: '8px', fontSize: '10px', fontWeight: 600, color: '#6b7280' }}>
                     {badge}
                   </div>

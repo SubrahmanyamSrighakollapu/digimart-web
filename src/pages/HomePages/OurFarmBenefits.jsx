@@ -16,7 +16,7 @@ const OurFarmBenefits = () => {
         },
         {
             icon: icon2,
-            title: 'Professional Farmers',
+            title: 'Professional Growers',
             text: 'Our products come from experienced farmers who follow best agricultural practices for consistent quality.'
         },
         {

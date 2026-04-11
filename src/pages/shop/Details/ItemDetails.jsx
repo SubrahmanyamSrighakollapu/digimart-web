@@ -60,13 +60,21 @@ const Details = () => {
     return stars;
   };
 
-  const handleAddToCart = () => {
-    addToCart(product, quantity);
-    
-  };
+const handleAddToCart = () => {
+  navigate('/login');
+};
 
-  const incrementQty = () => setQuantity(prev => prev + 1);
-  const decrementQty = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));
+const handleAddToWishlist = () => {
+  navigate('/login');
+};
+
+const incrementQty = () => {
+  setQuantity(prev => prev + 1);
+};
+
+const decrementQty = () => {
+  setQuantity(prev => (prev > 1 ? prev - 1 : 1));
+};
 
   return (
     <>
@@ -197,7 +205,7 @@ const Details = () => {
                 />
                 <Button 
                   text="Add to Wishlist"
-                  onClick={() => alert('Added to wishlist!')}
+                  onClick={handleAddToWishlist}
                   bgColor="#EEC044"
                   className="w-100"
                 />

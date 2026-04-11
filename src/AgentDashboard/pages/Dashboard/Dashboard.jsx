@@ -44,21 +44,21 @@ const Dashboard = () => {
     { label: 'New Orders',     value: dashboardData.stats.newOrders.count,   sub: dashboardData.stats.newOrders.label,     icon: ShoppingCart, bg: GL,        accent: G,         iconBg: '#bbf7d0' },
     { label: 'To Purchase',    value: dashboardData.stats.toPurchase.count,  sub: dashboardData.stats.toPurchase.label,    icon: ShoppingBasket, bg: '#fef9ec', accent: '#d97706', iconBg: '#fef3c7' },
     { label: 'In Transit',     value: dashboardData.stats.inTransit.count,   sub: dashboardData.stats.inTransit.label,     icon: Truck,        bg: '#eff6ff', accent: '#3b82f6', iconBg: '#dbeafe' },
-    { label: 'Farmer Payout',  value: `₹${parseFloat(dashboardData.stats.farmerPayout.amount).toLocaleString('en-IN')}`, sub: dashboardData.stats.farmerPayout.label, icon: Leaf, bg: '#f5f3ff', accent: '#7c3aed', iconBg: '#ede9fe' },
+    { label: 'Wholeseller Payout',  value: `₹${parseFloat(dashboardData.stats.farmerPayout.amount).toLocaleString('en-IN')}`, sub: dashboardData.stats.farmerPayout.label, icon: Leaf, bg: '#f5f3ff', accent: '#7c3aed', iconBg: '#ede9fe' },
     { label: 'Margin Earned',  value: `₹${parseFloat(dashboardData.stats.marginEarned.amount).toLocaleString('en-IN')}`, sub: dashboardData.stats.marginEarned.label, icon: TrendingUp, bg: PL, accent: P, iconBg: '#fddccc' },
   ] : [];
 
   const lifecycle = dashboardData ? [
     { label: `Customer Order`,   count: dashboardData.lifecycle.customerOrder,  color: G,         bg: GL        },
     { label: `Agent Purchase`,   count: dashboardData.lifecycle.agentPurchase,  color: '#d97706', bg: '#fef9ec' },
-    { label: `Farmer Confirm`,   count: dashboardData.lifecycle.farmerConfirm,  color: '#7c3aed', bg: '#f5f3ff' },
+    { label: `Wholesaller Confirm`,   count: dashboardData.lifecycle.farmerConfirm,  color: '#7c3aed', bg: '#f5f3ff' },
     { label: `Delivery`,         count: dashboardData.lifecycle.delivery,       color: '#3b82f6', bg: '#eff6ff' },
-    { label: `Farmer Payment`,   count: dashboardData.lifecycle.farmerPayment,  color: P,         bg: PL        },
+    { label: `Wholesaller Payment`,   count: dashboardData.lifecycle.farmerPayment,  color: P,         bg: PL        },
     { label: `Closed`,           count: dashboardData.lifecycle.closed,         color: '#16a34a', bg: '#dcfce7' },
   ] : [];
 
   const alerts = [
-    { text: 'Farmer Payout Pending for Order #2415', action: 'View Order', color: '#d97706', bg: '#fef9ec', border: '#fde68a' },
+    { text: 'Wholeseller Payout Pending for Order #2415', action: 'View Order', color: '#d97706', bg: '#fef9ec', border: '#fde68a' },
     { text: 'Customer delivery confirmation awaited (Order #2345)', action: 'Track', color: '#3b82f6', bg: '#eff6ff', border: '#bfdbfe' },
   ];
 
@@ -89,7 +89,7 @@ const Dashboard = () => {
             <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.8)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Agent Dashboard</span>
           </div>
           <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 800, color: 'white', letterSpacing: '-0.02em' }}>
-            {greeting}, {agentDetails?.userFullName?.split(' ')[0] || 'Agent'} 👋
+            {greeting}, {agentDetails?.userFullName || 'Agent'} 👋
           </h1>
           <p style={{ margin: '6px 0 0', fontSize: '13px', color: 'rgba(255,255,255,0.75)' }}>
             {now.toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
@@ -97,8 +97,8 @@ const Dashboard = () => {
         </div>
         <div style={{ display: 'flex', gap: '10px', position: 'relative' }}>
           {[
-            { label: 'Buy From Farmers', icon: ShoppingBasket, path: '/agent/buy-from-farmers' },
-            { label: 'Place Orders',     icon: ClipboardList,  path: '/agent/place-orders' },
+            { label: 'Place Orders', icon: ShoppingBasket, path: '/agent/buy-from-farmers' },
+            // { label: 'Place Orders',     icon: ClipboardList,  path: '/agent/place-orders' },
           ].map(({ label, icon: Icon, path }) => (
             <button key={label} onClick={() => navigate(path)} style={{
               display: 'flex', alignItems: 'center', gap: '7px',
@@ -117,7 +117,7 @@ const Dashboard = () => {
       </div>
 
       {/* Alerts */}
-      {alerts.length > 0 && (
+      {/* {alerts.length > 0 && (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '24px' }}>
           {alerts.map((a, i) => (
             <div key={i} style={{
@@ -133,7 +133,7 @@ const Dashboard = () => {
             </div>
           ))}
         </div>
-      )}
+      )} */}
 
       {/* Section label */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
@@ -166,14 +166,14 @@ const Dashboard = () => {
       </div>
 
       {/* Section label */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+      {/* <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
         <Zap size={14} color={P} />
         <span style={{ fontSize: '11px', fontWeight: 700, color: P, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Order Lifecycle</span>
         <div style={{ flex: 1, height: '1px', backgroundColor: '#e5e7eb' }} />
-      </div>
+      </div> */}
 
       {/* Order Lifecycle */}
-      <div style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '20px 24px', border: '1px solid #e5e7eb', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', marginBottom: '24px' }}>
+      {/* <div style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '20px 24px', border: '1px solid #e5e7eb', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', marginBottom: '24px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: '12px' }}>
           {lifecycle.map((s, i) => (
             <div key={i} style={{ textAlign: 'center' }}>
@@ -190,7 +190,7 @@ const Dashboard = () => {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
 
       {/* Notice Board */}
       <NoticeBoardCard />

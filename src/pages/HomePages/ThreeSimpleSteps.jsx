@@ -115,7 +115,7 @@ const ThreeSimpleSteps = () => {
         {/* CTA */}
         <div className="text-center mt-5 mt-lg-6 pt-3 pt-lg-4">
           <a
-            href="/register" // ← replace with your actual route
+            href="/login" // ← replace with your actual route
             className="btn btn-lg fw-semibold text-white shadow-lg"
             style={{
               backgroundColor: '#EC5609',

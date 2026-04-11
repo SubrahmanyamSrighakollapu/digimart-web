@@ -1,7 +1,7 @@
 // DiscoverMoreButton.jsx
 import React from 'react';
 
-const DiscoverMoreButton = ({ text = "Discover More", onClick = null, href = null }) => {
+const DiscoverMoreButton = ({ text = "Discover More", onClick = null, href = "/login" }) => {
   const handleClick = () => {
     if (onClick) {
       onClick();

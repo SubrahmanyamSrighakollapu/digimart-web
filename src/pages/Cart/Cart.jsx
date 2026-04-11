@@ -1,5 +1,5 @@
 // src/pages/Cart/Cart.jsx
-import { File, Minus, Plus, Trash2 } from 'lucide-react';
+import { File, Minus, Plus, Trash2, Lock, ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Check from '../../assets/cart/Check_img.png';
 import Delivery from '../../assets/cart/Delivery_img.png';
@@ -8,9 +8,12 @@ import Button from '../../components/Button/Button';
 import { useCart } from '../../context/CartContext';
 import { getImageUrl } from '../../utils/imageLoader';
 
+const isLoggedIn = () => !!sessionStorage.getItem('token');
+
 const Cart = () => {
   const navigate = useNavigate();
   const { cartItems, updateQuantity, removeItem } = useCart();
+  const loggedIn = false;
 
   const getImagePath = (imgName) => {
     const url = getImageUrl(imgName);
@@ -27,6 +30,88 @@ const Cart = () => {
   const tax = subtotal * 0.05;
   const shipping = cartItems.length > 0 ? 1000 : 0;
   const total = subtotal + tax + shipping;
+
+  // ── Not logged in: show blur + login prompt ──────────────
+  if (!loggedIn) {
+    return (
+      <div style={{ position: 'relative', minHeight: '80vh', overflow: 'hidden' }}>
+        {/* Blurred skeleton background */}
+        <div style={{ filter: 'blur(6px)', pointerEvents: 'none', userSelect: 'none', padding: '40px 24px', opacity: 0.55 }}>
+          <div style={{ maxWidth: '960px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 320px', gap: '24px' }}>
+            <div style={{ backgroundColor: '#fff', borderRadius: '12px', padding: '24px', border: '1px solid #e5e7eb' }}>
+              <div style={{ height: '20px', backgroundColor: '#e5e7eb', borderRadius: '4px', width: '30%', marginBottom: '24px' }} />
+              {[1, 2, 3].map(i => (
+                <div key={i} style={{ display: 'flex', gap: '16px', padding: '16px 0', borderBottom: '1px solid #f3f4f6' }}>
+                  <div style={{ width: '72px', height: '72px', borderRadius: '8px', backgroundColor: '#f3f4f6', flexShrink: 0 }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ height: '14px', backgroundColor: '#e5e7eb', borderRadius: '4px', marginBottom: '10px', width: '55%' }} />
+                    <div style={{ height: '12px', backgroundColor: '#f3f4f6', borderRadius: '4px', width: '35%' }} />
+                  </div>
+                  <div style={{ width: '80px', height: '36px', backgroundColor: '#f3f4f6', borderRadius: '6px' }} />
+                </div>
+              ))}
+            </div>
+            <div style={{ backgroundColor: '#fff', borderRadius: '12px', padding: '24px', border: '1px solid #e5e7eb' }}>
+              <div style={{ height: '18px', backgroundColor: '#e5e7eb', borderRadius: '4px', width: '50%', marginBottom: '20px' }} />
+              {[1, 2, 3].map(i => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '14px' }}>
+                  <div style={{ height: '12px', backgroundColor: '#f3f4f6', borderRadius: '4px', width: '45%' }} />
+                  <div style={{ height: '12px', backgroundColor: '#f3f4f6', borderRadius: '4px', width: '25%' }} />
+                </div>
+              ))}
+              <div style={{ height: '44px', backgroundColor: '#fddccc', borderRadius: '10px', marginTop: '20px' }} />
+            </div>
+          </div>
+        </div>
+
+        {/* Login overlay */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          backgroundColor: 'rgba(255,255,255,0.5)',
+        }}>
+          <div style={{
+            backgroundColor: '#fff', borderRadius: '20px', padding: '44px 36px',
+            textAlign: 'center', maxWidth: '400px', width: '90%',
+            boxShadow: '0 20px 60px rgba(236,91,19,0.18)', border: '1px solid #f0ede9',
+          }}>
+            <div style={{ width: '68px', height: '68px', borderRadius: '50%', backgroundColor: '#FEF0E9', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+              <ShoppingCart size={30} color="#EC5B13" />
+            </div>
+            <h3 style={{ margin: '0 0 10px', fontSize: '22px', fontWeight: 800, color: '#1c1917' }}>Your Cart Awaits</h3>
+            <p style={{ margin: '0 0 6px', fontSize: '15px', color: '#6b7280', lineHeight: 1.6 }}>
+              Please log in to view your cart and place your order.
+            </p>
+            <p style={{ margin: '0 0 28px', fontSize: '13px', color: '#9ca3af' }}>
+              Your saved items will be ready when you sign in.
+            </p>
+            <button
+              onClick={() => navigate('/login')}
+              style={{
+                width: '100%', padding: '14px', backgroundColor: '#EC5B13',
+                color: 'white', border: 'none', borderRadius: '12px',
+                fontWeight: 700, fontSize: '15px', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                boxShadow: '0 4px 16px rgba(236,91,19,0.3)', marginBottom: '12px',
+              }}
+            >
+              <Lock size={16} /> Login to Access Cart
+            </button>
+            {/* <button
+              onClick={() => navigate('/signup')}
+              style={{
+                width: '100%', padding: '12px', backgroundColor: 'transparent',
+                color: '#EC5B13', border: '1.5px solid #EC5B13', borderRadius: '12px',
+                fontWeight: 600, fontSize: '14px', cursor: 'pointer',
+              }}
+            >
+              Create an Account
+            </button> */}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (cartItems.length === 0) {
     return (

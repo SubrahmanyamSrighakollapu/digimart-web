@@ -76,7 +76,7 @@ const AboutUsHero = () => {
           </p>
 
           <a
-            href="/partner-with-us" // ← update to your actual partner route
+            href="/login" // ← update to your actual partner route
             className="btn btn-lg px-5 py-3 fw-semibold text-white"
             style={{
               backgroundColor: '#EC5609',

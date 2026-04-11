@@ -26,17 +26,20 @@ const ProductCard = ({ product, isAgentView = false }) => {
     navigate(isAgentView ? `/agent/agent-item-details/${product.id}` : `/details/${product.id}`);
   };
 
-  const handleAction = (e) => {
-    e.stopPropagation();
-    if (isAgentView) {
-      navigate(`/agent/agent-item-details/${product.id}`);
-    } else {
-      addToCart(product, 1);
-    }
-  };
+const handleAction = (e) => {
+  e.stopPropagation();
+
+  if (isAgentView) {
+    navigate(`/agent/agent-item-details/${product.id}`);
+  } else {
+    navigate('/login'); // direct redirect (no token check)
+  }
+};
 
   const handleWishlist = async (e) => {
     e.stopPropagation();
+    // Redirect to login if not authenticated (marketing site)
+    if (!isAgentView && !sessionStorage.getItem('token')) { navigate('/login'); return; }
     try {
       const res = await productService.addToWishlist(product.id);
       if (res?.status === 1) { setIsWishlisted(true); toast.success('Added to wishlist'); }

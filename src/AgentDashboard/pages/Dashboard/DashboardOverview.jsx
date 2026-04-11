@@ -24,7 +24,7 @@ const DashboardOverview = ({ data }) => {
   const paymentCards = data ? [
     { title: 'Customer Payment', amount: data.finance.customerPayment.amount.toLocaleString('en-IN'), status: data.finance.customerPayment.status, accent: G,         bg: GL        },
     { title: 'Agent Margin',     amount: parseFloat(data.finance.agentMargin.amount).toLocaleString('en-IN'), status: data.finance.agentMargin.status, accent: '#6b7280', bg: '#f9fafb' },
-    { title: 'Farmer Payout',    amount: data.finance.farmerPayout.amount.toLocaleString('en-IN'), status: data.finance.farmerPayout.status, accent: '#d97706', bg: '#fef9ec' },
+    { title: 'Wholeseller Payout',    amount: data.finance.farmerPayout.amount.toLocaleString('en-IN'), status: data.finance.farmerPayout.status, accent: '#d97706', bg: '#fef9ec' },
   ] : [];
 
   const flowSteps = [
@@ -32,7 +32,7 @@ const DashboardOverview = ({ data }) => {
     { icon: Icon8, bg: '#1f2937', border: '2px solid #1f2937', text: 'Platform Security' },
   ];
   const flowCards = [
-    { icon: Icon9,  bg: GL,       border: `1px solid ${G}`,    text: 'Farmer Credit' },
+    { icon: Icon9,  bg: GL,       border: `1px solid ${G}`,    text: 'Wholeseller Credit' },
     { icon: Icon10, bg: '#f9fafb', border: '1px solid #e5e7eb', text: 'Agent Margin'  },
   ];
 

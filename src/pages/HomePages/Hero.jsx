@@ -47,7 +47,7 @@ const Hero = () => {
             </p>
 
             <a
-              href="/shop"
+              href="/login"
               className="btn text-white"
               style={{
                 backgroundColor: "#EC5609",

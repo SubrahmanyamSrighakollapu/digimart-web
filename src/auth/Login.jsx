@@ -205,21 +205,21 @@ const Login = () => {
               {visibleErrorKey === 'password' && <p className="error-text">{errors.password}</p>}
             </div>
 
-            <div className="forget-password">
+            {/* <div className="forget-password">
               <a href="#forgot">Forget Password?</a>
-            </div>
+            </div> */}
 
             <button type="submit" className={styles.button} disabled={loading}>
               {loading ? 'Logging in...' : 'Log In'}
             </button>
           </form>
 
-          <p className={styles.linkText}>
+          {/* <p className={styles.linkText}>
             Don't have an account?
             <a onClick={() => navigate('/signup')} style={{ cursor: 'pointer', color: '#EC5609', marginLeft: '4px' }}>
               Sign Up
             </a>
-          </p>
+          </p> */}
         </div>
       </div>
     </div>

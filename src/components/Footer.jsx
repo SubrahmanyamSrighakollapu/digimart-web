@@ -49,7 +49,7 @@ const Footer = () => {
                         <div className="col-lg-4 col-md-12">
                             <img src={logo} alt="DigiMart" style={{ height: '8rem', marginBottom: '1rem', borderRadius: '0.5rem' }} />
                             <p style={{ color: '#fff', fontSize: '0.875rem', lineHeight: '1.6rem', maxWidth: '22rem' }}>
-                                Connecting farmers, agents, and consumers through ethical organic trade. Fresh, naturally grown produce — from soil to shelf.
+                                Connecting wholesale partners, agents, and consumers through ethical organic trade. Fresh, naturally grown produce — efficiently sourced, carefully handled, and delivered from trusted supply chains to your shelves.
                             </p>
 
                             {/* Social Icons */}
@@ -147,7 +147,7 @@ const Footer = () => {
                             <div style={{ width: '2rem', height: '2px', background: '#EC5609', marginBottom: '0.6rem', borderRadius: '2px' }} />
 
                             <p style={{ color: '#d4d4cc', fontSize: '0.875rem', lineHeight: '1.6rem', marginBottom: '0.75rem' }}>
-                                Stay updated with the latest news on organic farming and agri trade.
+                                Stay updated with latest organic trade and wholesale market news.
                             </p>
 
                             <div className="position-relative" style={{ maxWidth: '20rem' }}>

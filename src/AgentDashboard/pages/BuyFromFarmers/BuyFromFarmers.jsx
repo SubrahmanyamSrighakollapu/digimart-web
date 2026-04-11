@@ -60,12 +60,12 @@ const BuyFromFarmers = () => {
               <ShoppingBasket size={18} color="white" />
             </div>
             <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 800, color: 'white', letterSpacing: '-0.01em' }}>
-              Buy From Farmers
+              Place Orders
             </h1>
           </div>
-          <p style={{ margin: 0, fontSize: '13px', color: 'rgba(255,255,255,0.8)' }}>
+          {/* <p style={{ margin: 0, fontSize: '13px', color: 'rgba(255,255,255,0.8)' }}>
             Verified direct-from-farm sourcing · Bulk pricing for orders over 10 tons
-          </p>
+          </p> */}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.15)', borderRadius: '10px', padding: '10px 16px', backdropFilter: 'blur(4px)', border: '1px solid rgba(255,255,255,0.25)' }}>
           <Leaf size={16} color="white" />

@@ -90,12 +90,12 @@ const AgentRiceAndGrains = ({
 
       {/* Empty state */}
       {filteredProducts.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '80px 24px', backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #f0ede9' }}>
-          <div style={{ width: '64px', height: '64px', borderRadius: '50%', backgroundColor: PL, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+        <div style={{ textAlign: 'center', padding: '80px 24px', backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #f0ede9', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '64px', height: '64px', borderRadius: '50%', backgroundColor: PL, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
             <Package size={28} color={P} />
           </div>
-          <p style={{ margin: '0 0 6px', fontSize: '18px', fontWeight: 700, color: '#1c1917' }}>No products found</p>
-          <p style={{ margin: 0, fontSize: '14px', color: '#9ca3af' }}>Try adjusting your filters or search query</p>
+          <p style={{ margin: '0 0 6px', fontSize: '18px', fontWeight: 700, color: '#1c1917', textAlign: 'center' }}>No products found</p>
+          <p style={{ margin: 0, fontSize: '14px', color: '#9ca3af', textAlign: 'center' }}>Try adjusting your filters or search query</p>
         </div>
       ) : (
         <>
@@ -212,13 +212,13 @@ const ProductCard = ({ product, getImagePath, navigate }) => {
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px', backgroundColor: '#faf8f6', borderRadius: '8px', marginBottom: '14px' }}>
           <div>
-            <p style={{ margin: 0, fontSize: '10px', color: '#9ca3af', fontWeight: 500 }}>Price / Ton</p>
+            <p style={{ margin: 0, fontSize: '10px', color: '#9ca3af', fontWeight: 500 }}>Price</p>
             <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: P }}>₹{product.price}</p>
           </div>
-          <div style={{ textAlign: 'right' }}>
+          {/* <div style={{ textAlign: 'right' }}>
             <p style={{ margin: 0, fontSize: '10px', color: '#9ca3af', fontWeight: 500 }}>MOQ</p>
             <p style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: '#374151' }}>{product.moq}</p>
-          </div>
+          </div> */}
         </div>
 
         <button

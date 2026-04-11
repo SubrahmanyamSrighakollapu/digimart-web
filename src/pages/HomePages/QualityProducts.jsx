@@ -2,21 +2,21 @@
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import cardImg from '../../assets/groceryweb/grocery.png'; // ← replace if you have better matching image (farmer hand + tomatoes/eggplants)
-import icon1 from '../../assets/MainPage/QualityProducts/Icon1.png'; // Professional Farmers
-import icon2 from '../../assets/MainPage/QualityProducts/Icon2.png'; // Solution for Farming
+import icon1 from '../../assets/MainPage/QualityProducts/Icon1.png'; // Professional Growers
+import icon2 from '../../assets/MainPage/QualityProducts/Icon2.png'; // Wholesale Solutions
 import DiscoverMoreButton from '../../components/DiscoverMoreButton';
 
 const QualityProducts = () => {
   const features = [
     {
       icon: icon1,
-      title: 'Professional Farmers',
-      text: 'Grown by experienced and trusted farmers.',
+      title: 'Professional Growers',
+      text: 'Sourced from experienced and trusted suppliers.',
     },
     {
       icon: icon2,
-      title: 'Solution for Farming',
-      text: 'Smart solutions for modern farming needs.',
+      title: 'Wholesale Solutions',
+      text: 'Smart solutions tailored for efficient wholesale operations.',
     },
   ];
 

@@ -77,6 +77,7 @@ Wholesale Platform</span>
           </p>
 
           <a
+           href="/login" 
              // ← update to your actual partner route
             className="btn btn-lg px-5 py-3 fw-semibold text-white"
             style={{
@@ -99,7 +100,7 @@ Wholesale Platform</span>
             }}
           >
             Partner With Us
-          </a>
+          </a>  
         </div>
 
         {/* Stats Cards */}

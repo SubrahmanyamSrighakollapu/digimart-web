@@ -17,7 +17,7 @@ const inp = {
 const kpis = [
   { label: 'Total Orders',     value: '1,234', change: '+10%', icon: ShoppingCart, gradient: `linear-gradient(135deg, ${P} 0%, #F07030 100%)`,    glow: 'rgba(236,91,19,0.28)' },
   { label: 'Total Revenue',    value: '₹98,000', change: '+12%', icon: TrendingUp,   gradient: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)', glow: 'rgba(217,119,6,0.28)' },
-  { label: 'Farmer Payments',  value: '₹57,000', change: '+5%',  icon: Wheat,        gradient: `linear-gradient(135deg, ${G} 0%, #2a9054 100%)`,    glow: 'rgba(50,168,98,0.28)' },
+  { label: 'Wholesaller Payments',  value: '₹57,000', change: '+5%',  icon: Wheat,        gradient: `linear-gradient(135deg, ${G} 0%, #2a9054 100%)`,    glow: 'rgba(50,168,98,0.28)' },
   { label: 'Agent Margin',     value: '₹80,000', change: '+10%', icon: Users,        gradient: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)', glow: 'rgba(124,58,237,0.28)' },
 ];
 
@@ -96,7 +96,7 @@ const Reports = () => (
         </div>
       ))}
       <div>
-        <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '5px' }}>Farmer / Agent</label>
+        <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '5px' }}>Wholesaller / Agent</label>
         <select style={{ ...inp, width: '100%' }}
           onFocus={e => { e.target.style.borderColor = P; e.target.style.boxShadow = `0 0 0 3px ${PL}`; }}
           onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
@@ -170,7 +170,7 @@ const Reports = () => (
           </div>
           <div>
             {[
-              { color: '#d97706', label: 'Farmer payout', value: '20%' },
+              { color: '#d97706', label: 'Wholeseller payout', value: '20%' },
               { color: P,        label: 'Agent margin',  value: '20%' },
               { color: '#7c3aed', label: 'Platform fees', value: '60%' },
             ].map((l, i) => (
@@ -197,7 +197,7 @@ const Reports = () => (
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ backgroundColor: '#faf8f6' }}>
-              {['Transaction ID', 'Farmer', 'Product', 'Amount', 'Mode', 'Status', 'Date'].map(h => (
+              {['Transaction ID', 'Wholeseller', 'Product', 'Amount', 'Mode', 'Status', 'Date'].map(h => (
                 <th key={h} style={{ padding: '11px 18px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: P, borderBottom: '1px solid #f0ede9', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>{h}</th>
               ))}
             </tr>
@@ -225,7 +225,7 @@ const Reports = () => (
     {/* Bottom: Top Farmers + Top Buyers */}
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
       {[
-        { title: 'Top Farmers', headers: ['Farmer', 'Orders', 'Earnings', 'Trend'], rows: topFarmers.map(r => [r.name, r.orders, r.earnings, r.trend]) },
+        { title: 'Top Wholeseller', headers: ['Wholeseller', 'Orders', 'Earnings', 'Trend'], rows: topFarmers.map(r => [r.name, r.orders, r.earnings, r.trend]) },
         { title: 'Top Buyers',  headers: ['Buyer',  'Volume', 'Value',    'Trend'], rows: topBuyers.map(r => [r.name, r.volume, r.value, r.trend]) },
       ].map(tbl => (
         <div key={tbl.title} style={{ backgroundColor: '#fff', borderRadius: '14px', border: '1px solid #f0ede9', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', overflow: 'hidden' }}>

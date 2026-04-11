@@ -180,12 +180,12 @@ const AddProducts = () => {
                 <tr><td colSpan={8} style={{ textAlign: 'center', padding: '48px', color: '#9ca3af' }}>Loading products...</td></tr>
               ) : products.length === 0 ? (
                 <tr><td colSpan={8}>
-                  <div style={{ textAlign: 'center', padding: '64px 24px' }}>
-                    <div style={{ width: '56px', height: '56px', borderRadius: '50%', backgroundColor: PL, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '64px 24px' }}>
+                    <div style={{ width: '56px', height: '56px', borderRadius: '50%', backgroundColor: PL, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '14px' }}>
                       <Package size={24} color={P} />
                     </div>
-                    <p style={{ margin: '0 0 6px', fontSize: '16px', fontWeight: 600, color: '#1c1917' }}>No products yet</p>
-                    <p style={{ margin: 0, fontSize: '13px', color: '#9ca3af' }}>Click "Add Product" to list your first product</p>
+                    <p style={{ margin: '0 0 6px', fontSize: '16px', fontWeight: 600, color: '#1c1917', textAlign: 'center' }}>No products yet</p>
+                    <p style={{ margin: 0, fontSize: '13px', color: '#9ca3af', textAlign: 'center' }}>Click "Add Product" to list your first product</p>
                   </div>
                 </td></tr>
               ) : products.map((p, i) => (
