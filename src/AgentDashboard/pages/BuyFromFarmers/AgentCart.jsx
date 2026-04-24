@@ -295,25 +295,8 @@ const AgentCart = () => {
               </div>
             </div>
 
-            {/* Payment Options — blurred until gateway selected */}
-            <div style={{ position: 'relative', borderRadius: '16px' }}>
-              {!selectedGateway && (
-                <div style={{
-                  position: 'absolute', inset: 0, zIndex: 10,
-                  backdropFilter: 'blur(5px)', WebkitBackdropFilter: 'blur(5px)',
-                  backgroundColor: 'rgba(255,255,255,0.6)',
-                  borderRadius: '16px', border: '1.5px dashed #f0ede9',
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px',
-                  pointerEvents: 'none',
-                }}>
-                  <div style={{ width: '46px', height: '46px', borderRadius: '50%', backgroundColor: PL, border: `2px solid ${P}33`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={P} strokeWidth="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                  </div>
-                  <p style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: '#1c1917' }}>Waiting for Gateway</p>
-                  {/* <p style={{ margin: 0, fontSize: '12px', color: '#9ca3af', textAlign: 'center', maxWidth: '220px', lineHeight: 1.5 }}>Please select a payment gateway to unlock payment options</p> */}
-                </div>
-              )}
-              <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #f0ede9', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', padding: '24px' }}>
+            {/* Payment Options */}
+            <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #f0ede9', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', padding: '24px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
                 <div style={{ width: '32px', height: '32px', borderRadius: '8px', backgroundColor: PL, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <CreditCard size={15} color={P} />
@@ -400,29 +383,11 @@ const AgentCart = () => {
                   </div>
                 </div>
               )}
-              </div>
-            </div>{/* end payment blur wrapper */}
+            </div>{/* end payment options */}
           </div>{/* end left column */}
 
-          {/* Right: Order Summary — blurred until gateway selected */}
+          {/* Right: Order Summary */}
           <div style={{ position: 'sticky', top: '20px' }}>
-            <div style={{ position: 'relative', borderRadius: '16px' }}>
-              {!selectedGateway && (
-                <div style={{
-                  position: 'absolute', inset: 0, zIndex: 10,
-                  backdropFilter: 'blur(5px)', WebkitBackdropFilter: 'blur(5px)',
-                  backgroundColor: 'rgba(255,255,255,0.62)',
-                  borderRadius: '16px', border: '1.5px dashed #f0ede9',
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px',
-                  pointerEvents: 'none',
-                }}>
-                  <div style={{ width: '46px', height: '46px', borderRadius: '50%', backgroundColor: PL, border: `2px solid ${P}33`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={P} strokeWidth="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                  </div>
-                  <p style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: '#1c1917' }}>Awaiting Gateway</p>
-                  {/* <p style={{ margin: 0, fontSize: '12px', color: '#9ca3af', textAlign: 'center', maxWidth: '200px', lineHeight: 1.5 }}>Select a payment gateway to see your order total and proceed to checkout</p> */}
-                </div>
-              )}
             <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #f0ede9', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', overflow: 'hidden' }}>
               {/* Header */}
               <div style={{ padding: '18px 24px', background: `linear-gradient(135deg, ${PL}, #fff)`, borderBottom: '1px solid #f0ede9' }}>
@@ -498,7 +463,6 @@ const AgentCart = () => {
             </div>
           </div>
         </div>
-         </div>
       )}
 
       {/* Delete Confirm Modal */}

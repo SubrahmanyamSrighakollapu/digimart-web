@@ -79,7 +79,7 @@ const Login = () => {
 
         toast.success('Login successful!');
 
-        let redirectRoute = '/home';
+        let redirectRoute = '/';
         if (user.roleName === 'Super Admin' || user.roleName === 'Admin') {
           redirectRoute = '/admin';
         } else if (user.roleName === 'Super Distributor') {

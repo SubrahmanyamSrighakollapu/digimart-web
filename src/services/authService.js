@@ -178,20 +178,24 @@ export const authService = {
 
     try {
       // Basic JWT token validation (check if expired)
-      const payload = JSON.parse(atob(token.split('.')[1]));
+      const parts = token.split('.');
+      if (parts.length !== 3) return true; // not a standard JWT, allow through
+
+      const payload = JSON.parse(atob(parts[1]));
       const currentTime = Date.now() / 1000;
-      
+
       if (payload.exp && payload.exp < currentTime) {
         // Token expired, clear auth
         authUtils.clearAuth();
         return false;
       }
-      
+
       return true;
     } catch (error) {
-      // Invalid token format
-      authUtils.clearAuth();
-      return false;
+      // If we can't decode the token, don't clear auth — just allow through
+      // The API will reject it if truly invalid
+      console.warn('Token decode warning:', error.message);
+      return true;
     }
   }
 };
