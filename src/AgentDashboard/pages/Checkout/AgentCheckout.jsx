@@ -50,12 +50,12 @@ const AgentCheckout = () => {
         body: JSON.stringify({ ...checkoutData, ...formData }),
       });
       const data = await res.json();
-      // if (data.status === 1) {
-      //   toast.success('Order placed successfully!');
-      //   window.location.href = data.result.checkoutUrl;
-      // } else {
-      //   toast.error(data.message || 'Failed to place order');
-      // }
+      if (data.status === 1) {
+        toast.success('Order placed successfully!');
+        window.location.href = data.result.checkoutUrl;
+      } else {
+        toast.error(data.message || 'Failed to place order');
+      }
     } catch {
       toast.error('Failed to place order');
     } finally {
