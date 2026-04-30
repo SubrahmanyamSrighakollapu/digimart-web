@@ -13,7 +13,7 @@ const RouteGuard = ({ children }) => {
     // Distributor routes (/super-distributor, /master-distributor, /distributor)
     // are allowed through — they have their own routes defined
     const strictlyProtected = path.startsWith('/admin') || path.startsWith('/agent');
-    if (!strictlyProtected) return;
+    if (!strictlyProtected || path.startsWith('/payment')) return;
 
     const token = sessionStorage.getItem('token');
     const isAuth = sessionStorage.getItem('isAuthenticated') === 'true';

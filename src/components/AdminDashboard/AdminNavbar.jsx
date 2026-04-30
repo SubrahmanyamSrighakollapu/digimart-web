@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Bell, Search, ChevronDown, LogOut, User, Settings, X } from 'lucide-react';
+import { toast } from 'react-toastify';
+import { Bell, Search, ChevronDown, LogOut, User, Settings, X, Wallet, RefreshCw } from 'lucide-react';
 import logo from '../../assets/digimart.png';
 import authService from '../../services/authService';
 
@@ -14,10 +15,41 @@ const AdminNavbar = ({ sidebarCollapsed }) => {
   const [showProfile, setShowProfile] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [walletDetails, setWalletDetails] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
   const profileRef = useRef(null);
   const notifRef = useRef(null);
 
   const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+  const isDistributor = ['Super Distributor', 'Master Distributor', 'Distributor'].includes(user.roleName);
+
+  // Load wallet for distributor roles
+  useEffect(() => {
+    if (!isDistributor) return;
+    const w = sessionStorage.getItem('walletDetails');
+    if (w) { try { setWalletDetails(JSON.parse(w)); } catch {} }
+  }, []);
+
+  const handleRefreshWallet = async () => {
+    if (!isDistributor) return;
+    setRefreshing(true);
+    const token = sessionStorage.getItem('token');
+    const userId = user?.userId;
+    if (userId && token) {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/payment/wallet-details/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.status === 1) {
+          sessionStorage.setItem('walletDetails', JSON.stringify(data.result));
+          setWalletDetails(data.result);
+          toast.success('Wallet refreshed');
+        } else toast.error('Failed to refresh wallet');
+      } catch { toast.error('Error refreshing wallet'); }
+    } else toast.error('User session not found');
+    setRefreshing(false);
+  };
 
   const getDashboardRoute = () => {
     if (user.roleName === 'Super Distributor') return '/super-distributor';
@@ -100,6 +132,44 @@ const AdminNavbar = ({ sidebarCollapsed }) => {
         {searchQuery && <X size={13} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: '#a8897a', cursor: 'pointer' }} onClick={() => setSearchQuery('')} />}
       </div>
 
+      {/* Wallet — only for distributor roles */}
+      {isDistributor && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '10px',
+            backgroundColor: PL, border: `1px solid ${P}33`,
+            borderRadius: '10px', padding: '8px 14px',
+          }}>
+            <Wallet size={15} color={P} />
+            <div>
+              <p style={{ margin: 0, fontSize: '11px', fontWeight: 700, color: P, lineHeight: 1.2 }}>
+                ₹{walletDetails?.balance ? parseFloat(walletDetails.balance).toFixed(2) : '0.00'}
+              </p>
+              <p style={{ margin: 0, fontSize: '10px', color: '#a8897a', lineHeight: 1.2 }}>
+                Hold: ₹{walletDetails?.holdBalance ? parseFloat(walletDetails.holdBalance).toFixed(2) : '0.00'}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={handleRefreshWallet}
+            disabled={refreshing}
+            style={{
+              width: '32px', height: '32px', borderRadius: '50%',
+              backgroundColor: P, border: 'none',
+              cursor: refreshing ? 'not-allowed' : 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              opacity: refreshing ? 0.6 : 1, transition: 'all 0.2s',
+              boxShadow: `0 2px 8px rgba(236,91,19,0.35)`,
+            }}
+            onMouseEnter={e => { if (!refreshing) e.currentTarget.style.backgroundColor = '#D44E0E'; }}
+            onMouseLeave={e => { if (!refreshing) e.currentTarget.style.backgroundColor = P; }}
+          >
+            <RefreshCw size={14} color="white" style={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }} />
+          </button>
+          <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
+        </div>
+      )}
+
       {/* Notifications */}
       <div ref={notifRef} style={{ position: 'relative' }}>
         <button onClick={() => setShowNotifications(!showNotifications)} style={{
@@ -151,7 +221,7 @@ const AdminNavbar = ({ sidebarCollapsed }) => {
           <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: `linear-gradient(135deg, ${P}, #D44E0E)`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: '700', fontSize: '11px', flexShrink: 0 }}>
             {getInitials(user.email)}
           </div>
-          <div style={{ textAlign: 'left' }}>
+          <div style={{ textAlign: 'center' }}>
             <p style={{ margin: 0, fontSize: '12px', fontWeight: '600', color: '#1c1917', lineHeight: '1.2' }}>{user.roleName || 'Admin'}</p>
             <p style={{ margin: 0, fontSize: '11px', color: '#a8897a', lineHeight: '1.2' }}>{user.email?.split('@')[0] || 'admin'}</p>
           </div>

@@ -147,7 +147,7 @@ const AgentsList = () => {
         </div>
 
         <DataTable
-          headers={['Agent ID', 'Name', 'Business', 'Mobile', 'Address', 'Status', 'Actions']}
+          headers={['Agent ID', 'Name', 'Business','Plan', 'Mobile', 'Address', 'Status', 'Actions']}
           loading={loading}
           empty={filteredAgents.length === 0}
         >
@@ -166,6 +166,7 @@ const AgentsList = () => {
                 </div>
               </Td>
               <Td style={{ fontWeight: 500 }}>{agent.businessName || 'N/A'}</Td>
+              <Td style={{ fontWeight: 500 }}>{agent.planName || 'N/A'}</Td>
               <Td style={{ color: T.textMuted }}>{agent.contactNo || 'N/A'}</Td>
               <Td style={{ color: T.textMuted, maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{agent.agentAddress || 'N/A'}</Td>
               <Td><Badge variant={getStatusVariant(agent.statusName)}>{agent.statusName || 'N/A'}</Badge></Td>

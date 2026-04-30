@@ -257,7 +257,9 @@ const AgentItemDetails = () => {
 
               {/* Total */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', backgroundColor: PL, borderRadius: '10px', marginBottom: '16px' }}>
-                <span style={{ fontSize: '13px', color: '#6b7280' }}>Total ({quantity} ton{quantity > 1 ? 's' : ''})</span>
+                <span style={{ fontSize: '13px', color: '#6b7280' }}>Total 
+                  {/* ({quantity} ton{quantity > 1 ? 's' : ''}) */}
+                  </span>
                 <span style={{ fontSize: '16px', fontWeight: 800, color: P }}>₹{(parseFloat(product.finalPrice) * quantity).toLocaleString()}</span>
               </div>
 

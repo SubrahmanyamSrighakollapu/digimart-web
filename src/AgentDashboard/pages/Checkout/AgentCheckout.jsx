@@ -36,8 +36,8 @@ const AgentCheckout = () => {
   const handleChange = (e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
   const handlePlaceOrder = async () => {
-    const { userGSTNo, deliveryPersonName, deliveryPersonNo, deliveryAddress, deliveryStatePin } = formData;
-    if (!userGSTNo || !deliveryPersonName || !deliveryPersonNo || !deliveryAddress || !deliveryStatePin) {
+    const { deliveryPersonName, deliveryPersonNo, deliveryAddress, deliveryStatePin } = formData;
+    if (!deliveryPersonName || !deliveryPersonNo || !deliveryAddress || !deliveryStatePin) {
       toast.error('Please fill all required fields');
       return;
     }
@@ -50,12 +50,12 @@ const AgentCheckout = () => {
         body: JSON.stringify({ ...checkoutData, ...formData }),
       });
       const data = await res.json();
-      if (data.status === 1) {
-        toast.success('Order placed successfully!');
-        navigate('/agent/payment-fallback', { state: { orderId: data.result.orderId, orderCode: data.result.orderCode, paymentProcessId: data.result.paymentProcessId } });
-      } else {
-        toast.error(data.message || 'Failed to place order');
-      }
+      // if (data.status === 1) {
+      //   toast.success('Order placed successfully!');
+      //   window.location.href = data.result.checkoutUrl;
+      // } else {
+      //   toast.error(data.message || 'Failed to place order');
+      // }
     } catch {
       toast.error('Failed to place order');
     } finally {
@@ -70,7 +70,9 @@ const AgentCheckout = () => {
     ...(checkoutData.commissionRate > 0 ? [{ label: `Platform Fee (${checkoutData.commissionRate}%)`, value: `₹${checkoutData.commissionAmount?.toFixed(2) || '0.00'}` }] : []),
   ];
 
-  const allFilled = Object.values(formData).every(v => v.trim());
+  const requiredFields = ['deliveryPersonName', 'deliveryPersonNo', 'deliveryAddress', 'deliveryStatePin'];
+  const filledCount = requiredFields.filter(k => formData[k].trim()).length;
+  const allFilled = filledCount === requiredFields.length;
 
   return (
     <div style={{ fontFamily: "'Inter','Segoe UI',sans-serif" }}>
@@ -103,12 +105,12 @@ const AgentCheckout = () => {
             </div>
             <div>
               <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#1c1917' }}>Delivery Details</h3>
-              <p style={{ margin: 0, fontSize: '12px', color: '#9ca3af' }}>All fields are required</p>
+              <p style={{ margin: 0, fontSize: '12px', color: '#9ca3af' }}>GST is optional, other fields are required</p>
             </div>
           </div>
 
           <div style={{ padding: '24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px' }}>
-            <Field label="GST Number" icon={Hash} required>
+            <Field label="GST Number" icon={Hash}>
               <input name="userGSTNo" value={formData.userGSTNo} onChange={handleChange} placeholder="e.g. 22AAAAA0000A1Z5" style={inp}
                 onFocus={e => { e.target.style.borderColor = P; e.target.style.boxShadow = `0 0 0 3px ${PL}`; }}
                 onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
@@ -150,10 +152,10 @@ const AgentCheckout = () => {
           {/* Progress indicator */}
           <div style={{ padding: '16px 24px', borderTop: '1px solid #f0ede9', backgroundColor: '#faf8f6', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <div style={{ flex: 1, height: '4px', backgroundColor: '#e5e7eb', borderRadius: '999px', overflow: 'hidden' }}>
-              <div style={{ height: '100%', width: `${(Object.values(formData).filter(v => v.trim()).length / 5) * 100}%`, backgroundColor: P, borderRadius: '999px', transition: 'width 0.3s' }} />
+              <div style={{ height: '100%', width: `${(filledCount / requiredFields.length) * 100}%`, backgroundColor: P, borderRadius: '999px', transition: 'width 0.3s' }} />
             </div>
             <span style={{ fontSize: '12px', color: '#9ca3af', whiteSpace: 'nowrap' }}>
-              {Object.values(formData).filter(v => v.trim()).length}/5 fields filled
+              {filledCount}/{requiredFields.length} fields filled
             </span>
           </div>
         </div>

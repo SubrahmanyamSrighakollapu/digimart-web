@@ -79,17 +79,20 @@ import WalletRequest from './AgentDashboard/pages/WalletRequest';
 import PlanCommissionConfiguration from './AdminDashboard/pages/AdminSettings/PlanComissionConfiguration';
 import Partners from './pages/partners/Partners';
 import ScrollToTop from './components/ScrollToTop';
+import InvoiceDetails from './AgentDashboard/pages/Checkout/InvoiceDetails';
+import PaymentFallback from './AgentDashboard/pages/Checkout/PaymentFallback';
 
 function App() {
   return (
     <Router>
       <CartProvider>
-        <RouteGuard>
+          <RouteGuard>
           <ScrollToTop />
           <Routes>
           {/* Public/auth routes without any Layout (no navbar) */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/payment/webhookCall" element={<PaymentFallback />} />
           {/* <Route path="/otp-verification" element={<OtpVerification />} />
           <Route path="/verified-success" element={<VerifiedSuccess />} /> */}
           {/* AGRICULTURE WEBSITE routes wrapped with Layout (agriculture navbar) */}
@@ -127,6 +130,7 @@ function App() {
             <Route path="wallet-request" element={<WalletRequest />} />
             <Route path="products/add-category" element={<AddProductCategory />} />
             <Route path="products/add-product" element={<AddProducts />} />
+            <Route path="invoice-details" element={<InvoiceDetails />} />
 
             <Route path="place-orders" element={<PlaceOrders />} />
             <Route path="vendor-payments" element={<VendorPayments />} />
@@ -160,6 +164,7 @@ function App() {
             <Route path="admin-settings/payout-charges-manager" element={<PayoutChargesManager />} />
             <Route path="admin-settings/set-balance-requirement" element={<SetBalanceRequirement />} />
             <Route path="admin-settings/payment-methods-manager" element={<PaymentMethodsManager />} />
+            <Route path="admin-settings/invoice-details" element={<InvoiceDetails />} />
             <Route path="user-management/user-service-settings" element={<UserServiceSettings />} />
             <Route path="user-management/create-user" element={<CreateUser />} />
             <Route path="user-management/users-list" element={<UsersList />} />

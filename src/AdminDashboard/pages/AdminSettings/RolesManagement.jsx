@@ -12,6 +12,7 @@ const RolesManagement = () => {
   const [roleName, setRoleName] = useState('');
   const [roleCode, setRoleCode] = useState('');
   const [defaultCommission, setDefaultCommission] = useState('');
+  const [newRoleIsEmployee, setNewRoleIsEmployee] = useState(false);
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -36,8 +37,8 @@ const RolesManagement = () => {
     setLoading(true);
     try {
       const token = sessionStorage.getItem('token');
-      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/lookup/manageuserrolemaster`, { roleId: 0, roleName, roleCode, parentId: 1, hierarchyLevel: 1, defaultCommission: parseFloat(defaultCommission) || 0, isEmployee: true, isActive: true }, { headers: { Authorization: `Bearer ${token}` } });
-      if (res.data.status === 1) { toast.success('Role created!'); setRoleName(''); setRoleCode(''); setDefaultCommission(''); fetchRoles(); }
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/lookup/manageuserrolemaster`, { roleId: 0, roleName, roleCode, parentId: 1, hierarchyLevel: 1, defaultCommission: parseFloat(defaultCommission) || 0, isEmployee: newRoleIsEmployee, isActive: true }, { headers: { Authorization: `Bearer ${token}` } });
+      if (res.data.status === 1) { toast.success('Role created!'); setRoleName(''); setRoleCode(''); setDefaultCommission(''); setNewRoleIsEmployee(false); fetchRoles(); }
       else toast.error(res.data.message || 'Failed to create role');
     } catch { toast.error('Error creating role'); }
     finally { setLoading(false); }
@@ -47,7 +48,7 @@ const RolesManagement = () => {
     if (!editRole.roleName.trim() || !editRole.roleCode.trim()) { toast.error('Enter role name and code'); return; }
     try {
       const token = sessionStorage.getItem('token');
-      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/lookup/manageuserrolemaster`, { roleId: editRole.roleId, roleName: editRole.roleName, roleCode: editRole.roleCode, parentId: editRole.parentId || 1, hierarchyLevel: editRole.hierarchyLevel || 1, defaultCommission: editRole.defaultCommission || 0, isEmployee: true, isActive: true }, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/lookup/manageuserrolemaster`, { roleId: editRole.roleId, roleName: editRole.roleName, roleCode: editRole.roleCode, parentId: editRole.parentId || 1, hierarchyLevel: editRole.hierarchyLevel || 1, defaultCommission: parseFloat(editRole.defaultCommission) || 0, isEmployee: editRole.isEmployee ?? false, isActive: true }, { headers: { Authorization: `Bearer ${token}` } });
       if (res.data.status === 1) { toast.success('Role updated!'); setShowEditModal(false); setEditRole(null); fetchRoles(); }
       else toast.error(res.data.message || 'Failed to update role');
     } catch { toast.error('Error updating role'); }
@@ -83,6 +84,36 @@ const RolesManagement = () => {
             <FormField label="Default Commission (%)">
               <InputField type="number" value={defaultCommission} onChange={e => setDefaultCommission(e.target.value)} placeholder="e.g. 2.5" min="0" step="0.01" />
             </FormField>
+
+            {/* Employee Toggle */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', backgroundColor: T.bg, borderRadius: T.radius, border: `1px solid ${T.borderLight}` }}>
+              <div>
+                <p style={{ margin: 0, fontSize: T.fontMd, fontWeight: 600, color: T.text }}>Role Type</p>
+                <p style={{ margin: 0, fontSize: T.fontSm, color: T.textMuted }}>
+                  {newRoleIsEmployee ? 'Employee role' : 'Non-employee role'}
+                </p>
+              </div>
+              <label style={{ position: 'relative', display: 'inline-block', width: '44px', height: '24px', cursor: 'pointer', flexShrink: 0 }}>
+                <input
+                  type="checkbox"
+                  checked={newRoleIsEmployee}
+                  onChange={e => setNewRoleIsEmployee(e.target.checked)}
+                  style={{ opacity: 0, width: 0, height: 0 }}
+                />
+                <span style={{
+                  position: 'absolute', inset: 0, borderRadius: '24px',
+                  backgroundColor: newRoleIsEmployee ? T.primary : '#d1c4bc',
+                  transition: 'background 0.25s'
+                }} />
+                <span style={{
+                  position: 'absolute', top: '3px',
+                  left: newRoleIsEmployee ? '23px' : '3px',
+                  width: '18px', height: '18px', borderRadius: '50%',
+                  backgroundColor: 'white', transition: 'left 0.25s',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+                }} />
+              </label>
+            </div>
             <Btn onClick={handleSave} disabled={loading} style={{ width: '100%', justifyContent: 'center' }}>
               {loading ? 'Saving...' : 'Save Role'}
             </Btn>
@@ -137,6 +168,39 @@ const RolesManagement = () => {
             <FormField label="Role Code">
               <InputField value={editRole.roleCode} onChange={e => setEditRole(p => ({ ...p, roleCode: e.target.value }))} />
             </FormField>
+            <FormField label="Default Commission (%)">
+              <InputField type="number" value={editRole.defaultCommission ?? ''} onChange={e => setEditRole(p => ({ ...p, defaultCommission: e.target.value }))} placeholder="e.g. 2.5" min="0" step="0.01" />
+            </FormField>
+
+            {/* Employee Toggle */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', backgroundColor: T.bg, borderRadius: T.radius, border: `1px solid ${T.borderLight}` }}>
+              <div>
+                <p style={{ margin: 0, fontSize: T.fontMd, fontWeight: 600, color: T.text }}>Role Type</p>
+                <p style={{ margin: 0, fontSize: T.fontSm, color: T.textMuted }}>
+                  {editRole.isEmployee ? 'Employee role' : 'Non-employee role'}
+                </p>
+              </div>
+              <label style={{ position: 'relative', display: 'inline-block', width: '44px', height: '24px', cursor: 'pointer', flexShrink: 0 }}>
+                <input
+                  type="checkbox"
+                  checked={editRole.isEmployee ?? false}
+                  onChange={e => setEditRole(p => ({ ...p, isEmployee: e.target.checked }))}
+                  style={{ opacity: 0, width: 0, height: 0 }}
+                />
+                <span style={{
+                  position: 'absolute', inset: 0, borderRadius: '24px',
+                  backgroundColor: editRole.isEmployee ? T.primary : '#d1c4bc',
+                  transition: 'background 0.25s'
+                }} />
+                <span style={{
+                  position: 'absolute', top: '3px',
+                  left: editRole.isEmployee ? '23px' : '3px',
+                  width: '18px', height: '18px', borderRadius: '50%',
+                  backgroundColor: 'white', transition: 'left 0.25s',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+                }} />
+              </label>
+            </div>
             <ModalActions>
               <GhostBtn onClick={() => { setShowEditModal(false); setEditRole(null); }}>Cancel</GhostBtn>
               <Btn onClick={handleUpdate}>Update</Btn>
