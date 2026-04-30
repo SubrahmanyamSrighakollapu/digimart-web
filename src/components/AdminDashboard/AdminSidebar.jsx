@@ -89,7 +89,7 @@ const AdminSidebar = ({ collapsed, onToggle }) => {
       { icon: Coins,           label: 'Payout Charges',     path: `${base}/admin-settings/payout-charges-manager` },
       { icon: BadgeDollarSign, label: 'Min Wallet Balance', path: `${base}/admin-settings/set-balance-requirement` },
       { icon: CreditCard,      label: 'Payment Methods',    path: `${base}/admin-settings/payment-methods-manager` },
-      { icon: Shield,          label: 'Invoice Details',           path: `${base}/admin-settings/invoice-details` },
+      { icon: FileText,        label: 'Invoice Details',    path: `${base}/admin-settings/invoice-details` },
     ]},
     { icon: Globe, label: 'Website Settings', children: [
       { icon: Shield,     label: 'Privacy Policy',     path: `${base}/website-settings/privacy-policy` },
