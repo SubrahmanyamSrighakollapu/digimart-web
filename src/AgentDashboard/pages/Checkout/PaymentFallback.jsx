@@ -13,27 +13,41 @@ const PaymentFallback = () => {
 
   // Parse params directly from window.location — most reliable for payment gateway redirects
   const params = new URLSearchParams(window.location.search);
-  const orderId = params.get('orderId');
+  const merchantOrderId = params.get('orderId');  // from payment gateway URL param
   const status = params.get('status')?.toUpperCase();
   const isSuccess = status === 'SUCCESS';
 
+  // Build invoice payload — priority: merchantOrderId > orderCode > orderId
+  const buildInvoicePayload = () => {
+    const orderCode = sessionStorage.getItem('lastOrderCode') || '';
+    const orderId   = parseInt(sessionStorage.getItem('lastOrderId') || '0', 10);
+    if (merchantOrderId) return { orderId: 0,       orderCode: '',        merchantOrderId };
+    if (orderCode)       return { orderId: 0,       orderCode,            merchantOrderId: '' };
+    return                      { orderId,           orderCode: '',        merchantOrderId: '' };
+  };
+
+  // Keep orderId string for display badge (from URL param)
+  const displayOrderId = merchantOrderId || sessionStorage.getItem('lastOrderCode') || sessionStorage.getItem('lastOrderId') || '—';
+
   console.log('[PaymentFallback] raw search:', window.location.search);
-  console.log('[PaymentFallback] orderId:', orderId, '| status:', status, '| isSuccess:', isSuccess);
+  console.log('[PaymentFallback] merchantOrderId:', merchantOrderId, '| status:', status, '| isSuccess:', isSuccess);
 
   useEffect(() => {
-    console.log('[PaymentFallback] useEffect — orderId:', orderId, 'called:', called.current);
-    if (called.current || !orderId) return;
+    console.log('[PaymentFallback] useEffect — merchantOrderId:', merchantOrderId, 'called:', called.current);
+    if (called.current) return;
     called.current = true;
 
     const token = sessionStorage.getItem('token');
+    const payload = buildInvoicePayload();
     console.log('[PaymentFallback] token present:', !!token);
+    console.log('[PaymentFallback] invoice payload:', payload);
 
     // Notify backend
     fetch(`${import.meta.env.VITE_API_BASE_URL}/api/payment/verifyPayInPaymentStatus`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        orderId,
+        orderId: merchantOrderId || '',
         rawPayload: 'N/A',
         rawPayloadResponse: 'N/A',
         paymentStatus: isSuccess ? 'success' : 'failure',
@@ -44,10 +58,12 @@ const PaymentFallback = () => {
       .then(d => console.log('[PaymentFallback] verifyPayment response:', d))
       .catch(e => console.error('[PaymentFallback] verifyPayment error:', e));
 
-    // Fetch invoice only on success
+    // Fetch invoice only on success using POST
     if (isSuccess) {
-      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/payment/invoice/details/${orderId}`, {
-        headers: { Authorization: `Bearer ${token}` },
+      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/payment/invoice/details`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       })
         .then(r => r.json())
         .then(d => {
@@ -62,15 +78,18 @@ const PaymentFallback = () => {
     try {
       setDownloading(true);
       const token = sessionStorage.getItem('token');
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/payment/invoice/download/${orderId}`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const payload = buildInvoicePayload();
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/payment/invoice/download`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `Invoice_${invoice?.invoiceCode || orderId}.pdf`;
+        a.download = `Invoice_${invoice?.invoiceCode || displayOrderId}.pdf`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
@@ -86,12 +105,12 @@ const PaymentFallback = () => {
     }
   };
 
-  // Safety: if params missing entirely, show error
-  if (!orderId || !status) {
-    console.warn('[PaymentFallback] Missing orderId or status in URL');
+  // Safety: if status missing entirely, show error
+  if (!status) {
+    console.warn('[PaymentFallback] Missing status in URL');
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: '#6b7280' }}>Invalid payment callback. Missing order details.</p>
+        <p style={{ color: '#6b7280' }}>Invalid payment callback. Missing status.</p>
       </div>
     );
   }
@@ -121,7 +140,7 @@ const PaymentFallback = () => {
         {/* Order ID badge */}
         <div style={{ backgroundColor: '#faf8f6', border: '1px solid #f0ede9', borderRadius: '10px', padding: '12px 20px', marginBottom: '28px', display: 'inline-block' }}>
           <span style={{ fontSize: '12px', color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Order ID</span>
-          <p style={{ margin: '4px 0 0', fontSize: '15px', fontWeight: 700, color: '#1c1917' }}>{orderId}</p>
+          <p style={{ margin: '4px 0 0', fontSize: '15px', fontWeight: 700, color: '#1c1917' }}>{displayOrderId}</p>
         </div>
 
         {/* Actions */}
@@ -129,7 +148,7 @@ const PaymentFallback = () => {
           {isSuccess ? (
             <>
               <button
-                onClick={() => navigate('/agent/invoice-details', { state: { orderId } })}
+                onClick={() => navigate('/agent/view-invoice', { state: { merchantOrderId, orderCode: sessionStorage.getItem('lastOrderCode') || '', orderId: parseInt(sessionStorage.getItem('lastOrderId') || '0', 10) } })}
                 style={{ width: '100%', padding: '13px', backgroundColor: P, color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 4px 14px rgba(236,91,19,0.3)' }}
               >
                 <FileText size={16} /> View Invoice

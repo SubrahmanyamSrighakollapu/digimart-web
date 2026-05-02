@@ -52,7 +52,10 @@ const AgentCheckout = () => {
       const data = await res.json();
       if (data.status === 1) {
         toast.success('Order placed successfully!');
-        window.location.href = data.result.checkoutUrl;
+        // Store order identifiers for invoice retrieval after payment redirect
+        sessionStorage.setItem('lastOrderId',   String(data.result.orderId   ?? ''));
+        sessionStorage.setItem('lastOrderCode', String(data.result.orderCode ?? ''));
+        window.open(data.result.checkoutUrl, '_blank');
       } else {
         toast.error(data.message || 'Failed to place order');
       }

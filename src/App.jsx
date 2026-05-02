@@ -78,9 +78,9 @@ import AddProductCategory from './AgentDashboard/pages/Products/AddProductCatego
 import WalletRequest from './AgentDashboard/pages/WalletRequest';
 import PlanCommissionConfiguration from './AdminDashboard/pages/AdminSettings/PlanComissionConfiguration';
 import InvoiceDetails from './AdminDashboard/pages/AdminSettings/InvoiceDetails';
+import ViewInvoice from './AgentDashboard/pages/Checkout/InvoiceDetails';
 import Partners from './pages/partners/Partners';
 import ScrollToTop from './components/ScrollToTop';
-// import InvoiceDetails from './AgentDashboard/pages/Checkout/InvoiceDetails';
 import PaymentFallback from './AgentDashboard/pages/Checkout/PaymentFallback';
 
 function App() {
@@ -131,7 +131,7 @@ function App() {
             <Route path="wallet-request" element={<WalletRequest />} />
             <Route path="products/add-category" element={<AddProductCategory />} />
             <Route path="products/add-product" element={<AddProducts />} />
-            <Route path="invoice-details" element={<InvoiceDetails />} />
+            <Route path="view-invoice" element={<ViewInvoice />} />
 
             <Route path="place-orders" element={<PlaceOrders />} />
             <Route path="vendor-payments" element={<VendorPayments />} />
