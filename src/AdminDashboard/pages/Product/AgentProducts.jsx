@@ -70,7 +70,7 @@ const AgentProducts = () => {
 
   const groupedByAgent = products.reduce((acc, p) => {
     const id = p.createdBy;
-    if (!acc[id]) acc[id] = { agentId: id, agentName: `Agent ${id}`, products: [], totalProducts: 0, totalPrice: 0 };
+    if (!acc[id]) acc[id] = { agentId: id, agentName: p.userFullName || `Agent ${id}`, agentCode: p.agentCode || '', products: [], totalProducts: 0, totalPrice: 0 };
     acc[id].products.push(p);
     acc[id].totalProducts += 1;
     acc[id].totalPrice += parseFloat(p.finalPrice || 0);
@@ -78,14 +78,17 @@ const AgentProducts = () => {
   }, {});
 
   const agentRecords = Object.values(groupedByAgent);
-  const filteredRecords = agentRecords.filter(a => a.agentName.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredRecords = agentRecords.filter(a => {
+    const q = searchTerm.toLowerCase();
+    return !searchTerm || a.agentName.toLowerCase().includes(q) || a.agentCode.toLowerCase().includes(q);
+  });
   const { currentPage, totalPages, currentRecords, handlePageChange } = usePagination(filteredRecords, 10);
 
   const handleExport = () => {
     try {
       const data = [];
       agentRecords.forEach(a => {
-        a.products.forEach(p => data.push({ 'Agent ID': a.agentId, 'Agent Name': a.agentName, 'Product': p.productName, 'Category': p.categoryName || 'N/A', 'Price': `₹${p.price}`, 'Final Price': `₹${p.finalPrice}`, 'Status': p.statusName || 'Pending' }));
+        a.products.forEach(p => data.push({ 'Agent Name': a.agentName, 'Agent Code': a.agentCode, 'Product': p.productName, 'Category': p.categoryName || 'N/A', 'Price': `₹${p.price}`, 'Final Price': `₹${p.finalPrice}`, 'Status': p.statusName || 'Pending' }));
       });
       const ws = XLSX.utils.json_to_sheet(data);
       const wb = XLSX.utils.book_new();
@@ -121,16 +124,18 @@ const AgentProducts = () => {
       </div>
 
       <Card noPad>
-        <DataTable headers={['Agent ID', 'Agent Name', 'Total Products', 'Total Value', 'Action']} loading={loading} empty={filteredRecords.length === 0}>
+        <DataTable headers={['Agent', 'Total Products', 'Total Value', 'Action']} loading={loading} empty={filteredRecords.length === 0}>
           {currentRecords.map((agent, i) => (
             <Tr key={i}>
-              <Td><span style={{ fontFamily: 'monospace', fontSize: T.fontSm, color: T.textMuted }}>#{agent.agentId}</span></Td>
               <Td>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: 'linear-gradient(135deg,#f59e0b,#ef4444)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '11px', fontWeight: 700, flexShrink: 0 }}>
                     {agent.agentName.substring(0, 2).toUpperCase()}
                   </div>
-                  <span style={{ fontWeight: 600, color: T.text }}>{agent.agentName}</span>
+                  <div>
+                    <div style={{ fontWeight: 600, color: T.text }}>{agent.agentName}</div>
+                    <div style={{ fontSize: T.fontSm, color: T.textMuted, fontFamily: 'monospace' }}>{agent.agentCode}</div>
+                  </div>
                 </div>
               </Td>
               <Td><Badge variant="info">{agent.totalProducts} products</Badge></Td>
@@ -149,7 +154,7 @@ const AgentProducts = () => {
       </Card>
 
       {/* Products Modal */}
-      <Modal open={!!selectedAgent} onClose={() => setSelectedAgent(null)} title={`${selectedAgent?.agentName} — ${selectedAgent?.totalProducts} Products`} width="900px">
+      <Modal open={!!selectedAgent} onClose={() => setSelectedAgent(null)} title={`${selectedAgent?.agentName} (${selectedAgent?.agentCode}) — ${selectedAgent?.totalProducts} Products`} width="900px">
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>

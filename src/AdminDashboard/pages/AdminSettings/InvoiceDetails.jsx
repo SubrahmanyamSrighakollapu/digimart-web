@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Edit, Store, Building2, FileText, CheckCircle } from 'lucide-react';
+import { toast } from 'react-toastify';
 import {
   T, PageHeader, Card, Btn, GhostBtn, SectionLabel,
   FormGrid, FormField, InputField, SelectField, Modal, ModalActions
@@ -8,12 +9,29 @@ import {
 const ACCOUNT_TYPES = ['Savings', 'Current', 'Overdraft'];
 
 const EMPTY = {
-  // Store
   storeName: '', gstNumber: '', mobile: '', email: '', address: '',
-  // Bank
   beneficiaryName: '', bankName: '', accountType: '', bankBranch: '',
   city: '', accountNo: '', ifsc: '', pan: '',
 };
+
+const toForm = (r) => ({
+  storeName: r.businessName || '', gstNumber: r.gstNo || '', mobile: r.contactNo || '',
+  email: r.emailAddress || '', address: r.businessAddress || '',
+  beneficiaryName: r.beneficiaryName || '', bankName: r.bankName || '',
+  accountType: r.accountType || '', bankBranch: r.branchName || '',
+  city: r.cityName || '', accountNo: r.accountNumber || '',
+  ifsc: r.ifscCode || '', pan: r.panNo || '',
+});
+
+const toPayload = (form, detailsId, userId) => ({
+  detailsId, userId,
+  businessName: form.storeName, businessAddress: form.address,
+  emailAddress: form.email, contactNo: form.mobile,
+  gstNo: form.gstNumber, panNo: form.pan,
+  bankName: form.bankName, branchName: form.bankBranch,
+  beneficiaryName: form.beneficiaryName, accountType: form.accountType,
+  accountNumber: form.accountNo, cityName: form.city, ifscCode: form.ifsc,
+});
 
 const InfoRow = ({ label, value }) => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
@@ -58,36 +76,88 @@ const FormSection = ({ icon: Icon, title, accent, children }) => (
 );
 
 const InvoiceDetails = () => {
+  const currentUser = JSON.parse(sessionStorage.getItem('user') || '{}');
+  const userId = currentUser?.userId;
+
   const [saved, setSaved] = useState(false);
+  const [detailsId, setDetailsId] = useState(0);
   const [data, setData] = useState(EMPTY);
   const [form, setForm] = useState(EMPTY);
   const [editOpen, setEditOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
+
+  useEffect(() => { fetchDetails(); }, []);
+
+  const fetchDetails = async () => {
+    try {
+      setFetching(true);
+      const token = sessionStorage.getItem('token');
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/agents/getUserBusinessAndBankDetails?userId=${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.status === 1 && data.result) {
+        const r = data.result;
+        setDetailsId(r.detailsId || 0);
+        const mapped = toForm(r);
+        setData(mapped);
+        setForm(mapped);
+        setSaved(true);
+      }
+    } catch {}
+    finally { setFetching(false); }
+  };
+
+  const callSaveApi = async (formData, id) => {
+    const token = sessionStorage.getItem('token');
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/agents/saveUpdateUserBusinessDetails`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(toPayload(formData, id, userId)),
+    });
+    return res.json();
+  };
 
   const handleChange = (e) => setForm(p => ({ ...p, [e.target.name]: e.target.value }));
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const required = ['storeName', 'gstNumber', 'mobile', 'email', 'address', 'beneficiaryName', 'bankName', 'accountType', 'bankBranch', 'city', 'accountNo', 'ifsc', 'pan'];
-    const missing = required.find(k => !form[k]?.trim());
-    if (missing) { alert('Please fill all required fields.'); return; }
-    setLoading(true);
-    setTimeout(() => {
-      setData({ ...form });
-      setSaved(true);
-      setLoading(false);
-    }, 600);
+    if (required.find(k => !form[k]?.trim())) { toast.error('Please fill all required fields.'); return; }
+    try {
+      setLoading(true);
+      const result = await callSaveApi(form, 0);
+      if (result.status === 1) {
+        if (result.result?.detailsId) setDetailsId(result.result.detailsId);
+        setData({ ...form });
+        setSaved(true);
+        toast.success('Invoice details saved successfully!');
+      } else toast.error(result.message || 'Failed to save details');
+    } catch { toast.error('Failed to save details'); }
+    finally { setLoading(false); }
   };
 
   const handleEditOpen = () => { setForm({ ...data }); setEditOpen(true); };
 
-  const handleEditSave = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setData({ ...form });
-      setEditOpen(false);
-      setLoading(false);
-    }, 600);
+  const handleEditSave = async () => {
+    try {
+      setLoading(true);
+      const result = await callSaveApi(form, detailsId);
+      if (result.status === 1) {
+        setData({ ...form });
+        setEditOpen(false);
+        toast.success('Invoice details updated successfully!');
+      } else toast.error(result.message || 'Failed to update details');
+    } catch { toast.error('Failed to update details'); }
+    finally { setLoading(false); }
   };
+
+  if (fetching) return (
+    <div style={{ display: 'flex', justifyContent: 'center', padding: '80px' }}>
+      <div style={{ width: '36px', height: '36px', border: `3px solid ${T.borderLight}`, borderTopColor: T.primary, borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+      <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
+    </div>
+  );
 
   // ── VIEW MODE ──────────────────────────────────────────────────────────────
   if (saved) return (

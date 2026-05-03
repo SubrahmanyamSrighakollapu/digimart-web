@@ -53,9 +53,16 @@ const AgentCheckout = () => {
       if (data.status === 1) {
         toast.success('Order placed successfully!');
         // Store order identifiers for invoice retrieval after payment redirect
-        sessionStorage.setItem('lastOrderId',   String(data.result.orderId   ?? ''));
-        sessionStorage.setItem('lastOrderCode', String(data.result.orderCode ?? ''));
-        window.open(data.result.checkoutUrl, '_blank');
+        const orderId   = String(data.result.orderId   ?? '');
+        const orderCode = String(data.result.orderCode ?? '');
+        const token     = sessionStorage.getItem('token') || '';
+        sessionStorage.setItem('lastOrderId',   orderId);
+        sessionStorage.setItem('lastOrderCode', orderCode);
+        // Mirror to localStorage so PaymentFallback can recover after cross-origin redirect
+        localStorage.setItem('lastOrderId',   orderId);
+        localStorage.setItem('lastOrderCode', orderCode);
+        localStorage.setItem('paymentToken',  token);
+        window.location.href = data.result.checkoutUrl;
       } else {
         toast.error(data.message || 'Failed to place order');
       }

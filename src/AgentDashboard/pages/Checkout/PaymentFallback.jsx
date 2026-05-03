@@ -17,17 +17,25 @@ const PaymentFallback = () => {
   const status = params.get('status')?.toUpperCase();
   const isSuccess = status === 'SUCCESS';
 
+  // Recover session data from localStorage if sessionStorage was wiped by cross-origin redirect
+  const getToken = () =>
+    sessionStorage.getItem('token') || localStorage.getItem('paymentToken') || '';
+  const getOrderCode = () =>
+    sessionStorage.getItem('lastOrderCode') || localStorage.getItem('lastOrderCode') || '';
+  const getOrderId = () =>
+    parseInt(sessionStorage.getItem('lastOrderId') || localStorage.getItem('lastOrderId') || '0', 10);
+
   // Build invoice payload — priority: merchantOrderId > orderCode > orderId
   const buildInvoicePayload = () => {
-    const orderCode = sessionStorage.getItem('lastOrderCode') || '';
-    const orderId   = parseInt(sessionStorage.getItem('lastOrderId') || '0', 10);
-    if (merchantOrderId) return { orderId: 0,       orderCode: '',        merchantOrderId };
-    if (orderCode)       return { orderId: 0,       orderCode,            merchantOrderId: '' };
-    return                      { orderId,           orderCode: '',        merchantOrderId: '' };
+    const orderCode = getOrderCode();
+    const orderId   = getOrderId();
+    if (merchantOrderId) return { orderId: 0,  orderCode: '',   merchantOrderId };
+    if (orderCode)       return { orderId: 0,  orderCode,       merchantOrderId: '' };
+    return                      { orderId,     orderCode: '',   merchantOrderId: '' };
   };
 
   // Keep orderId string for display badge (from URL param)
-  const displayOrderId = merchantOrderId || sessionStorage.getItem('lastOrderCode') || sessionStorage.getItem('lastOrderId') || '—';
+  const displayOrderId = merchantOrderId || getOrderCode() || String(getOrderId() || '') || '—';
 
   console.log('[PaymentFallback] raw search:', window.location.search);
   console.log('[PaymentFallback] merchantOrderId:', merchantOrderId, '| status:', status, '| isSuccess:', isSuccess);
@@ -37,26 +45,26 @@ const PaymentFallback = () => {
     if (called.current) return;
     called.current = true;
 
-    const token = sessionStorage.getItem('token');
+    const token = getToken();
     const payload = buildInvoicePayload();
     console.log('[PaymentFallback] token present:', !!token);
     console.log('[PaymentFallback] invoice payload:', payload);
 
-    // Notify backend
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/payment/verifyPayInPaymentStatus`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        orderId: merchantOrderId || '',
-        rawPayload: 'N/A',
-        rawPayloadResponse: 'N/A',
-        paymentStatus: isSuccess ? 'success' : 'failure',
-        isSuccess,
-      }),
-    })
-      .then(r => r.json())
-      .then(d => console.log('[PaymentFallback] verifyPayment response:', d))
-      .catch(e => console.error('[PaymentFallback] verifyPayment error:', e));
+    // Notify backend — commented out, not required
+    // fetch(`${import.meta.env.VITE_API_BASE_URL}/api/payment/verifyPayInPaymentStatus`, {
+    //   method: 'POST',
+    //   headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({
+    //     orderId: merchantOrderId || '',
+    //     rawPayload: 'N/A',
+    //     rawPayloadResponse: 'N/A',
+    //     paymentStatus: isSuccess ? 'success' : 'failure',
+    //     isSuccess,
+    //   }),
+    // })
+    //   .then(r => r.json())
+    //   .then(d => console.log('[PaymentFallback] verifyPayment response:', d))
+    //   .catch(e => console.error('[PaymentFallback] verifyPayment error:', e));
 
     // Fetch invoice only on success using POST
     if (isSuccess) {
@@ -77,7 +85,7 @@ const PaymentFallback = () => {
   const handleDownload = async () => {
     try {
       setDownloading(true);
-      const token = sessionStorage.getItem('token');
+      const token = getToken();
       const payload = buildInvoicePayload();
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/payment/invoice/download`, {
         method: 'POST',
@@ -148,7 +156,7 @@ const PaymentFallback = () => {
           {isSuccess ? (
             <>
               <button
-                onClick={() => navigate('/agent/view-invoice', { state: { merchantOrderId, orderCode: sessionStorage.getItem('lastOrderCode') || '', orderId: parseInt(sessionStorage.getItem('lastOrderId') || '0', 10) } })}
+                onClick={() => navigate('/agent/view-invoice', { state: { merchantOrderId, orderCode: getOrderCode(), orderId: getOrderId() } })}
                 style={{ width: '100%', padding: '13px', backgroundColor: P, color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 4px 14px rgba(236,91,19,0.3)' }}
               >
                 <FileText size={16} /> View Invoice
