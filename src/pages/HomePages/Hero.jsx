@@ -31,7 +31,7 @@ const Hero = () => {
                 Grocery Wholesale
               </span>{" "}
               <br />
-              Partener
+              Partner
             </h1>
 
             <p

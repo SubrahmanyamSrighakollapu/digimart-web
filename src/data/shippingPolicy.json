@@ -1,0 +1,145 @@
+{
+  "banner": {
+    "title": "Shipping Policy",
+    "lastUpdated": "May 19, 2026"
+  },
+  "intro": "At MDGMart.com, we are committed to ensuring that your orders reach you safely and on time. Please read our shipping policy carefully to understand how deliveries are handled on our platform.",
+  "sections": [
+    {
+      "id": "01",
+      "title": "Overview",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "At MDGMart.com, we are committed to ensuring that your orders reach you safely and on time. Please read our shipping policy carefully to understand how deliveries are handled on our platform."
+        }
+      ]
+    },
+    {
+      "id": "02",
+      "title": "Agent-Managed Shipping",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "All shipping and delivery operations on MDGMart.com are exclusively managed by our authorized delivery agents. MDGMart.com serves solely as a marketplace platform and has no direct involvement in the shipping, handling, packaging, or delivery of any orders."
+        },
+        {
+          "type": "points",
+          "items": [
+            "MDGMart.com does not ship products directly. The website is a platform that connects buyers with sellers and their designated delivery agents.",
+            "All logistics responsibilities — including order pickup, packaging, transit, and final delivery — are handled entirely by the assigned agents.",
+            "MDGMart.com bears no liability for delays, damages, losses, or errors that occur during the shipping process, as these are solely under the control of the respective agents."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "03",
+      "title": "Role of the Agent",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "The agent assigned to your order is fully responsible for the following activities:" 
+        },
+        {
+          "type": "points",
+          "items": [
+            "Order Pickup — Collecting the product from the seller or warehouse.",
+            "Packaging & Handling — Ensuring the product is safely packed for transit.",
+            "Shipping & Transit — Transporting the product to your delivery address.",
+            "Last-Mile Delivery — Delivering the order to your doorstep.",
+            "Proof of Delivery — Providing delivery confirmation upon successful handover.",
+            "Failed Delivery Attempts — Managing re-delivery schedules if the customer is unavailable."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "04",
+      "title": "Shipping Timelines",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Shipping timelines are determined and communicated by the agent at the time of order confirmation. MDGMart.com does not guarantee or commit to specific delivery dates, as these are entirely dependent on the agent's operations and logistics capacity."
+        }
+      ]
+    },
+    {
+      "id": "05",
+      "title": "Shipping Charges",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Shipping fees, if applicable, are set by the respective agents. MDGMart.com does not collect, control, or regulate any shipping charges. Any shipping-related fees will be clearly communicated to you by the agent before or at the time of order placement."
+        }
+      ]
+    },
+    {
+      "id": "06",
+      "title": "Tracking Your Order",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Order tracking, if available, will be provided directly by the agent. MDGMart.com does not have access to real-time shipment tracking data and is unable to provide shipping updates on behalf of any agent."
+        }
+      ]
+    },
+    {
+      "id": "07",
+      "title": "Damaged, Lost, or Missing Orders",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "In the event of a damaged, lost, or undelivered order:"
+        },
+        {
+          "type": "points",
+          "items": [
+            "The matter must be raised directly with the assigned agent, as they hold full responsibility for the shipment.",
+            "MDGMart.com can assist in facilitating communication between the customer and the agent but cannot be held responsible for any shipping-related disputes, losses, or damages."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "08",
+      "title": "Disclaimer",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "MDGMart.com is a digital marketplace platform only. The website plays no role in the physical movement of goods. All shipping operations, commitments, and responsibilities rest solely with the agents. By placing an order on MDGMart.com, you acknowledge and agree that MDGMart.com is not a logistics provider and assumes no shipping liability whatsoever."
+        }
+      ]
+    },
+    {
+      "id": "09",
+      "title": "Contact & Support",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For any shipping-related queries, please reach out to your assigned delivery agent directly. For platform-related assistance, you may contact us at:"
+        },
+        {
+          "type": "contact",
+          "details": {
+            "company": "MDGMart.com Support",
+            "name": "",
+            "email": "support@mdgmart.com",
+            "phone": "N/A",
+            "address": "www.mdgmart.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "10",
+      "title": "Policy Updates",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "MDGMart.com reserves the right to update this Shipping Policy at any time without prior notice. Continued use of the platform constitutes acceptance of the revised policy."
+        }
+      ]
+    }
+  ]
+}

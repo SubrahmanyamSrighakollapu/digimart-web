@@ -19,6 +19,7 @@ import Services from './pages/service/Services';
 import Details from './pages/shop/Details/Details';
 import Shop from './pages/shop/shop';
 import PrivacyPolicy from './pages/TermsAndConditions/PrivacyPolicy';
+import ShippingPolicy from './pages/TermsAndConditions/ShippingPolicy';
 import RefundPolicy from './pages/TermsAndConditions/RefundPolicy';
 import TermsAndConditions from './pages/TermsAndConditions/TermsAndConditions';
 
@@ -109,6 +110,7 @@ function App() {
             <Route path="/order-placed" element={<OrderPlaced />} />
             <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/shipping-policy" element={<ShippingPolicy />} />
             <Route path="/refund-policy" element={<RefundPolicy />} />
           </Route>
 

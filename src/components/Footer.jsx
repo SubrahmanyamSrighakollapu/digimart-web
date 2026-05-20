@@ -24,6 +24,7 @@ const Footer = () => {
     const legalLinks = [
         { label: 'Terms of Use', path: '/terms-and-conditions' },
         { label: 'Privacy Policy', path: '/privacy-policy' },
+        { label: 'Shipping Policy', path: '/shipping-policy' },
         { label: 'Refund Policy', path: '/refund-policy' },
     ];
 
