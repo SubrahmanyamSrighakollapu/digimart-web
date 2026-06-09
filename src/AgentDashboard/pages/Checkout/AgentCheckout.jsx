@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { MapPin, User, Phone, Hash, FileText, ArrowLeft, Lock, CheckCircle, Truck, Shield } from 'lucide-react';
+import { mirrorPaymentSessionToLocalStorage } from '../../../utils/paymentSession';
 
 const P  = '#EC5B13';
 const PL = '#FEF0E9';
@@ -55,13 +56,10 @@ const AgentCheckout = () => {
         // Store order identifiers for invoice retrieval after payment redirect
         const orderId   = String(data.result.orderId   ?? '');
         const orderCode = String(data.result.orderCode ?? '');
-        const token     = sessionStorage.getItem('token') || '';
         sessionStorage.setItem('lastOrderId',   orderId);
         sessionStorage.setItem('lastOrderCode', orderCode);
-        // Mirror to localStorage so PaymentFallback can recover after cross-origin redirect
-        localStorage.setItem('lastOrderId',   orderId);
-        localStorage.setItem('lastOrderCode', orderCode);
-        localStorage.setItem('paymentToken',  token);
+        // Mirror auth + order context so the callback page can restore it when sessionStorage is cleared.
+        mirrorPaymentSessionToLocalStorage({ lastOrderId: orderId, lastOrderCode: orderCode });
         window.location.href = data.result.checkoutUrl;
       } else {
         toast.error(data.message || 'Failed to place order');

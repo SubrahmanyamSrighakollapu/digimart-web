@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { restorePaymentSessionFromLocalStorage } from '../utils/paymentSession';
 
 const RouteGuard = ({ children }) => {
   const location = useLocation();
@@ -14,6 +15,8 @@ const RouteGuard = ({ children }) => {
     // are allowed through — they have their own routes defined
     const strictlyProtected = path.startsWith('/admin') || path.startsWith('/agent');
     if (!strictlyProtected || path.startsWith('/payment')) return;
+
+    restorePaymentSessionFromLocalStorage();
 
     const token = sessionStorage.getItem('token');
     const isAuth = sessionStorage.getItem('isAuthenticated') === 'true';

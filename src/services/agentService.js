@@ -29,8 +29,8 @@ export const agentService = {
 
   // Get Agent Products
   getAgentProducts: async () => {
-    return await api.get('/agents/getAgentProducts');
-  },
+  return await api.get('/agents/getAgentProducts?status=true');
+},
 
   // Submit/Update Bank Details
   submitUpdateBankDetails: async (payload) => {

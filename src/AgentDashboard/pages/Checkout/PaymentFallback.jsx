@@ -2,6 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle, XCircle, ArrowRight, Home, FileText, Download } from 'lucide-react';
 import { toast } from 'react-toastify';
+import {
+  getPaymentOrderCode,
+  getPaymentOrderId,
+  getPaymentToken,
+  restorePaymentSessionFromLocalStorage,
+} from '../../../utils/paymentSession';
 
 const P = '#EC5B13';
 
@@ -9,7 +15,8 @@ const PaymentFallback = () => {
   const navigate = useNavigate();
   const called = useRef(false);
   const [invoice, setInvoice] = useState(null);
-  const [downloading, setDownloading] = useState(false);
+  const [gstInvoice, setGstInvoice] = useState(null);
+  const [downloadingType, setDownloadingType] = useState('');
 
   // Parse params directly from window.location — most reliable for payment gateway redirects
   const params = new URLSearchParams(window.location.search);
@@ -17,25 +24,30 @@ const PaymentFallback = () => {
   const status = params.get('status')?.toUpperCase();
   const isSuccess = status === 'SUCCESS';
 
-  // Recover session data from localStorage if sessionStorage was wiped by cross-origin redirect
-  const getToken = () =>
-    sessionStorage.getItem('token') || localStorage.getItem('paymentToken') || '';
-  const getOrderCode = () =>
-    sessionStorage.getItem('lastOrderCode') || localStorage.getItem('lastOrderCode') || '';
-  const getOrderId = () =>
-    parseInt(sessionStorage.getItem('lastOrderId') || localStorage.getItem('lastOrderId') || '0', 10);
-
   // Build invoice payload — priority: merchantOrderId > orderCode > orderId
   const buildInvoicePayload = () => {
-    const orderCode = getOrderCode();
-    const orderId   = getOrderId();
+    const orderCode = getPaymentOrderCode();
+    const orderId   = getPaymentOrderId();
     if (merchantOrderId) return { orderId: 0,  orderCode: '',   merchantOrderId };
     if (orderCode)       return { orderId: 0,  orderCode,       merchantOrderId: '' };
     return                      { orderId,     orderCode: '',   merchantOrderId: '' };
   };
 
+  const fetchInvoiceData = async (endpoint) => {
+    const token = getPaymentToken();
+    const payload = buildInvoicePayload();
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${endpoint}`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await response.json();
+    if (data.status === 1) return data.result;
+    throw new Error(data.message || 'Failed to fetch invoice');
+  };
+
   // Keep orderId string for display badge (from URL param)
-  const displayOrderId = merchantOrderId || getOrderCode() || String(getOrderId() || '') || '—';
+  const displayOrderId = merchantOrderId || getPaymentOrderCode() || String(getPaymentOrderId() || '') || '—';
 
   console.log('[PaymentFallback] raw search:', window.location.search);
   console.log('[PaymentFallback] merchantOrderId:', merchantOrderId, '| status:', status, '| isSuccess:', isSuccess);
@@ -45,7 +57,9 @@ const PaymentFallback = () => {
     if (called.current) return;
     called.current = true;
 
-    const token = getToken();
+    restorePaymentSessionFromLocalStorage();
+
+    const token = getPaymentToken();
     const payload = buildInvoicePayload();
     console.log('[PaymentFallback] token present:', !!token);
     console.log('[PaymentFallback] invoice payload:', payload);
@@ -68,26 +82,42 @@ const PaymentFallback = () => {
 
     // Fetch invoice only on success using POST
     if (isSuccess) {
-      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/payment/invoice/details`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      })
-        .then(r => r.json())
-        .then(d => {
-          console.log('[PaymentFallback] invoice response:', d);
-          if (d.status === 1) setInvoice(d.result);
+      Promise.allSettled([
+        fetchInvoiceData('/api/payment/invoice/details'),
+        fetchInvoiceData('/api/payment/gst-invoice/details'),
+      ])
+        .then(([purchaseResult, gstResult]) => {
+          if (purchaseResult.status === 'fulfilled') {
+            console.log('[PaymentFallback] invoice response:', purchaseResult.value);
+            setInvoice(purchaseResult.value);
+          } else {
+            console.error('[PaymentFallback] invoice fetch error:', purchaseResult.reason);
+          }
+
+          if (gstResult.status === 'fulfilled') {
+            console.log('[PaymentFallback] GST invoice response:', gstResult.value);
+            setGstInvoice(gstResult.value);
+          } else {
+            console.error('[PaymentFallback] GST invoice fetch error:', gstResult.reason);
+          }
         })
         .catch(e => console.error('[PaymentFallback] invoice fetch error:', e));
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleDownload = async () => {
+  const handleDownload = async (type) => {
+    const isGst = type === 'gst';
+    const currentInvoice = isGst ? gstInvoice : invoice;
+    const endpoint = isGst ? '/api/payment/gst-invoice/download' : '/api/payment/invoice/download';
+    const filePrefix = isGst ? 'GST_Invoice' : 'Invoice';
+    const successMessage = isGst ? 'GST invoice downloaded successfully' : 'Invoice downloaded successfully';
+    const errorMessage = isGst ? 'Failed to download GST invoice' : 'Failed to download invoice';
+
     try {
-      setDownloading(true);
-      const token = getToken();
+      setDownloadingType(type);
+      const token = getPaymentToken();
       const payload = buildInvoicePayload();
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/payment/invoice/download`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${endpoint}`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -97,19 +127,19 @@ const PaymentFallback = () => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `Invoice_${invoice?.invoiceCode || displayOrderId}.pdf`;
+        a.download = `${filePrefix}_${currentInvoice?.invoiceCode || displayOrderId}.pdf`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
-        toast.success('Invoice downloaded successfully');
+        toast.success(successMessage);
       } else {
-        toast.error('Failed to download invoice');
+        toast.error(errorMessage);
       }
     } catch {
-      toast.error('Failed to download invoice');
+      toast.error(errorMessage);
     } finally {
-      setDownloading(false);
+      setDownloadingType('');
     }
   };
 
@@ -156,17 +186,30 @@ const PaymentFallback = () => {
           {isSuccess ? (
             <>
               <button
-                onClick={() => navigate('/agent/view-invoice', { state: { merchantOrderId, orderCode: getOrderCode(), orderId: getOrderId() } })}
+                onClick={() => navigate('/agent/view-invoice', { state: { merchantOrderId, orderCode: getPaymentOrderCode(), orderId: getPaymentOrderId(), preferredInvoiceType: 'purchase' } })}
                 style={{ width: '100%', padding: '13px', backgroundColor: P, color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 4px 14px rgba(236,91,19,0.3)' }}
               >
                 <FileText size={16} /> View Invoice
               </button>
               <button
-                onClick={handleDownload}
-                disabled={downloading}
-                style={{ width: '100%', padding: '13px', backgroundColor: '#fff', color: '#16a34a', border: '2px solid #16a34a', borderRadius: '10px', fontWeight: 700, fontSize: '14px', cursor: downloading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: downloading ? 0.7 : 1 }}
+                onClick={() => navigate('/agent/view-invoice', { state: { merchantOrderId, orderCode: getPaymentOrderCode(), orderId: getPaymentOrderId(), preferredInvoiceType: 'gst' } })}
+                style={{ width: '100%', padding: '13px', backgroundColor: '#fff', color: '#2563eb', border: '2px solid #2563eb', borderRadius: '10px', fontWeight: 700, fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
               >
-                <Download size={16} /> {downloading ? 'Downloading...' : 'Download Invoice'}
+                <FileText size={16} /> View GST Invoice
+              </button>
+              <button
+                onClick={() => handleDownload('purchase')}
+                disabled={downloadingType === 'purchase'}
+                style={{ width: '100%', padding: '13px', backgroundColor: '#fff', color: '#16a34a', border: '2px solid #16a34a', borderRadius: '10px', fontWeight: 700, fontSize: '14px', cursor: downloadingType === 'purchase' ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: downloadingType === 'purchase' ? 0.7 : 1 }}
+              >
+                <Download size={16} /> {downloadingType === 'purchase' ? 'Downloading...' : 'Download Invoice'}
+              </button>
+              <button
+                onClick={() => handleDownload('gst')}
+                disabled={downloadingType === 'gst'}
+                style={{ width: '100%', padding: '13px', backgroundColor: '#fff', color: '#2563eb', border: '2px solid #2563eb', borderRadius: '10px', fontWeight: 700, fontSize: '14px', cursor: downloadingType === 'gst' ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: downloadingType === 'gst' ? 0.7 : 1 }}
+              >
+                <Download size={16} /> {downloadingType === 'gst' ? 'Downloading...' : 'Download GST Invoice'}
               </button>
             </>
           ) : (
