@@ -3,7 +3,7 @@
     "title": "Shipping Policy",
     "lastUpdated": "May 19, 2026"
   },
-  "intro": "At MDGMart.com, we are committed to ensuring that your orders reach you safely and on time. Please read our shipping policy carefully to understand how deliveries are handled on our platform.",
+  "intro": "At mdigimart, we are committed to ensuring that your orders reach you safely and on time. Please read our shipping policy carefully to understand how deliveries are handled on our platform.",
   "sections": [
     {
       "id": "01",
@@ -11,7 +11,7 @@
       "content": [
         {
           "type": "paragraph",
-          "text": "At MDGMart.com, we are committed to ensuring that your orders reach you safely and on time. Please read our shipping policy carefully to understand how deliveries are handled on our platform."
+          "text": "At mdigimart, we are committed to ensuring that your orders reach you safely and on time. Please read our shipping policy carefully to understand how deliveries are handled on our platform."
         }
       ]
     },
@@ -21,14 +21,14 @@
       "content": [
         {
           "type": "paragraph",
-          "text": "All shipping and delivery operations on MDGMart.com are exclusively managed by our authorized delivery agents. MDGMart.com serves solely as a marketplace platform and has no direct involvement in the shipping, handling, packaging, or delivery of any orders."
+          "text": "All shipping and delivery operations on mdigimart are managed through our authorized delivery agents. mdigimart is a platform that connects retailers and consumers and supports the order flow, while shipping, handling, packaging, and delivery are coordinated through the assigned agents."
         },
         {
           "type": "points",
           "items": [
-            "MDGMart.com does not ship products directly. The website is a platform that connects buyers with sellers and their designated delivery agents.",
+            "mdigimart does not ship products directly. It is a platform that connects retailers and consumers while assigned agents coordinate order delivery.",
             "All logistics responsibilities — including order pickup, packaging, transit, and final delivery — are handled entirely by the assigned agents.",
-            "MDGMart.com bears no liability for delays, damages, losses, or errors that occur during the shipping process, as these are solely under the control of the respective agents."
+            "mdigimart is not responsible for delays, damages, losses, or errors that occur during the shipping process, as these are handled by the respective agents."
           ]
         }
       ]
@@ -49,7 +49,11 @@
             "Shipping & Transit — Transporting the product to your delivery address.",
             "Last-Mile Delivery — Delivering the order to your doorstep.",
             "Proof of Delivery — Providing delivery confirmation upon successful handover.",
-            "Failed Delivery Attempts — Managing re-delivery schedules if the customer is unavailable."
+            "Failed Delivery Attempts — Managing re-delivery schedules if the customer is unavailable.",
+            {
+              "text": "Important: Assigned agents are responsible for taking care of pickup, packaging, shipment coordination, transit handling, and final delivery-related activities for the order.",
+              "highlight": true
+            }
           ]
         }
       ]
@@ -60,7 +64,16 @@
       "content": [
         {
           "type": "paragraph",
-          "text": "Shipping timelines are determined and communicated by the agent at the time of order confirmation. MDGMart.com does not guarantee or commit to specific delivery dates, as these are entirely dependent on the agent's operations and logistics capacity."
+          "text": "Shipping timelines are determined and communicated by the agent at the time of order confirmation. Delivery is generally scheduled after 3 days of successful payment being received, subject to product readiness, agent scheduling, and logistics availability."
+        },
+        {
+          "type": "points",
+          "items": [
+            {
+              "text": "Important: Shipping will be done after 3 days of successful payment being received, based on operational readiness and delivery planning.",
+              "highlight": true
+            }
+          ]
         }
       ]
     },
@@ -70,7 +83,7 @@
       "content": [
         {
           "type": "paragraph",
-          "text": "Shipping fees, if applicable, are set by the respective agents. MDGMart.com does not collect, control, or regulate any shipping charges. Any shipping-related fees will be clearly communicated to you by the agent before or at the time of order placement."
+          "text": "Shipping fees, if applicable, are set by the respective agents. mdigimart does not collect, control, or regulate any shipping charges. Any shipping-related fees will be clearly communicated to you by the agent before or at the time of order placement."
         }
       ]
     },
@@ -80,7 +93,7 @@
       "content": [
         {
           "type": "paragraph",
-          "text": "Order tracking, if available, will be provided directly by the agent. MDGMart.com does not have access to real-time shipment tracking data and is unable to provide shipping updates on behalf of any agent."
+          "text": "Order tracking, if available, will be provided directly by the agent. mdigimart does not have access to real-time shipment tracking data and is unable to provide shipping updates on behalf of any agent."
         }
       ]
     },
@@ -96,7 +109,7 @@
           "type": "points",
           "items": [
             "The matter must be raised directly with the assigned agent, as they hold full responsibility for the shipment.",
-            "MDGMart.com can assist in facilitating communication between the customer and the agent but cannot be held responsible for any shipping-related disputes, losses, or damages."
+            "mdigimart can assist in facilitating communication between the customer and the agent but cannot be held responsible for any shipping-related disputes, losses, or damages."
           ]
         }
       ]
@@ -107,7 +120,7 @@
       "content": [
         {
           "type": "paragraph",
-          "text": "MDGMart.com is a digital marketplace platform only. The website plays no role in the physical movement of goods. All shipping operations, commitments, and responsibilities rest solely with the agents. By placing an order on MDGMart.com, you acknowledge and agree that MDGMart.com is not a logistics provider and assumes no shipping liability whatsoever."
+          "text": "mdigimart is a digital platform that connects retailers and consumers. The platform does not directly perform the physical movement of goods. All shipping operations, commitments, and delivery responsibilities rest with the assigned agents. By placing an order on mdigimart, you acknowledge and agree that shipping execution is managed through the assigned delivery agents."
         }
       ]
     },
@@ -122,11 +135,11 @@
         {
           "type": "contact",
           "details": {
-            "company": "MDGMart.com Support",
+            "company": "mdigimart",
             "name": "",
-            "email": "support@mdgmart.com",
-            "phone": "N/A",
-            "address": "www.mdgmart.com"
+            "email": "support@mdigimart.com",
+            "phone": "9652283222",
+            "address": "www.mdigimart.com"
           }
         }
       ]
@@ -137,7 +150,7 @@
       "content": [
         {
           "type": "paragraph",
-          "text": "MDGMart.com reserves the right to update this Shipping Policy at any time without prior notice. Continued use of the platform constitutes acceptance of the revised policy."
+          "text": "mdigimart reserves the right to update this Shipping Policy at any time without prior notice. Continued use of the platform constitutes acceptance of the revised policy."
         }
       ]
     }

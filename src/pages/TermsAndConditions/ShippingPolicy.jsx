@@ -17,9 +17,28 @@ const ShippingPolicy = () => {
           return (
             <ul key={index} className="mb-3" style={{ listStyleType: 'disc', paddingLeft: '1.5rem' }}>
               {item.items.map((point, idx) => (
-                <li key={idx} className="terms-content-text mb-2" style={{ paddingLeft: '0.5rem' }}>
-                  {point}
-                </li>
+                typeof point === 'string' ? (
+                  <li key={idx} className="terms-content-text mb-2" style={{ paddingLeft: '0.5rem' }}>
+                    {point}
+                  </li>
+                ) : (
+                  <li
+                    key={idx}
+                    className="terms-content-text mb-2"
+                    style={{
+                      padding: point.highlight ? '0.85rem 1rem' : '0 0 0 0.5rem',
+                      marginLeft: point.highlight ? '-0.25rem' : '0',
+                      listStyleType: point.highlight ? 'none' : 'disc',
+                      background: point.highlight ? '#FFF7E6' : 'transparent',
+                      borderLeft: point.highlight ? '4px solid #EC5B13' : 'none',
+                      borderRadius: point.highlight ? '8px' : '0',
+                      color: point.highlight ? '#1c1917' : '#565656',
+                      fontWeight: point.highlight ? 600 : 400,
+                    }}
+                  >
+                    {point.text}
+                  </li>
+                )
               ))}
             </ul>
           );
